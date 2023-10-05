@@ -44,4 +44,4 @@ jobs:
         app-name: 'Lagalt'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_d9505b0a93a54fb38bfb1afb16d55441 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_817f4e8fde03448ab84bf4ea9a211e88 }}/jacoblangevei/lagalt-backend:${{ github.sha }}'
+        images: 'index.docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/jacoblangevei/lagalt-backend:${{ github.sha }}'
