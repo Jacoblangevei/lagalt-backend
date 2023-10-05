@@ -9,11 +9,11 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
+WORKDIR /src/Lagalt-Backend
 COPY ["Lagalt-Backend.csproj", "."]
 RUN dotnet restore "./Lagalt-Backend.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/Lagalt-Backend"
 RUN dotnet build "Lagalt-Backend.csproj" -c Release -o /app/build
 
 FROM build AS publish
