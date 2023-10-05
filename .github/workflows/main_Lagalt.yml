@@ -30,7 +30,7 @@ jobs:
       with:
         push: true
         tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_817f4e8fde03448ab84bf4ea9a211e88 }}/jacoblangevei/lagalt-backend:${{ github.sha }}
-        file: ./Lagalt-Backend/Dockerfile
+        file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
