@@ -10,7 +10,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src/
-COPY ["Lagalt-Backend.csproj", "."]
+COPY ["Lagalt-Backemd/Lagalt-Backend.csproj", "."]
 RUN dotnet restore "./Lagalt-Backend.csproj"
 COPY . .
 WORKDIR /src/
