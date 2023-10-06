@@ -17,10 +17,10 @@ namespace Lagalt_Backend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.14")
+                .HasAnnotation("ProductVersion", "7.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.OwnerModels.Owner", b =>
                 {
@@ -28,7 +28,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -53,13 +53,57 @@ namespace Lagalt_Backend.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.OwnerModels.UserReview", b =>
+                {
+                    b.Property<int>("UserReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserReviewId"));
+
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Review")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserReviewId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserReview");
+
+                    b.HasData(
+                        new
+                        {
+                            UserReviewId = 1,
+                            OwnerId = 1,
+                            Review = "Very good",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            UserReviewId = 2,
+                            OwnerId = 1,
+                            Review = "Did a very good job",
+                            UserId = 1
+                        });
+                });
+
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.Milestone", b =>
                 {
                     b.Property<int>("MilestoneId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MilestoneId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MilestoneId"));
 
                     b.Property<string>("Currency")
                         .IsRequired()
@@ -77,7 +121,7 @@ namespace Lagalt_Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("PaymentAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnType("int");
@@ -113,7 +157,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MilestoneStatusId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MilestoneStatusId"));
 
                     b.Property<string>("MilestoneStatusName")
                         .IsRequired()
@@ -137,7 +181,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -152,9 +196,19 @@ namespace Lagalt_Backend.Migrations
                     b.Property<int?>("OwnerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ProjectStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectTypeId")
+                        .HasColumnType("int");
+
                     b.HasKey("ProjectId");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("ProjectStatusId");
+
+                    b.HasIndex("ProjectTypeId");
 
                     b.ToTable("Project");
 
@@ -165,6 +219,59 @@ namespace Lagalt_Backend.Migrations
                             Description = "Hacking someone important",
                             Name = "Happy Hacking",
                             OwnerId = 1
+                        });
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectStatus", b =>
+                {
+                    b.Property<int>("StatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"));
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StatusId");
+
+                    b.ToTable("ProjectStatus");
+
+                    b.HasData(
+                        new
+                        {
+                            StatusId = 1,
+                            StatusName = "Completed"
+                        });
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectType", b =>
+                {
+                    b.Property<int>("ProjectTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectTypeId"));
+
+                    b.Property<string>("ProjectTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProjectTypeId");
+
+                    b.ToTable("ProjectType");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectTypeId = 1,
+                            ProjectTypeName = "Coding"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 2,
+                            ProjectTypeName = "Movie"
                         });
                 });
 
@@ -196,7 +303,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TagId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TagId"));
 
                     b.Property<string>("TagName")
                         .IsRequired()
@@ -220,7 +327,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UpdateId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UpdateId"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -244,7 +351,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 6, 13, 23, 35, 712, DateTimeKind.Local).AddTicks(9631),
+                            Timestamp = new DateTime(2023, 10, 6, 15, 35, 48, 856, DateTimeKind.Local).AddTicks(1107),
                             UserId = 1
                         });
                 });
@@ -255,7 +362,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PortfolioProjectId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PortfolioProjectId"));
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -343,7 +450,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"));
 
                     b.Property<string>("SkillName")
                         .IsRequired()
@@ -389,7 +496,7 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -440,6 +547,23 @@ namespace Lagalt_Backend.Migrations
                     b.ToTable("ProjectTag");
                 });
 
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.OwnerModels.UserReview", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.OwnerModels.Owner", "Owner")
+                        .WithMany("UserReviews")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", "User")
+                        .WithMany("UserReviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.Milestone", b =>
                 {
                     b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.MilestoneStatus", "MilestoneStatus")
@@ -464,7 +588,21 @@ namespace Lagalt_Backend.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.ProjectStatus", "ProjectStatus")
+                        .WithMany("Projects")
+                        .HasForeignKey("ProjectStatusId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.ProjectType", "ProjectType")
+                        .WithMany("Projects")
+                        .HasForeignKey("ProjectTypeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Owner");
+
+                    b.Navigation("ProjectStatus");
+
+                    b.Navigation("ProjectType");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectUpdate", b =>
@@ -571,6 +709,8 @@ namespace Lagalt_Backend.Migrations
             modelBuilder.Entity("Lagalt_Backend.Data.Models.OwnerModels.Owner", b =>
                 {
                     b.Navigation("Projects");
+
+                    b.Navigation("UserReviews");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.MilestoneStatus", b =>
@@ -583,9 +723,21 @@ namespace Lagalt_Backend.Migrations
                     b.Navigation("Milestones");
                 });
 
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectStatus", b =>
+                {
+                    b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectType", b =>
+                {
+                    b.Navigation("Projects");
+                });
+
             modelBuilder.Entity("Lagalt_Backend.Data.Models.UserModels.User", b =>
                 {
                     b.Navigation("Updates");
+
+                    b.Navigation("UserReviews");
                 });
 #pragma warning restore 612, 618
         }

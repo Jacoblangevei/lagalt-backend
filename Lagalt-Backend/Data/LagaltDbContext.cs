@@ -19,6 +19,9 @@ namespace Lagalt_Backend.Data
         public DbSet<Milestone> Milestones { get; set; }
         public DbSet<MilestoneStatus> MilestoneStatuses { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<ProjectStatus> ProjectStatuses { get; set; }
+        public DbSet<ProjectType> ProjectTypes { get; set; }
+        public DbSet<UserReview> UserReviews { get; set; }  
 
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,6 +38,9 @@ namespace Lagalt_Backend.Data
 
             //Projects
             modelBuilder.Entity<Project>().HasOne(p => p.Owner).WithMany(o => o.Projects).HasForeignKey(p => p.OwnerId).OnDelete(DeleteBehavior.SetNull); //<--- What should happen to projects if a owner gets deleted?
+            modelBuilder.Entity<Project>().HasOne(p => p.ProjectStatus).WithMany(ps => ps.Projects).HasForeignKey(p => p.ProjectStatusId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Project>().HasOne(p => p.ProjectType).WithMany(pt => pt.Projects).HasForeignKey(p => p.ProjectTypeId).OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<Project>().HasData(
                 new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1 }
                 );
@@ -144,6 +150,26 @@ namespace Lagalt_Backend.Data
             //Tag
             modelBuilder.Entity<Tag>().HasData(
                 new Tag { TagId = 1 , TagName = ".NET"}
+                );
+
+            //ProjectStatus
+            modelBuilder.Entity<ProjectStatus>().HasData(
+                new ProjectStatus { StatusId = 1, StatusName = "Completed" }
+                );
+
+            //ProjectType
+            modelBuilder.Entity<ProjectType>().HasData(
+                new ProjectType { ProjectTypeId = 1, ProjectTypeName = "Coding"},
+                new ProjectType { ProjectTypeId = 2, ProjectTypeName = "Movie"}
+                );
+
+            //UserReview
+            modelBuilder.Entity<UserReview>().HasOne(ur => ur.User).WithMany(u => u.UserReviews).HasForeignKey(ur => ur.UserId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<UserReview>().HasOne(ur => ur.Owner).WithMany(o => o.UserReviews).HasForeignKey(ur => ur.OwnerId).OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<UserReview>().HasData(
+                new UserReview { UserReviewId = 1, UserId = 1, OwnerId = 1, Review = "Very good"},
+                new UserReview { UserReviewId = 2, UserId = 1, OwnerId = 1, Review = "Did a very good job" }
                 );
 
         }

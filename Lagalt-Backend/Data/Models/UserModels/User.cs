@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
 
 namespace Lagalt_Backend.Data.Models.UserModels
@@ -24,5 +25,6 @@ namespace Lagalt_Backend.Data.Models.UserModels
         public ICollection<Skill> Skills { get; set; }
         public ICollection<PortfolioProject> PortfolioProjects { get; set; }
         public ICollection<Update> Updates { get; set; }
+        public ICollection<UserReview> UserReviews { get; set; }
     }
 }

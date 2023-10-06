@@ -22,6 +22,14 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         public int? OwnerId { get; set; }
         public Owner? Owner { get; set; }
 
+        [ForeignKey("ProjectStatus")]
+        public int? ProjectStatusId { get; set; }
+        public ProjectStatus? ProjectStatus { get; set; }
+
+        [ForeignKey("ProjectType")]
+        public int? ProjectTypeId { get; set; }
+        public ProjectType? ProjectType { get; set; }
+
         public ICollection<User> Users { get; set; }
         public ICollection<Update> Updates { get; set; }
         public ICollection<Milestone> Milestones { get; set; }

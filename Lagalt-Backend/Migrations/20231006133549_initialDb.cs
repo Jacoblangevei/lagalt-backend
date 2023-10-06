@@ -3,10 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Lagalt_Backend.Migrations
 {
-    public partial class InitialDb : Migration
+    /// <inheritdoc />
+    public partial class initialDb : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -51,6 +55,32 @@ namespace Lagalt_Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PortfolioProject", x => x.PortfolioProjectId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectStatus",
+                columns: table => new
+                {
+                    StatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectStatus", x => x.StatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectType",
+                columns: table => new
+                {
+                    ProjectTypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectTypeName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectType", x => x.ProjectTypeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,7 +133,9 @@ namespace Lagalt_Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    OwnerId = table.Column<int>(type: "int", nullable: true)
+                    OwnerId = table.Column<int>(type: "int", nullable: true),
+                    ProjectStatusId = table.Column<int>(type: "int", nullable: true),
+                    ProjectTypeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -113,6 +145,18 @@ namespace Lagalt_Backend.Migrations
                         column: x => x.OwnerId,
                         principalTable: "Owner",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Project_ProjectStatus_ProjectStatusId",
+                        column: x => x.ProjectStatusId,
+                        principalTable: "ProjectStatus",
+                        principalColumn: "StatusId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Project_ProjectType_ProjectTypeId",
+                        column: x => x.ProjectTypeId,
+                        principalTable: "ProjectType",
+                        principalColumn: "ProjectTypeId",
                         onDelete: ReferentialAction.SetNull);
                 });
 
@@ -179,6 +223,33 @@ namespace Lagalt_Backend.Migrations
                     table.PrimaryKey("PK_Update", x => x.UpdateId);
                     table.ForeignKey(
                         name: "FK_Update_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserReview",
+                columns: table => new
+                {
+                    UserReviewId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Review = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    OwnerId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserReview", x => x.UserReviewId);
+                    table.ForeignKey(
+                        name: "FK_UserReview_Owner_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Owner",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_UserReview_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -304,6 +375,20 @@ namespace Lagalt_Backend.Migrations
                 values: new object[] { 1, new DateTime(2001, 8, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), "calculator.no", "Coded a simple calculator", "Calculator", new DateTime(2000, 8, 23, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
+                table: "ProjectStatus",
+                columns: new[] { "StatusId", "StatusName" },
+                values: new object[] { 1, "Completed" });
+
+            migrationBuilder.InsertData(
+                table: "ProjectType",
+                columns: new[] { "ProjectTypeId", "ProjectTypeName" },
+                values: new object[,]
+                {
+                    { 1, "Coding" },
+                    { 2, "Movie" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Skill",
                 columns: new[] { "SkillId", "SkillName" },
                 values: new object[] { 1, "Hacking" });
@@ -330,8 +415,8 @@ namespace Lagalt_Backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "Project",
-                columns: new[] { "ProjectId", "Description", "Name", "OwnerId" },
-                values: new object[] { 1, "Hacking someone important", "Happy Hacking", 1 });
+                columns: new[] { "ProjectId", "Description", "Name", "OwnerId", "ProjectStatusId", "ProjectTypeId" },
+                values: new object[] { 1, "Hacking someone important", "Happy Hacking", 1, null, null });
 
             migrationBuilder.InsertData(
                 table: "SkillUser",
@@ -341,7 +426,16 @@ namespace Lagalt_Backend.Migrations
             migrationBuilder.InsertData(
                 table: "Update",
                 columns: new[] { "UpdateId", "Description", "Timestamp", "UserId" },
-                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 6, 13, 23, 35, 712, DateTimeKind.Local).AddTicks(9631), 1 });
+                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 6, 15, 35, 48, 856, DateTimeKind.Local).AddTicks(1107), 1 });
+
+            migrationBuilder.InsertData(
+                table: "UserReview",
+                columns: new[] { "UserReviewId", "OwnerId", "Review", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 1, "Very good", 1 },
+                    { 2, 1, "Did a very good job", 1 }
+                });
 
             migrationBuilder.InsertData(
                 table: "ProjectUpdate",
@@ -374,6 +468,16 @@ namespace Lagalt_Backend.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Project_ProjectStatusId",
+                table: "Project",
+                column: "ProjectStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Project_ProjectTypeId",
+                table: "Project",
+                column: "ProjectTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProjectTag_TagsTagId",
                 table: "ProjectTag",
                 column: "TagsTagId");
@@ -397,8 +501,19 @@ namespace Lagalt_Backend.Migrations
                 name: "IX_Update_UserId",
                 table: "Update",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReview_OwnerId",
+                table: "UserReview",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReview_UserId",
+                table: "UserReview",
+                column: "UserId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -418,6 +533,9 @@ namespace Lagalt_Backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "SkillUser");
+
+            migrationBuilder.DropTable(
+                name: "UserReview");
 
             migrationBuilder.DropTable(
                 name: "MilestoneStatus");
@@ -442,6 +560,12 @@ namespace Lagalt_Backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Owner");
+
+            migrationBuilder.DropTable(
+                name: "ProjectStatus");
+
+            migrationBuilder.DropTable(
+                name: "ProjectType");
         }
     }
 }
