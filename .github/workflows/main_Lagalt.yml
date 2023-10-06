@@ -53,11 +53,16 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetch the entire history
 
-    - name: Push to Azure DevOps
+    - name: Set git user
       run: |
         git config user.email "jacob-langevei@hotmail.com"
         git config user.name "Jacob Langevei"
+
+    - name: Push to Azure DevOps
+      run: |
         git remote add azure-devops https://$AZURE_DEVOPS_PAT@dev.azure.com/jacoblangevei/Lagalt/_git/Lagalt
         git push --force azure-devops HEAD:main
       env:
