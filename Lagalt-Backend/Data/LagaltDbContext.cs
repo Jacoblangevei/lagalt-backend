@@ -8,6 +8,7 @@ namespace Lagalt_Backend.Data
 {
     public class LagaltDbContext : DbContext
     {
+        public LagaltDbContext(DbContextOptions<LagaltDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
@@ -19,11 +20,11 @@ namespace Lagalt_Backend.Data
         public DbSet<MilestoneStatus> MilestoneStatuses { get; set; }
         public DbSet<Tag> Tags { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Data Source=N-NO-01-01-5733\\SQLEXPRESS; Initial Catalog=LagaltEF; Integrated Security= true; Trust Server Certificate= true;");
             //Ida data source: N-NO-01-01-5733\SQLEXPRESS
-        }
+        }*/
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

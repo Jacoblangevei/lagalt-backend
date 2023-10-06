@@ -1,4 +1,6 @@
+using Lagalt_Backend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -31,6 +33,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<LagaltDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -40,7 +45,6 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 
 app.UseHttpsRedirection();
 
