@@ -58,7 +58,7 @@ jobs:
       run: |
         git config user.email "jacob-langevei@hotmail.com"
         git config user.name "Jacob Langevei"
-        git remote add azure-devops https://jacoblangevei@dev.azure.com/jacoblangevei/Lagalt/_git/Lagalt
+        git remote add azure-devops https://$AZURE_DEVOPS_PAT@dev.azure.com/jacoblangevei/Lagalt/_git/Lagalt
         git push --force azure-devops HEAD:main
       env:
         AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
