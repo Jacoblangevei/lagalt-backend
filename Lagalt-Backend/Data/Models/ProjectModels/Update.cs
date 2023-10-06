@@ -1,0 +1,25 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using Lagalt_Backend.Data.Models.UserModels;
+
+namespace Lagalt_Backend.Data.Models.ProjectModels
+{
+    [Table(nameof(Update))]
+    public class Update
+    {
+        [Key]
+        public int UpdateId { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Description { get; set; }
+        [Required]
+        public DateTime Timestamp { get; set; }
+
+        [ForeignKey("User")]
+        public int? UserId { get; set; }
+        public User? User { get; set; }
+
+        public ICollection<Project> Projects { get; set; }
+
+    }
+}

@@ -23,5 +23,6 @@ namespace Lagalt_Backend.Data.Models.UserModels
         public ICollection<Project> Projects { get; set; }
         public ICollection<Skill> Skills { get; set; }
         public ICollection<PortfolioProject> PortfolioProjects { get; set; }
+        public ICollection<Update> Updates { get; set; }
     }
 }

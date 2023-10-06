@@ -14,6 +14,10 @@ namespace Lagalt_Backend.Data
         public DbSet<Owner> Owners { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<PortfolioProject> PortfolioProjects { get; set; }
+        public DbSet<Update> Updates { get; set; }
+        public DbSet<Milestone> Milestones { get; set; }
+        public DbSet<MilestoneStatus> MilestoneStatuses { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -97,6 +101,50 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<PortfolioProjectUser>().HasData(
                 new PortfolioProjectUser { PortfolioProjectId = 1, UserId = 1 }
                 );
+
+            //Update
+            modelBuilder.Entity<Update>().HasOne(ud => ud.User).WithMany(u => u.Updates).HasForeignKey(ud => ud.UserId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Update>().HasData(
+                new Update { UpdateId = 1, UserId = 1, Description = "Fixed everything", Timestamp = DateTime.Now}
+                );
+
+            //ProjectUpdate
+            modelBuilder.Entity<ProjectUpdate>().HasKey(pud => new { pud.ProjectId, pud.UpdateId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(left => left.Updates)
+                .WithMany(right => right.Projects)
+                .UsingEntity<ProjectUpdate>(
+                    right => right.HasOne(e => e.Updates).WithMany(),
+                    left => left.HasOne(e => e.Projects).WithMany().HasForeignKey(e => e.ProjectId),
+                    join => join.ToTable("ProjectUpdate")
+                );
+
+            modelBuilder.Entity<ProjectUpdate>().HasData(
+                new ProjectUpdate { ProjectId = 1, UpdateId = 1 }
+                );
+
+            //Milestone
+            modelBuilder.Entity<Milestone>()
+            .Property(m => m.PaymentAmount)
+            .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<Milestone>().HasOne(m => m.Project).WithMany(p => p.Milestones).HasForeignKey(m => m.ProjectId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Milestone>().HasOne(m => m.MilestoneStatus).WithMany(ms => ms.Milestones).HasForeignKey(m => m.MilestoneStatusId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Milestone>().HasData(
+                new Milestone { MilestoneId = 1, Title = "Set up Azure", Description = "Set up Azure", DueDate = new DateTime(2023, 12, 01), Currency = "EUR", PaymentAmount = 10.99m, MilestoneStatusId = 1 }
+                );
+
+            //MilestoneStatus
+            modelBuilder.Entity<MilestoneStatus>().HasData(
+                new MilestoneStatus { MilestoneStatusId = 1, MilestoneStatusName = "Completed" }
+                );
+
+            //Tag
+            modelBuilder.Entity<Tag>().HasData(
+                new Tag { TagId = 1 , TagName = ".NET"}
+                );
+
         }
     }
 }

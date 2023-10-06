@@ -23,6 +23,9 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         public Owner? Owner { get; set; }
 
         public ICollection<User> Users { get; set; }
+        public ICollection<Update> Updates { get; set; }
+        public ICollection<Milestone> Milestones { get; set; }
+        public ICollection<Tag> Tags { get; set; }
 
     }
 }
