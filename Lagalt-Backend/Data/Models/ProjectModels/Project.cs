@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Lagalt_Backend.Data.Models.OwnerModels;
+using Lagalt_Backend.Data.Models.UserModels;
 
-namespace Lagalt_Backend.Data.Models
+namespace Lagalt_Backend.Data.Models.ProjectModels
 {
     [Table(nameof(Project))]
     public class Project
@@ -20,7 +22,7 @@ namespace Lagalt_Backend.Data.Models
         public int? OwnerId { get; set; }
         public Owner? Owner { get; set; }
 
-        public ICollection<User> Users { get; set;}
+        public ICollection<User> Users { get; set; }
 
     }
 }

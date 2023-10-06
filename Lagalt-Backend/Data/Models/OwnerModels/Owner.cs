@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Lagalt_Backend.Data.Models.ProjectModels;
 
-namespace Lagalt_Backend.Data.Models
+namespace Lagalt_Backend.Data.Models.OwnerModels
 {
     [Table(nameof(Owner))]
     public class Owner

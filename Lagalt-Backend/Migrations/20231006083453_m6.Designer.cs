@@ -4,6 +4,7 @@ using Lagalt_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    partial class LagaltDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231006083453_m6")]
+    partial class m6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,28 +96,6 @@ namespace Lagalt_Backend.Migrations
                             PortfolioProjectDescription = "Coded a simple calculator",
                             PortfolioProjectName = "Calculator",
                             StartDate = new DateTime(2000, 8, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
-                });
-
-            modelBuilder.Entity("Lagalt_Backend.Data.Models.PortfolioProjectUser", b =>
-                {
-                    b.Property<int>("PortfolioProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PortfolioProjectId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PortfolioProjectUser", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            PortfolioProjectId = 1,
-                            UserId = 1
                         });
                 });
 
@@ -266,23 +246,19 @@ namespace Lagalt_Backend.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Lagalt_Backend.Data.Models.PortfolioProjectUser", b =>
+            modelBuilder.Entity("PortfolioProjectUser", b =>
                 {
-                    b.HasOne("Lagalt_Backend.Data.Models.PortfolioProject", "PortfolioProjects")
-                        .WithMany()
-                        .HasForeignKey("PortfolioProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("PortfolioProjectsPortfolioProjectId")
+                        .HasColumnType("int");
 
-                    b.HasOne("Lagalt_Backend.Data.Models.User", "Users")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("UsersUserId")
+                        .HasColumnType("int");
 
-                    b.Navigation("PortfolioProjects");
+                    b.HasKey("PortfolioProjectsPortfolioProjectId", "UsersUserId");
 
-                    b.Navigation("Users");
+                    b.HasIndex("UsersUserId");
+
+                    b.ToTable("PortfolioProjectUser");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.Project", b =>
@@ -331,6 +307,21 @@ namespace Lagalt_Backend.Migrations
                     b.Navigation("Skills");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("PortfolioProjectUser", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.PortfolioProject", null)
+                        .WithMany()
+                        .HasForeignKey("PortfolioProjectsPortfolioProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lagalt_Backend.Data.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.Owner", b =>

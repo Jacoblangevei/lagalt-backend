@@ -4,6 +4,7 @@ using Lagalt_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    partial class LagaltDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231006082116_m5")]
+    partial class m5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,72 +52,6 @@ namespace Lagalt_Backend.Migrations
                             Id = 1,
                             Password = "BestBoss123",
                             Username = "BestBoss"
-                        });
-                });
-
-            modelBuilder.Entity("Lagalt_Backend.Data.Models.PortfolioProject", b =>
-                {
-                    b.Property<int>("PortfolioProjectId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PortfolioProjectId"), 1L, 1);
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PortfolioProjectDescription")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PortfolioProjectName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("PortfolioProjectId");
-
-                    b.ToTable("PortfolioProject");
-
-                    b.HasData(
-                        new
-                        {
-                            PortfolioProjectId = 1,
-                            EndDate = new DateTime(2001, 8, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "calculator.no",
-                            PortfolioProjectDescription = "Coded a simple calculator",
-                            PortfolioProjectName = "Calculator",
-                            StartDate = new DateTime(2000, 8, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
-                });
-
-            modelBuilder.Entity("Lagalt_Backend.Data.Models.PortfolioProjectUser", b =>
-                {
-                    b.Property<int>("PortfolioProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PortfolioProjectId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PortfolioProjectUser", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            PortfolioProjectId = 1,
-                            UserId = 1
                         });
                 });
 
@@ -186,7 +122,7 @@ namespace Lagalt_Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"), 1L, 1);
 
-                    b.Property<string>("SkillName")
+                    b.Property<string>("Skill_Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -198,7 +134,7 @@ namespace Lagalt_Backend.Migrations
                         new
                         {
                             SkillId = 1,
-                            SkillName = "Hacking"
+                            Skill_Name = "Hacking"
                         });
                 });
 
@@ -264,25 +200,6 @@ namespace Lagalt_Backend.Migrations
                             Password = "Qwerty12345",
                             UserName = "UserNr1"
                         });
-                });
-
-            modelBuilder.Entity("Lagalt_Backend.Data.Models.PortfolioProjectUser", b =>
-                {
-                    b.HasOne("Lagalt_Backend.Data.Models.PortfolioProject", "PortfolioProjects")
-                        .WithMany()
-                        .HasForeignKey("PortfolioProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lagalt_Backend.Data.Models.User", "Users")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PortfolioProjects");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.Project", b =>
