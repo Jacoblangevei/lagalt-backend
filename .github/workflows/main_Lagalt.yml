@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'production'
+      name: 'development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     steps:
     - name: Deploy to Azure Web App
@@ -42,28 +42,6 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'Lagalt'
-        slot-name: 'production'
+        slot-name: 'development'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_d9505b0a93a54fb38bfb1afb16d55441 }}
         images: 'index.docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/lagalt-backend:${{ github.sha }}'
-
-# Sync to Azure DevOps
-  sync:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # Fetch the entire history
-
-    - name: Set git user
-      run: |
-        git config user.email "jacob-langevei@hotmail.com"
-        git config user.name "Jacob Langevei"
-
-    - name: Push to Azure DevOps
-      run: |
-        git remote add azure-devops https://$AZURE_DEVOPS_PAT@dev.azure.com/jacoblangevei/Lagalt/_git/Lagalt
-        git push --force azure-devops HEAD:main
-      env:
-        AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}rvice_ContainerUsername_ea3d1f7051884745bef3d6d20f264b97 }}/jacoblangevei/lagalt-backend:${{ github.sha }}'
