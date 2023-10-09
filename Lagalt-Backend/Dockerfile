@@ -14,10 +14,10 @@ COPY ["Lagalt-Backend/Lagalt-Backend.csproj", "."]
 RUN dotnet restore "./Lagalt-Backend.csproj"
 COPY . .
 WORKDIR "/src/Lagalt-Backend"
-RUN dotnet build "Lagalt-Backend.csproj" -c Release -o /app/build
+RUN dotnet build "Lagalt-Backend.acsproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Lagalt-Backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Lagalt-Backend.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
