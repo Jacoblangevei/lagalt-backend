@@ -4,6 +4,7 @@ using Lagalt_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    partial class LagaltDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231009081401_initialDb")]
+    partial class initialDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace Lagalt_Backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CommentMessage", b =>
+                {
+                    b.Property<int>("CommentsCommentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessagesMessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentsCommentId", "MessagesMessageId");
+
+                    b.HasIndex("MessagesMessageId");
+
+                    b.ToTable("CommentMessage");
+                });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Comment", b =>
                 {
@@ -68,7 +86,7 @@ namespace Lagalt_Backend.Migrations
                             CommentText = "I can help!",
                             CreatorId = 1,
                             CreatorType = "User",
-                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 911, DateTimeKind.Local).AddTicks(7991)
+                            Timestamp = new DateTime(2023, 10, 9, 10, 14, 1, 392, DateTimeKind.Local).AddTicks(6466)
                         },
                         new
                         {
@@ -76,34 +94,7 @@ namespace Lagalt_Backend.Migrations
                             CommentText = "This is cool",
                             CreatorId = 1,
                             CreatorType = "Owner",
-                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 911, DateTimeKind.Local).AddTicks(8014)
-                        });
-                });
-
-            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.CommentMessage", b =>
-                {
-                    b.Property<int?>("CommentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MessageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CommentId", "MessageId");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("CommentMessage", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            CommentId = 1,
-                            MessageId = 1
-                        },
-                        new
-                        {
-                            CommentId = 2,
-                            MessageId = 2
+                            Timestamp = new DateTime(2023, 10, 9, 10, 14, 1, 392, DateTimeKind.Local).AddTicks(6487)
                         });
                 });
 
@@ -165,7 +156,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Hi, I need a link",
                             ProjectId = 1,
                             Subject = "Need link",
-                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 908, DateTimeKind.Local).AddTicks(8307)
+                            Timestamp = new DateTime(2023, 10, 9, 10, 14, 1, 389, DateTimeKind.Local).AddTicks(6501)
                         },
                         new
                         {
@@ -175,7 +166,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Can someone explain how...",
                             ProjectId = 1,
                             Subject = "How to do...",
-                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 908, DateTimeKind.Local).AddTicks(8332)
+                            Timestamp = new DateTime(2023, 10, 9, 10, 14, 1, 389, DateTimeKind.Local).AddTicks(6523)
                         });
                 });
 
@@ -416,7 +407,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectRequestId = 1,
                             ProjectId = 2,
-                            RequestDate = new DateTime(2023, 10, 9, 10, 16, 22, 905, DateTimeKind.Local).AddTicks(4331),
+                            RequestDate = new DateTime(2023, 10, 9, 10, 14, 1, 386, DateTimeKind.Local).AddTicks(3210),
                             UserId = 1
                         });
                 });
@@ -550,7 +541,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 901, DateTimeKind.Local).AddTicks(7460),
+                            Timestamp = new DateTime(2023, 10, 9, 10, 14, 1, 383, DateTimeKind.Local).AddTicks(1946),
                             UserId = 1
                         });
                 });
@@ -746,6 +737,21 @@ namespace Lagalt_Backend.Migrations
                     b.ToTable("ProjectTag");
                 });
 
+            modelBuilder.Entity("CommentMessage", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.MessageModels.Comment", null)
+                        .WithMany()
+                        .HasForeignKey("CommentsCommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lagalt_Backend.Data.Models.MessageModels.Message", null)
+                        .WithMany()
+                        .HasForeignKey("MessagesMessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Comment", b =>
                 {
                     b.HasOne("Lagalt_Backend.Data.Models.OwnerModels.Owner", "Owner")
@@ -771,25 +777,6 @@ namespace Lagalt_Backend.Migrations
                     b.Navigation("Owner");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.CommentMessage", b =>
-                {
-                    b.HasOne("Lagalt_Backend.Data.Models.MessageModels.Comment", "Comments")
-                        .WithMany()
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lagalt_Backend.Data.Models.MessageModels.Message", "Messages")
-                        .WithMany()
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comments");
-
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Message", b =>

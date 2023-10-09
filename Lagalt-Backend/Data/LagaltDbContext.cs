@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
+using Lagalt_Backend.Data.Models.MessageModels;
 
 namespace Lagalt_Backend.Data
 {
@@ -21,7 +22,10 @@ namespace Lagalt_Backend.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
         public DbSet<ProjectType> ProjectTypes { get; set; }
-        public DbSet<UserReview> UserReviews { get; set; }  
+        public DbSet<UserReview> UserReviews { get; set; }
+        public DbSet<ProjectRequest> ProjectRequests { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,7 +46,8 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<Project>().HasOne(p => p.ProjectType).WithMany(pt => pt.Projects).HasForeignKey(p => p.ProjectTypeId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Project>().HasData(
-                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1 }
+                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1 },
+                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = 1}
                 );
 
             //Owner
@@ -172,6 +177,73 @@ namespace Lagalt_Backend.Data
                 new UserReview { UserReviewId = 2, UserId = 1, OwnerId = 1, Review = "Did a very good job" }
                 );
 
+            //ProjectRequest
+            modelBuilder.Entity<ProjectRequest>().HasOne(pr => pr.User).WithMany(u => u.ProjectRequests).HasForeignKey(pr => pr.UserId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<ProjectRequest>().HasOne(pr => pr.Project).WithMany(p => p.ProjectRequests).HasForeignKey(pr => pr.ProjectId).OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ProjectRequest>().HasData(
+                new ProjectRequest { ProjectRequestId = 1, ProjectId = 2, UserId = 1, RequestDate = DateTime.Now}
+                );
+
+            //Messages
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.User)
+                .WithMany()
+                .HasForeignKey(m => m.CreatorId)
+                .HasConstraintName("FK_Message_User")
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Owner)
+                .WithMany()
+                .HasForeignKey(m => m.CreatorId)
+                .HasConstraintName("FK_Message_Owner")
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Message>().HasData(
+                new Message { MessageId = 1, CreatorId = 1, CreatorType = "User", Subject = "Need link", MessageContent = "Hi, I need a link", Timestamp = DateTime.Now, ProjectId = 1},
+                new Message { MessageId = 2, CreatorId = 1, CreatorType = "Owner", Subject = "How to do...", MessageContent = "Can someone explain how...", Timestamp = DateTime.Now, ProjectId = 1}
+                );
+
+            //Comments
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.CreatorId)
+                .HasConstraintName("FK_Comment_User")
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Owner)
+                .WithMany()
+                .HasForeignKey(c => c.CreatorId)
+                .HasConstraintName("FK_Comment_Owner")
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Comment>().HasData(
+                new Comment { CommentId = 1, CreatorId = 1, CreatorType = "User", CommentText = "I can help!", Timestamp = DateTime.Now},
+                new Comment { CommentId = 2, CreatorId = 1, CreatorType = "Owner", CommentText = "This is cool", Timestamp = DateTime.Now}
+                );
+
+            //CommentMessage
+            modelBuilder.Entity<CommentMessage>().HasKey(cm => new {cm.CommentId, cm.MessageId });
+
+            modelBuilder.Entity<Comment>()
+                .HasMany(left => left.Messages)
+                .WithMany(right => right.Comments)
+                .UsingEntity<CommentMessage>(
+                    right => right.HasOne(e => e.Messages).WithMany(),
+                    left => left.HasOne(e => e.Comments).WithMany().HasForeignKey(e => e.CommentId),
+                    join => join.ToTable("CommentMessage")
+                );
+            modelBuilder.Entity<CommentMessage>().HasData(
+                new CommentMessage { MessageId = 1, CommentId = 1},
+                new CommentMessage { MessageId = 2, CommentId = 2}
+                );
         }
     }
 }

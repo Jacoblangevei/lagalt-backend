@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    [Migration("20231006133549_initialDb")]
-    partial class initialDb
+    [Migration("20231009081623_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,163 @@ namespace Lagalt_Backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Comment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+
+                    b.Property<string>("CommentText")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatorType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comment");
+
+                    b.HasData(
+                        new
+                        {
+                            CommentId = 1,
+                            CommentText = "I can help!",
+                            CreatorId = 1,
+                            CreatorType = "User",
+                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 911, DateTimeKind.Local).AddTicks(7991)
+                        },
+                        new
+                        {
+                            CommentId = 2,
+                            CommentText = "This is cool",
+                            CreatorId = 1,
+                            CreatorType = "Owner",
+                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 911, DateTimeKind.Local).AddTicks(8014)
+                        });
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.CommentMessage", b =>
+                {
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId", "MessageId");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("CommentMessage", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            CommentId = 1,
+                            MessageId = 1
+                        },
+                        new
+                        {
+                            CommentId = 2,
+                            MessageId = 2
+                        });
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatorType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageContent")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Message");
+
+                    b.HasData(
+                        new
+                        {
+                            MessageId = 1,
+                            CreatorId = 1,
+                            CreatorType = "User",
+                            MessageContent = "Hi, I need a link",
+                            ProjectId = 1,
+                            Subject = "Need link",
+                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 908, DateTimeKind.Local).AddTicks(8307)
+                        },
+                        new
+                        {
+                            MessageId = 2,
+                            CreatorId = 1,
+                            CreatorType = "Owner",
+                            MessageContent = "Can someone explain how...",
+                            ProjectId = 1,
+                            Subject = "How to do...",
+                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 908, DateTimeKind.Local).AddTicks(8332)
+                        });
+                });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.OwnerModels.Owner", b =>
                 {
@@ -222,6 +379,48 @@ namespace Lagalt_Backend.Migrations
                             Description = "Hacking someone important",
                             Name = "Happy Hacking",
                             OwnerId = 1
+                        },
+                        new
+                        {
+                            ProjectId = 2,
+                            Description = "Make a cool movie",
+                            Name = "Movie Maker",
+                            OwnerId = 1
+                        });
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectRequest", b =>
+                {
+                    b.Property<int>("ProjectRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectRequestId"));
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProjectRequestId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProjectRequest");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectRequestId = 1,
+                            ProjectId = 2,
+                            RequestDate = new DateTime(2023, 10, 9, 10, 16, 22, 905, DateTimeKind.Local).AddTicks(4331),
+                            UserId = 1
                         });
                 });
 
@@ -354,7 +553,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 6, 15, 35, 48, 856, DateTimeKind.Local).AddTicks(1107),
+                            Timestamp = new DateTime(2023, 10, 9, 10, 16, 22, 901, DateTimeKind.Local).AddTicks(7460),
                             UserId = 1
                         });
                 });
@@ -550,6 +749,85 @@ namespace Lagalt_Backend.Migrations
                     b.ToTable("ProjectTag");
                 });
 
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Comment", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.OwnerModels.Owner", "Owner")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Comment_Owner");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Comment_User");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.OwnerModels.Owner", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("OwnerId");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.CommentMessage", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.MessageModels.Comment", "Comments")
+                        .WithMany()
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lagalt_Backend.Data.Models.MessageModels.Message", "Messages")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comments");
+
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Message", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.OwnerModels.Owner", "Owner")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Message_Owner");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", "User")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Message_User");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.OwnerModels.Owner", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("OwnerId");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Lagalt_Backend.Data.Models.OwnerModels.UserReview", b =>
                 {
                     b.HasOne("Lagalt_Backend.Data.Models.OwnerModels.Owner", "Owner")
@@ -606,6 +884,23 @@ namespace Lagalt_Backend.Migrations
                     b.Navigation("ProjectStatus");
 
                     b.Navigation("ProjectType");
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectRequest", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.Project", "Project")
+                        .WithMany("ProjectRequests")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", "User")
+                        .WithMany("ProjectRequests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Project");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectUpdate", b =>
@@ -711,6 +1006,10 @@ namespace Lagalt_Backend.Migrations
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.OwnerModels.Owner", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Messages");
+
                     b.Navigation("Projects");
 
                     b.Navigation("UserReviews");
@@ -724,6 +1023,8 @@ namespace Lagalt_Backend.Migrations
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.Project", b =>
                 {
                     b.Navigation("Milestones");
+
+                    b.Navigation("ProjectRequests");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectStatus", b =>
@@ -738,6 +1039,12 @@ namespace Lagalt_Backend.Migrations
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.UserModels.User", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Messages");
+
+                    b.Navigation("ProjectRequests");
+
                     b.Navigation("Updates");
 
                     b.Navigation("UserReviews");

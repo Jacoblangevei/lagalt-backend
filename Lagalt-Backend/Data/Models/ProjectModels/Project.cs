@@ -34,6 +34,7 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         public ICollection<Update> Updates { get; set; }
         public ICollection<Milestone> Milestones { get; set; }
         public ICollection<Tag> Tags { get; set; }
+        public ICollection<ProjectRequest> ProjectRequests { get; set; }
 
     }
 }
