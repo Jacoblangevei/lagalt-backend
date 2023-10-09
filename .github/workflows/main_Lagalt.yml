@@ -26,7 +26,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/jacoblangevei/lagalt-backend:${{ github.sha }}
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lagalt-backend:${{ github.sha }}
         file: ./Lagalt-Backend/Dockerfile
 
 # Deploy to Azure Web App
@@ -44,7 +44,7 @@ jobs:
         app-name: 'Lagalt'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_d9505b0a93a54fb38bfb1afb16d55441 }}
-        images: 'index.docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/jacoblangevei/lagalt-backend:${{ github.sha }}'
+        images: 'index.docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/lagalt-backend:${{ github.sha }}'
 
 # Sync to Azure DevOps
   sync:
