@@ -26,7 +26,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/jacoblangevei/lagalt-backend:${{ github.sha }}
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lagalt-backend:${{ github.sha }}
         file: ./Lagalt-Backend/Dockerfile
 
 # Deploy to Azure Web App
