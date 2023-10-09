@@ -46,8 +46,6 @@ namespace Lagalt_Backend.Services.Projects
                 .Where(p => p.ProjectId == id)
                 .FirstAsync();
 
-            proj.Users.Clear(); //MIght not be needed
-
             _context.Projects.Remove(proj);
             await _context.SaveChangesAsync();
         }
@@ -56,8 +54,6 @@ namespace Lagalt_Backend.Services.Projects
         {
             if (!await ProjectExistsAsync(obj.ProjectId))
                 throw new EntityNotFoundException(nameof(Project), obj.ProjectId);
-
-            obj.Users.Clear();
 
             _context.Entry(obj).State = EntityState.Modified;
             _context.SaveChanges();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Lagalt_Backend.Services.Projects;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<LagaltDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+
+// Add our service
+builder.Services.AddScoped<IProjectService, ProjectService>();
+// Add automapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 var app = builder.Build();
 
