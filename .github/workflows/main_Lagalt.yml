@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'development'
+      name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     steps:
     - name: Deploy to Azure Web App
@@ -42,6 +42,6 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'Lagalt'
-        slot-name: 'development'
+        slot-name: 'production'
         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_44BFF38F7E3E48A8A3CB0FBBA95AF691 }}
         images: 'index.docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/lagalt-backend:${{ github.sha }}'
