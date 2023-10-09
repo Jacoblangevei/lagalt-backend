@@ -2,6 +2,7 @@
 using Lagalt_Backend.Data;
 using Lagalt_Backend.Data.Exceptions;
 using Lagalt_Backend.Data.Models.ProjectModels;
+using Lagalt_Backend.Data.Models.MessageModels;
 
 namespace Lagalt_Backend.Services.Projects
 {
@@ -61,6 +62,17 @@ namespace Lagalt_Backend.Services.Projects
             return obj;
         }
 
+        //Messages
+        public async Task<ICollection<Message>> GetMessagesAsync(int id)
+        {
+            if (!await ProjectExistsAsync(id))
+                throw new EntityNotFoundException(nameof(Project), id);
+
+            return await _context.Messages
+                .Where(m => m.ProjectId == id)
+                .ToListAsync();
+        }
+        
         //Helping methods
         private async Task<bool> ProjectExistsAsync(int id)
         {

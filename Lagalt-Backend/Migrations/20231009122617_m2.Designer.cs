@@ -4,6 +4,7 @@ using Lagalt_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    partial class LagaltDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231009122617_m2")]
+    partial class m2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,8 +76,7 @@ namespace Lagalt_Backend.Migrations
                             CommentText = "I can help!",
                             CreatorId = 1,
                             CreatorType = "User",
-                            MessageId = 1,
-                            Timestamp = new DateTime(2023, 10, 9, 14, 29, 50, 477, DateTimeKind.Local).AddTicks(9794)
+                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 695, DateTimeKind.Local).AddTicks(694)
                         },
                         new
                         {
@@ -82,8 +84,7 @@ namespace Lagalt_Backend.Migrations
                             CommentText = "This is cool",
                             CreatorId = 1,
                             CreatorType = "Owner",
-                            MessageId = 2,
-                            Timestamp = new DateTime(2023, 10, 9, 14, 29, 50, 477, DateTimeKind.Local).AddTicks(9815)
+                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 695, DateTimeKind.Local).AddTicks(713)
                         });
                 });
 
@@ -145,7 +146,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Hi, I need a link",
                             ProjectId = 1,
                             Subject = "Need link",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 29, 50, 475, DateTimeKind.Local).AddTicks(8076)
+                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 692, DateTimeKind.Local).AddTicks(9638)
                         },
                         new
                         {
@@ -155,7 +156,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Can someone explain how...",
                             ProjectId = 1,
                             Subject = "How to do...",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 29, 50, 475, DateTimeKind.Local).AddTicks(8104)
+                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 692, DateTimeKind.Local).AddTicks(9652)
                         });
                 });
 
@@ -396,7 +397,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectRequestId = 1,
                             ProjectId = 2,
-                            RequestDate = new DateTime(2023, 10, 9, 14, 29, 50, 473, DateTimeKind.Local).AddTicks(7033),
+                            RequestDate = new DateTime(2023, 10, 9, 14, 26, 17, 690, DateTimeKind.Local).AddTicks(9013),
                             UserId = 1
                         });
                 });
@@ -530,7 +531,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 29, 50, 471, DateTimeKind.Local).AddTicks(7246),
+                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 689, DateTimeKind.Local).AddTicks(1047),
                             UserId = 1
                         });
                 });

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Lagalt_Backend.Services.Projects;
+using Lagalt_Backend.Services.Messages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services.AddDbContext<LagaltDbContext>(options =>
 
 // Add our service
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 // Add automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

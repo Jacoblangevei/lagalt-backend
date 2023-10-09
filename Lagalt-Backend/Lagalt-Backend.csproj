@@ -36,9 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Dtos\Messages\" />
     <Folder Include="Data\Dtos\Owners\" />
-    <Folder Include="Data\Dtos\Users\" />
   </ItemGroup>
 
 </Project>

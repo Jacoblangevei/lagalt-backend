@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Lagalt_Backend.Services.Projects;
 using Lagalt_Backend.Data.Dtos.Projects;
+using Lagalt_Backend.Data.Dtos.Messages;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Exceptions;
 
@@ -90,5 +91,20 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        //Messages
+        [HttpGet("{id}/messages")]
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages(int id)
+        {
+            try
+            {
+                return Ok(_mapper
+                    .Map<IEnumerable<MessageDTO>>(
+                        await _projService.GetMessagesAsync(id)));
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

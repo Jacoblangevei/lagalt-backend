@@ -208,6 +208,8 @@ namespace Lagalt_Backend.Data
                 );
 
             //Comments
+            modelBuilder.Entity<Comment>().HasOne(c => c.Message).WithMany(m => m.Comments).HasForeignKey(c => c.MessageId).OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.User)
                 .WithMany()
@@ -225,24 +227,8 @@ namespace Lagalt_Backend.Data
                 .IsRequired(false);
 
             modelBuilder.Entity<Comment>().HasData(
-                new Comment { CommentId = 1, CreatorId = 1, CreatorType = "User", CommentText = "I can help!", Timestamp = DateTime.Now},
-                new Comment { CommentId = 2, CreatorId = 1, CreatorType = "Owner", CommentText = "This is cool", Timestamp = DateTime.Now}
-                );
-
-            //CommentMessage
-            modelBuilder.Entity<CommentMessage>().HasKey(cm => new {cm.CommentId, cm.MessageId });
-
-            modelBuilder.Entity<Comment>()
-                .HasMany(left => left.Messages)
-                .WithMany(right => right.Comments)
-                .UsingEntity<CommentMessage>(
-                    right => right.HasOne(e => e.Messages).WithMany(),
-                    left => left.HasOne(e => e.Comments).WithMany().HasForeignKey(e => e.CommentId),
-                    join => join.ToTable("CommentMessage")
-                );
-            modelBuilder.Entity<CommentMessage>().HasData(
-                new CommentMessage { MessageId = 1, CommentId = 1},
-                new CommentMessage { MessageId = 2, CommentId = 2}
+                new Comment { CommentId = 1, CreatorId = 1, CreatorType = "User", CommentText = "I can help!", Timestamp = DateTime.Now, MessageId = 1},
+                new Comment { CommentId = 2, CreatorId = 1, CreatorType = "Owner", CommentText = "This is cool", Timestamp = DateTime.Now, MessageId = 2}
                 );
         }
     }
