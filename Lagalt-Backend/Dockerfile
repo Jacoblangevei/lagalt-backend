@@ -17,7 +17,7 @@ WORKDIR "/src/Lagalt-Backend"
 RUN dotnet build "Lagalt-Backend.acsproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Lagalt-Backend.csproj" -c Release -o /app/publish
+RUN dotnet publish "Lagalt-Backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
