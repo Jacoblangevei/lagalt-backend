@@ -1,6 +1,9 @@
-﻿namespace Lagalt_Backend.Mappers
+﻿using AutoMapper;
+
+namespace Lagalt_Backend.Mappers
 {
-    public class OwnerProfile
+    public class OwnerProfile : Profile
     {
+        public OwnerProfile() { }
     }
 }

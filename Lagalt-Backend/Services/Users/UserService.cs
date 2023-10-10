@@ -35,7 +35,7 @@ namespace Lagalt_Backend.Services.Users
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
-        public async Task<User> GetByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
             var user = await _context.Users.Where(u => u.UserId == id).FirstAsync();
 
@@ -54,6 +54,21 @@ namespace Lagalt_Backend.Services.Users
             _context.SaveChanges();
 
             return obj;
+        }
+
+        public async Task<User> GetUserProfileAsync(int userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Skills)
+                .Include(u => u.PortfolioProjects)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+            
+            if (user == null)
+            {
+                throw new EntityNotFoundException(nameof(User), userId);
+            }
+
+            return user;
         }
 
         public async Task UpdateProfileAsync(int id, UserPutDTO obj)
