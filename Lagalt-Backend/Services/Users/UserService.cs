@@ -87,7 +87,7 @@ namespace Lagalt_Backend.Services.Users
         public async Task AddSkillToUserAsync(int userId, int skillId)
         {
             var skill = await _context.Skills.FindAsync(skillId) ?? throw new EntityNotFoundException(nameof(Skill), skillId);
-            var user = await _context.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(Skill), skillId);
+            var user = await _context.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(User), userId);
 
             user.Skills.Add(skill);
             await _context.SaveChangesAsync();;

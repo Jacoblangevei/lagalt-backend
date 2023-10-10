@@ -60,7 +60,6 @@ namespace Lagalt_Backend.Controllers
                 _mapper.Map<UserDTO>(newUser));
         }
 
-
         [HttpGet("{id}/profile")]
         public async Task<ActionResult<UserProfileDTO>> GetUserProfile(int id)
         {
@@ -74,6 +73,19 @@ namespace Lagalt_Backend.Controllers
             var userProfileDto = _mapper.Map<UserProfileDTO>(user);
 
             return Ok(userProfileDto);
+        }
+
+        //Skill
+
+        //Todo: Make more skill controller methods so that the post will work
+        [HttpPost]
+        public async Task<ActionResult<SkillDTO>> PostSkill(SkillPostDTO skill)
+        {
+            var newSkill = await _userService.AddSkillAsync(_mapper.Map<Skill>(skill));
+
+            return CreatedAtAction("GetUser",
+                new { id = newSkill.SkillId },
+                _mapper.Map<UserDTO>(newSkill));
         }
     }
 }
