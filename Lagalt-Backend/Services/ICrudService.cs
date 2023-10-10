@@ -1,8 +1,13 @@
 ﻿using Lagalt_Backend.Data.Exceptions;
+using Lagalt_Backend.Data.Models.OwnerModels;
+
 namespace Lagalt_Backend.Services
 {
     public interface ICrudService<TEntity, TID>
     {
+        Task<ICollection<TEntity>> GetAllAsync();
+
+        Task<TEntity> GetByIdAsync(TID id);
         /// <summary>
         /// Adds an <typeparamref name="TEntity"/> to the database.
         /// </summary>

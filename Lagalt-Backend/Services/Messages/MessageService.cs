@@ -15,6 +15,21 @@ namespace Lagalt_Backend.Services.Messages
             _context = context;
         }
 
+        public async Task<ICollection<Message>> GetAllAsync()
+        {
+            return await _context.Messages.ToListAsync();
+        }
+
+        public async Task<Message> GetByIdAsync(int id)
+        {
+            var msg = await _context.Messages.Where(m => m.MessageId == id).FirstAsync();
+
+            if (msg is null)
+                throw new EntityNotFoundException(nameof(msg), id);
+
+            return msg;
+        }
+
         public async Task<Message> AddAsync(Message obj)
         {
             await _context.Messages.AddAsync(obj);

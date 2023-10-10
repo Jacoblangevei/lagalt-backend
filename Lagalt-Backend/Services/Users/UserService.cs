@@ -17,9 +17,24 @@ namespace Lagalt_Backend.Services.Users
             _context = context;
         }
 
+        public async Task<ICollection<User>> GetAllAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        public async Task<User> GetByIdAsync(int id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+
+            if (user is null)
+                throw new EntityNotFoundException(nameof(User), id);
+
+            return user;
+        }
+
         public async Task<User> AddAsync(User obj)
         {
-            await _context.Users.AddAsync(obj);
+            _context.Users.Add(obj);
             await _context.SaveChangesAsync();
             return obj;
         }
@@ -34,15 +49,6 @@ namespace Lagalt_Backend.Services.Users
 
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
-        }
-        public async Task<User> GetUserByIdAsync(int id)
-        {
-            var user = await _context.Users.Where(u => u.UserId == id).FirstAsync();
-
-            if (user is null)
-                throw new EntityNotFoundException(nameof(user), id);
-
-            return user;
         }
 
         public async Task<User> UpdateAsync(User obj)
@@ -71,14 +77,20 @@ namespace Lagalt_Backend.Services.Users
             return user;
         }
 
-        public async Task UpdateProfileAsync(int id, UserPutDTO obj)
+        public async Task<Skill> AddSkillAsync (Skill obj)
         {
-            var user = await _context.Users.Where(u => u.UserId == id).FirstAsync();
-            if (user is null)
-                throw new EntityNotFoundException(nameof(user), id);
+            await _context.Skills.AddAsync(obj);
+            await _context.SaveChangesAsync();
+            return obj;
+        }
 
-            //TBA
+        public async Task AddSkillToUserAsync(int userId, int skillId)
+        {
+            var skill = await _context.Skills.FindAsync(skillId) ?? throw new EntityNotFoundException(nameof(Skill), skillId);
+            var user = await _context.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(Skill), skillId);
 
+            user.Skills.Add(skill);
+            await _context.SaveChangesAsync();;
         }
 
         //Helping methods

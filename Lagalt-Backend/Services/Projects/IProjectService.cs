@@ -1,9 +1,5 @@
-﻿using Lagalt_Backend.Data.Exceptions;
-using Lagalt_Backend.Data.Models.ProjectModels;
-using Lagalt_Backend.Data.Models.UserModels;
-using Lagalt_Backend.Data.Models.OwnerModels;
+﻿using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.MessageModels;
-using System.Security.Cryptography;
 
 namespace Lagalt_Backend.Services.Projects
 {
@@ -16,5 +12,7 @@ namespace Lagalt_Backend.Services.Projects
         Task<Project> UpdateAsync(Project obj);
 
         Task<ICollection<Message>> GetMessagesAsync(int id);
+
+        //Add message to project
     }
 }

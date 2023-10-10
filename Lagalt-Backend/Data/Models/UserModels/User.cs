@@ -18,8 +18,8 @@ namespace Lagalt_Backend.Data.Models.UserModels
         [StringLength(50)]
         public string Password { get; set; }
         [StringLength(255)]
-        public string Description { get; set; }
-        public string Education { get; set; }
+        public string? Description { get; set; }
+        public string? Education { get; set; }
 
         //Navigation
         public ICollection<Project> Projects { get; set; }
