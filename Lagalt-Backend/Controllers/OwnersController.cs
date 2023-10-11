@@ -6,28 +6,38 @@ using System.Net.Mime;
 using Lagalt_Backend.Data.Exceptions;
 using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Dtos.Projects;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lagalt_Backend.Controllers
 {
+    /// <summary>
+    /// API Controller for operations related to Owners.
+    /// </summary>
     [Route("api/v1/owners")]
     [ApiController]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
-
-
     public class OwnersController : ControllerBase
     {
         private readonly IOwnerService _ownerService;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OwnersController"/> class.
+        /// </summary>
+        /// <param name="ownerService">The service object for accessing owner operations.</param>
+        /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
         public OwnersController(IOwnerService ownerService, IMapper mapper)
         {
             _ownerService = ownerService;
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Gets all owners.
+        /// </summary>
+        /// <returns>A list of owners.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OwnerDTO>>> GetOwners()
         {
@@ -36,6 +46,11 @@ namespace Lagalt_Backend.Controllers
                     await _ownerService.GetAllAsync()));
         }
 
+        /// <summary>
+        /// Gets an owner by ID.
+        /// </summary>
+        /// <param name="id">The ID of the owner.</param>
+        /// <returns>The owner DTO if found.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<OwnerDTO>> GetOwner(int id)
         {
@@ -51,6 +66,11 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a new owner.
+        /// </summary>
+        /// <param name="owner">The new owner's data.</param>
+        /// <returns>A newly created owner.</returns>
         [HttpPost]
         public async Task<ActionResult<OwnerDTO>> PostOwner(OwnerPostDTO owner)
         {
@@ -61,6 +81,11 @@ namespace Lagalt_Backend.Controllers
                 _mapper.Map<OwnerDTO>(newOwner));
         }
 
+        /// <summary>
+        /// Deletes an owner by ID.
+        /// </summary>
+        /// <param name="id">The ID of the owner to delete.</param>
+        /// <returns>An IActionResult object.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
@@ -75,6 +100,11 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all projects owned by a specific owner.
+        /// </summary>
+        /// <param name="id">The ID of the owner.</param>
+        /// <returns>A list of projects the specified owner owns.</returns>
         [HttpGet("{id}/projects")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetAllProjectsOwnerOwns(int id)
         {
