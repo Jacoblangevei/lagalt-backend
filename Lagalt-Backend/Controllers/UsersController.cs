@@ -50,7 +50,7 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("user")]
         public async Task<ActionResult<UserDTO>> PostUser(UserPostDTO user)
         {
             var newUser = await _userService.AddAsync(_mapper.Map<User>(user));
@@ -78,7 +78,7 @@ namespace Lagalt_Backend.Controllers
         //Skill
 
         //Todo: Make more skill controller methods so that the post will work
-        [HttpPost]
+        [HttpPost("skill")]
         public async Task<ActionResult<SkillDTO>> PostSkill(SkillPostDTO skill)
         {
             var newSkill = await _userService.AddSkillAsync(_mapper.Map<Skill>(skill));
