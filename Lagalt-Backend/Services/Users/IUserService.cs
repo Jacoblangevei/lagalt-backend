@@ -6,7 +6,7 @@ namespace Lagalt_Backend.Services.Users
 {
     public interface IUserService : ICrudService<User, int>
     {
-        Task<User> UpdateAsync(User obj);
+        Task<User> UpdateAsync(int userId, UserPutDTO userPutDTO);
 
         Task<User> GetUserProfileAsync(int userId);
 

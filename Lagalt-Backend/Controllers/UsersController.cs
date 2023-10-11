@@ -82,7 +82,31 @@ namespace Lagalt_Backend.Controllers
                 new { id = newUser.UserId },
                 _mapper.Map<UserDTO>(newUser));
         }
-        
+
+        /// <summary>
+        /// Updating a users description and education
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userPutDTO"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserDTO>> UpdateUser(int id, [FromBody] UserPutDTO userPutDTO)
+        {
+            try
+            {
+                var updatedUser = await _userService.UpdateAsync(id, userPutDTO);
+                return Ok(_mapper.Map<UserDTO>(updatedUser));
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         //Might not working properly anymore
         /// <summary>
         /// Gets the profile of a specific user.

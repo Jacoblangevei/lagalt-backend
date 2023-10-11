@@ -51,15 +51,27 @@ namespace Lagalt_Backend.Services.Users
             await _context.SaveChangesAsync();
         }
 
-        public async Task<User> UpdateAsync(User obj)
+        public async Task<User> UpdateAsync(int userId, UserPutDTO userPutDTO)
         {
-            if (!await UserExistsAsync(obj.UserId))
-                throw new EntityNotFoundException(nameof(User), obj.UserId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
 
-            _context.Entry(obj).State = EntityState.Modified;
-            _context.SaveChanges();
+            if (user == null)
+            {
+                throw new EntityNotFoundException(nameof(User), userId);
+            }
 
-            return obj;
+            if (!string.IsNullOrEmpty(userPutDTO.Description))
+            {
+                user.Description = userPutDTO.Description;
+            }
+
+            if (!string.IsNullOrEmpty(userPutDTO.Education))
+            {
+                user.Education = userPutDTO.Education;
+            }
+
+            await _context.SaveChangesAsync();
+            return user;
         }
 
         public async Task<User> GetUserProfileAsync(int userId)
