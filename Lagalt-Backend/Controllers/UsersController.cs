@@ -82,7 +82,8 @@ namespace Lagalt_Backend.Controllers
                 new { id = newUser.UserId },
                 _mapper.Map<UserDTO>(newUser));
         }
-
+        
+        //Might not working properly anymore
         /// <summary>
         /// Gets the profile of a specific user.
         /// </summary>
@@ -104,6 +105,12 @@ namespace Lagalt_Backend.Controllers
         }
 
         //Skill
+
+        /// <summary>
+        /// Gets all skills a user has
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/skills")]
         public async Task<ActionResult<IEnumerable<SkillDTO>>> GetSkills(int id)
         {
@@ -118,13 +125,18 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Gets a spesific skill from user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="skillId"></param>
+        /// <returns></returns>
         [HttpGet("{id}/skills/{skillId}")]
-        public async Task<ActionResult<SkillDTO>> GetSkillById(int userId, int skillId)
+        public async Task<ActionResult<SkillDTO>> GetSkillById(int id, int skillId)
         {
             try
             {
-                var skill = await _userService.GetSkillByIdAsync(userId, skillId);
+                var skill = await _userService.GetSkillByIdAsync(id, skillId);
                 return Ok(_mapper.Map<SkillDTO>(skill));
             }
             catch (EntityNotFoundException ex)
@@ -133,12 +145,18 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds skill to user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="skillPostDto"></param>
+        /// <returns></returns>
         [HttpPost("{id}/skills")]
-        public async Task<IActionResult> AddNewSkillToUser(int userId, [FromBody] SkillPostDTO skillPostDto)
+        public async Task<IActionResult> AddNewSkillToUser(int id, [FromBody] SkillPostDTO skillPostDto)
         {
             try
             {
-                await _userService.AddNewSkillToUserAsync(userId, skillPostDto.SkillName);
+                await _userService.AddNewSkillToUserAsync(id, skillPostDto.SkillName);
                 return Ok("Skill added to user successfully.");
             }
             catch (EntityNotFoundException ex)
@@ -147,12 +165,18 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Removes skill from user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="skillId"></param>
+        /// <returns></returns>
         [HttpDelete("{id}/skills/{skillId}")]
-        public async Task<ActionResult> RemoveSkillFromUser(int userId, int skillId)
+        public async Task<ActionResult> RemoveSkillFromUser(int id, int skillId)
         {
             try
             {
-                await _userService.RemoveSkillFromUserAsync(userId, skillId);
+                await _userService.RemoveSkillFromUserAsync(id, skillId);
                 return Ok("Skill removed from user successfully.");
             }
             catch (EntityNotFoundException ex)
@@ -162,6 +186,12 @@ namespace Lagalt_Backend.Controllers
         }
 
         //Portfolio Projects
+
+        /// <summary>
+        /// Gets all portfolio projecs a user has
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/portfolioprojects")]
         public async Task<ActionResult<IEnumerable<PortfolioProjectDTO>>> GetPortfolioProjects(int id)
         {
@@ -175,9 +205,13 @@ namespace Lagalt_Backend.Controllers
                 return NotFound(ex.Message);
             }
         }
-        //Skill section
 
-
+        /// <summary>
+        /// Gets a spesific portfolio project a user has
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="portfolioProjectId"></param>
+        /// <returns></returns>
         [HttpGet("{id}/portfolioprojects/{portfolioProjectId}")]
         public async Task<ActionResult<PortfolioProjectDTO>> GetPortfolioProjectById(int id, int portfolioProjectId)
         {
@@ -192,12 +226,18 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
-        [HttpPost("{userId}/portfolioprojects")]
-        public async Task<IActionResult> AddPortfolioProjectToUser(int userId, [FromBody] PortfolioProjectPostDTO projectDTO)
+        /// <summary>
+        /// Adds new portfolio project to user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="projectDTO"></param>
+        /// <returns></returns>
+        [HttpPost("{id}/portfolioprojects")]
+        public async Task<IActionResult> AddPortfolioProjectToUser(int id, [FromBody] PortfolioProjectPostDTO projectDTO)
         {
             try
             {
-                await _userService.AddNewPortfolioProjectToUserAsync(userId, projectDTO.PortfolioProjectName, projectDTO.PortfolioProjectDescription, projectDTO.ImageUrl, projectDTO.StartDate, projectDTO.EndDate);
+                await _userService.AddNewPortfolioProjectToUserAsync(id, projectDTO.PortfolioProjectName, projectDTO.PortfolioProjectDescription, projectDTO.ImageUrl, projectDTO.StartDate, projectDTO.EndDate);
                 return Ok("Portfolio project added to the user successfully.");
             }
             catch (EntityNotFoundException ex)
@@ -209,34 +249,25 @@ namespace Lagalt_Backend.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        /// <summary>
-        /// Adds a skill to the user.
-        /// </summary>
-        /// <remarks>
-        /// TODO: Expand the controller methods for handling skills.
-        /// </remarks>
-        /// <param name="skill">The skill data to add.</param>
-        /// <returns>A newly created skill.</returns>
-        [HttpPost("skill")]
-        public async Task<ActionResult<SkillDTO>> PostSkill(SkillPostDTO skill)
-        {
-            var newSkill = await _userService.AddSkillAsync(_mapper.Map<Skill>(skill));
 
-        [HttpDelete("{userId}/portfolioprojects/{portfolioProjectId}")]
-        public async Task<ActionResult> RemovePortfolioProjectFromUser(int userId, int portfolioProjectId)
+        /// <summary>
+        /// Deletes portfolio project a user has
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="portfolioProjectId"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}/portfolioprojects/{portfolioProjectId}")]
+        public async Task<ActionResult> RemovePortfolioProjectFromUser(int id, int portfolioProjectId)
         {
             try
             {
-                await _userService.RemovePortfolioProjectFromUserAsync(userId, portfolioProjectId);
+                await _userService.RemovePortfolioProjectFromUserAsync(id, portfolioProjectId);
                 return Ok("Portfolio project removed from user successfully.");
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-            return CreatedAtAction("GetUser",
-                new { id = newSkill.SkillId },
-                _mapper.Map<SkillDTO>(newSkill));
         }
     }
 }
