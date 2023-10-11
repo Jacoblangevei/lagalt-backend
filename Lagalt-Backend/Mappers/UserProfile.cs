@@ -42,7 +42,9 @@ namespace Lagalt_Backend.Mappers
                 .ForMember(
                     udto => udto.PortfolioProjects, options => options.MapFrom(u => u.PortfolioProjects.Select(pp => pp.PortfolioProjectId).ToArray()))
                 .ForMember(
-                    udto => udto.UserReviews, options => options.MapFrom(u => u.UserReviews.Select(ur => ur.UserReviewId).ToArray())).ReverseMap();   
+                    udto => udto.UserReviews, options => options.MapFrom(u => u.UserReviews.Select(ur => ur.UserReviewId).ToArray())).ReverseMap();
+
+            CreateMap<Skill, UserDTO>().ReverseMap();
         }
     }
 }
