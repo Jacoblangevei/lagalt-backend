@@ -49,15 +49,16 @@ builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add CORS services
-/*builder.Services.AddCors(options =>
+builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
         builder.WithOrigins("https://lagalt.azurewebsites.net")
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .AllowCredentials();        
     });
-});*/
+});
 
 var app = builder.Build();
 
@@ -66,18 +67,18 @@ var app = builder.Build();
 
 // TESTEST2345673
 
-/*if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}*/
+}
 
-app.UseSwagger();
-app.UseSwaggerUI();
+//app.UseSwagger();
+//app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-//app.UseCors();
+app.UseCors();
 
 app.UseAuthorization();
 
