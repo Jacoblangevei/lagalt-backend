@@ -1,4 +1,4 @@
-name: Build, Deploy, and Sync to Azure DevOps
+name: Build, Deploy
 
 on:
   push:

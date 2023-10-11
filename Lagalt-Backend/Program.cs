@@ -7,11 +7,13 @@ using Lagalt_Backend.Services.Projects;
 using Lagalt_Backend.Services.Messages;
 using Lagalt_Backend.Services.Users;
 using Lagalt_Backend.Services.Owners;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -31,11 +33,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             },
             ValidAudience = "account",
         };
-    });
+    });*/
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "LagaltAPI", Version = "v1" });
+    // Include XML Comments
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
+});
 
 builder.Services.AddDbContext<LagaltDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
@@ -55,7 +63,8 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins("https://lagalt.azurewebsites.net")
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .AllowCredentials();        
     });
 });
 
