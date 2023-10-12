@@ -8,8 +8,8 @@ namespace Lagalt_Backend.Services.Messages
     {
         Task<ICollection<Comment>> GetAllCommentsInMessageAsync(int id);
 
-        Task<Skill> GetCommentInMessageByIdAsync(int messageId, int commentId);
+        Task<Comment> GetCommentInMessageByIdAsync(int messageId, int commentId);
 
-        Task AddNewCommentToMessageAsync(int messageId, string comment);
+        Task<Comment> AddNewCommentToMessageAsync(int messageId, string commentText, int creatorId, string creatorRole);
     }
 }

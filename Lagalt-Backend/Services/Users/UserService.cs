@@ -34,6 +34,8 @@ namespace Lagalt_Backend.Services.Users
 
         public async Task<User> AddAsync(User obj)
         {
+            obj.Role = "User";
+
             _context.Users.Add(obj);
             await _context.SaveChangesAsync();
             return obj;

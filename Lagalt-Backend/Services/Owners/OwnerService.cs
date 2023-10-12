@@ -34,6 +34,8 @@ namespace Lagalt_Backend.Services.Owners
 
         public async Task<Owner> AddAsync(Owner obj)
         {
+            obj.Role = "Owner";
+
             await _context.Owners.AddAsync(obj);
             await _context.SaveChangesAsync();
             return obj;

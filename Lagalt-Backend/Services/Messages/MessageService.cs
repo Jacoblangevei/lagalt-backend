@@ -83,7 +83,7 @@ namespace Lagalt_Backend.Services.Messages
             return comment;
         }
 
-        public async Task AddNewCommentToMessageAsync(int messageId, string comment)
+        public async Task<Comment> AddNewCommentToMessageAsync(int messageId, string commentText, int creatorId, string creatorRole)
         {
             var message = await _context.Messages
                 .Include(m => m.Comments)
@@ -94,12 +94,20 @@ namespace Lagalt_Backend.Services.Messages
                 throw new EntityNotFoundException(nameof(Message), messageId);
             }
 
-            var newComment = new Comment { CommentText = comment, Timestamp = DateTime.Now,  };
+            var newComment = new Comment
+            {
+                CommentText = commentText,
+                Timestamp = DateTime.Now,
+                CreatorType = creatorRole,
+                CreatorId = creatorId
+            };
             _context.Comments.Add(newComment);
             await _context.SaveChangesAsync();
             message.Comments.Add(newComment);
 
             await _context.SaveChangesAsync();
+
+            return newComment;
         }
 
         //Helping methods
