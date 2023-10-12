@@ -117,8 +117,8 @@ namespace Lagalt_Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Education = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Education = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -133,6 +133,7 @@ namespace Lagalt_Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OwnerId = table.Column<int>(type: "int", nullable: true),
                     ProjectStatusId = table.Column<int>(type: "int", nullable: true),
                     ProjectTypeId = table.Column<int>(type: "int", nullable: true)
@@ -158,46 +159,6 @@ namespace Lagalt_Backend.Migrations
                         principalTable: "ProjectType",
                         principalColumn: "ProjectTypeId",
                         onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Comment",
-                columns: table => new
-                {
-                    CommentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CommentText = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreatorType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: true),
-                    OwnerId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comment", x => x.CommentId);
-                    table.ForeignKey(
-                        name: "FK_Comment_Owner",
-                        column: x => x.CreatorId,
-                        principalTable: "Owner",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comment_Owner_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Owner",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Comment_User",
-                        column: x => x.CreatorId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comment_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -450,6 +411,26 @@ namespace Lagalt_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Requirement",
+                columns: table => new
+                {
+                    RequirementId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RequirementText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Requirement", x => x.RequirementId);
+                    table.ForeignKey(
+                        name: "FK_Requirement_Project_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Project",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectUpdate",
                 columns: table => new
                 {
@@ -474,27 +455,50 @@ namespace Lagalt_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CommentMessage",
+                name: "Comment",
                 columns: table => new
                 {
-                    CommentsCommentId = table.Column<int>(type: "int", nullable: false),
-                    MessagesMessageId = table.Column<int>(type: "int", nullable: false)
+                    CommentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CommentText = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatorType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    MessageId = table.Column<int>(type: "int", nullable: true),
+                    OwnerId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CommentMessage", x => new { x.CommentsCommentId, x.MessagesMessageId });
+                    table.PrimaryKey("PK_Comment", x => x.CommentId);
                     table.ForeignKey(
-                        name: "FK_CommentMessage_Comment_CommentsCommentId",
-                        column: x => x.CommentsCommentId,
-                        principalTable: "Comment",
-                        principalColumn: "CommentId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CommentMessage_Message_MessagesMessageId",
-                        column: x => x.MessagesMessageId,
+                        name: "FK_Comment_Message_MessageId",
+                        column: x => x.MessageId,
                         principalTable: "Message",
                         principalColumn: "MessageId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Comment_Owner",
+                        column: x => x.CreatorId,
+                        principalTable: "Owner",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Comment_Owner_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Owner",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Comment_User",
+                        column: x => x.CreatorId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Comment_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.InsertData(
@@ -522,8 +526,16 @@ namespace Lagalt_Backend.Migrations
                 columns: new[] { "ProjectTypeId", "ProjectTypeName" },
                 values: new object[,]
                 {
-                    { 1, "Coding" },
-                    { 2, "Movie" }
+                    { 1, "Software Development" },
+                    { 2, "Graphic Design" },
+                    { 3, "Game Development" },
+                    { 4, "Film Production" },
+                    { 5, "Music Production" },
+                    { 6, "Photography" },
+                    { 7, "Fashion Design" },
+                    { 8, "Interior Design" },
+                    { 9, "Research and Analysis" },
+                    { 10, "Hacking" }
                 });
 
             migrationBuilder.InsertData(
@@ -542,15 +554,6 @@ namespace Lagalt_Backend.Migrations
                 values: new object[] { 1, "I love coding", "Coding Academy", "Qwerty12345", "UserNr1" });
 
             migrationBuilder.InsertData(
-                table: "Comment",
-                columns: new[] { "CommentId", "CommentText", "CreatorId", "CreatorType", "OwnerId", "Timestamp", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "I can help!", 1, "User", null, new DateTime(2023, 10, 9, 10, 14, 1, 392, DateTimeKind.Local).AddTicks(6466), null },
-                    { 2, "This is cool", 1, "Owner", null, new DateTime(2023, 10, 9, 10, 14, 1, 392, DateTimeKind.Local).AddTicks(6487), null }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Milestone",
                 columns: new[] { "MilestoneId", "Currency", "Description", "DueDate", "MilestoneStatusId", "PaymentAmount", "ProjectId", "Title" },
                 values: new object[] { 1, "EUR", "Set up Azure", new DateTime(2023, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 10.99m, null, "Set up Azure" });
@@ -562,11 +565,11 @@ namespace Lagalt_Backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "Project",
-                columns: new[] { "ProjectId", "Description", "Name", "OwnerId", "ProjectStatusId", "ProjectTypeId" },
+                columns: new[] { "ProjectId", "Description", "ImageUrl", "Name", "OwnerId", "ProjectStatusId", "ProjectTypeId" },
                 values: new object[,]
                 {
-                    { 1, "Hacking someone important", "Happy Hacking", 1, null, null },
-                    { 2, "Make a cool movie", "Movie Maker", 1, null, null }
+                    { 1, "Hacking someone important", "www.example.no", "Happy Hacking", 1, null, 10 },
+                    { 2, "Make a cool movie", "www.example.no", "Movie Maker", 1, null, 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -577,7 +580,7 @@ namespace Lagalt_Backend.Migrations
             migrationBuilder.InsertData(
                 table: "Update",
                 columns: new[] { "UpdateId", "Description", "Timestamp", "UserId" },
-                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 9, 10, 14, 1, 383, DateTimeKind.Local).AddTicks(1946), 1 });
+                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 12, 10, 23, 22, 632, DateTimeKind.Local).AddTicks(2384), 1 });
 
             migrationBuilder.InsertData(
                 table: "UserReview",
@@ -593,14 +596,14 @@ namespace Lagalt_Backend.Migrations
                 columns: new[] { "MessageId", "CreatorId", "CreatorType", "MessageContent", "OwnerId", "ProjectId", "Subject", "Timestamp", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 1, "User", "Hi, I need a link", null, 1, "Need link", new DateTime(2023, 10, 9, 10, 14, 1, 389, DateTimeKind.Local).AddTicks(6501), null },
-                    { 2, 1, "Owner", "Can someone explain how...", null, 1, "How to do...", new DateTime(2023, 10, 9, 10, 14, 1, 389, DateTimeKind.Local).AddTicks(6523), null }
+                    { 1, 1, "User", "Hi, I need a link", null, 1, "Need link", new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9579), null },
+                    { 2, 1, "Owner", "Can someone explain how...", null, 1, "How to do...", new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9600), null }
                 });
 
             migrationBuilder.InsertData(
                 table: "ProjectRequest",
                 columns: new[] { "ProjectRequestId", "ProjectId", "RequestDate", "UserId" },
-                values: new object[] { 1, 2, new DateTime(2023, 10, 9, 10, 14, 1, 386, DateTimeKind.Local).AddTicks(3210), 1 });
+                values: new object[] { 1, 2, new DateTime(2023, 10, 12, 10, 23, 22, 635, DateTimeKind.Local).AddTicks(4083), 1 });
 
             migrationBuilder.InsertData(
                 table: "ProjectUpdate",
@@ -612,10 +615,29 @@ namespace Lagalt_Backend.Migrations
                 columns: new[] { "ProjectId", "UserId" },
                 values: new object[] { 1, 1 });
 
+            migrationBuilder.InsertData(
+                table: "Requirement",
+                columns: new[] { "RequirementId", "ProjectId", "RequirementText" },
+                values: new object[] { 1, 1, "Experience with hacking" });
+
+            migrationBuilder.InsertData(
+                table: "Comment",
+                columns: new[] { "CommentId", "CommentText", "CreatorId", "CreatorType", "MessageId", "OwnerId", "Timestamp", "UserId" },
+                values: new object[,]
+                {
+                    { 1, "I can help!", 1, "User", 1, null, new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5161), null },
+                    { 2, "This is cool", 1, "Owner", 2, null, new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5182), null }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_CreatorId",
                 table: "Comment",
                 column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comment_MessageId",
+                table: "Comment",
+                column: "MessageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_OwnerId",
@@ -626,11 +648,6 @@ namespace Lagalt_Backend.Migrations
                 name: "IX_Comment_UserId",
                 table: "Comment",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CommentMessage_MessagesMessageId",
-                table: "CommentMessage",
-                column: "MessagesMessageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_CreatorId",
@@ -708,6 +725,11 @@ namespace Lagalt_Backend.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Requirement_ProjectId",
+                table: "Requirement",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SkillUser_UserId",
                 table: "SkillUser",
                 column: "UserId");
@@ -732,7 +754,7 @@ namespace Lagalt_Backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CommentMessage");
+                name: "Comment");
 
             migrationBuilder.DropTable(
                 name: "Milestone");
@@ -753,13 +775,13 @@ namespace Lagalt_Backend.Migrations
                 name: "ProjectUser");
 
             migrationBuilder.DropTable(
+                name: "Requirement");
+
+            migrationBuilder.DropTable(
                 name: "SkillUser");
 
             migrationBuilder.DropTable(
                 name: "UserReview");
-
-            migrationBuilder.DropTable(
-                name: "Comment");
 
             migrationBuilder.DropTable(
                 name: "Message");

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    [Migration("20231009122617_m2")]
-    partial class m2
+    [Migration("20231012082323_initialDb")]
+    partial class initialDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,7 +76,8 @@ namespace Lagalt_Backend.Migrations
                             CommentText = "I can help!",
                             CreatorId = 1,
                             CreatorType = "User",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 695, DateTimeKind.Local).AddTicks(694)
+                            MessageId = 1,
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5161)
                         },
                         new
                         {
@@ -84,7 +85,8 @@ namespace Lagalt_Backend.Migrations
                             CommentText = "This is cool",
                             CreatorId = 1,
                             CreatorType = "Owner",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 695, DateTimeKind.Local).AddTicks(713)
+                            MessageId = 2,
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5182)
                         });
                 });
 
@@ -146,7 +148,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Hi, I need a link",
                             ProjectId = 1,
                             Subject = "Need link",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 692, DateTimeKind.Local).AddTicks(9638)
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9579)
                         },
                         new
                         {
@@ -156,7 +158,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Can someone explain how...",
                             ProjectId = 1,
                             Subject = "How to do...",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 692, DateTimeKind.Local).AddTicks(9652)
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9600)
                         });
                 });
 
@@ -326,6 +328,10 @@ namespace Lagalt_Backend.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -355,15 +361,19 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectId = 1,
                             Description = "Hacking someone important",
+                            ImageUrl = "www.example.no",
                             Name = "Happy Hacking",
-                            OwnerId = 1
+                            OwnerId = 1,
+                            ProjectTypeId = 10
                         },
                         new
                         {
                             ProjectId = 2,
                             Description = "Make a cool movie",
+                            ImageUrl = "www.example.no",
                             Name = "Movie Maker",
-                            OwnerId = 1
+                            OwnerId = 1,
+                            ProjectTypeId = 4
                         });
                 });
 
@@ -397,7 +407,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectRequestId = 1,
                             ProjectId = 2,
-                            RequestDate = new DateTime(2023, 10, 9, 14, 26, 17, 690, DateTimeKind.Local).AddTicks(9013),
+                            RequestDate = new DateTime(2023, 10, 12, 10, 23, 22, 635, DateTimeKind.Local).AddTicks(4083),
                             UserId = 1
                         });
                 });
@@ -446,12 +456,52 @@ namespace Lagalt_Backend.Migrations
                         new
                         {
                             ProjectTypeId = 1,
-                            ProjectTypeName = "Coding"
+                            ProjectTypeName = "Software Development"
                         },
                         new
                         {
                             ProjectTypeId = 2,
-                            ProjectTypeName = "Movie"
+                            ProjectTypeName = "Graphic Design"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 3,
+                            ProjectTypeName = "Game Development"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 4,
+                            ProjectTypeName = "Film Production"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 5,
+                            ProjectTypeName = "Music Production"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 6,
+                            ProjectTypeName = "Photography"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 7,
+                            ProjectTypeName = "Fashion Design"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 8,
+                            ProjectTypeName = "Interior Design"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 9,
+                            ProjectTypeName = "Research and Analysis"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 10,
+                            ProjectTypeName = "Hacking"
                         });
                 });
 
@@ -474,6 +524,36 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectId = 1,
                             UpdateId = 1
+                        });
+                });
+
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.Requirement", b =>
+                {
+                    b.Property<int>("RequirementId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequirementId"));
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequirementText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RequirementId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Requirement");
+
+                    b.HasData(
+                        new
+                        {
+                            RequirementId = 1,
+                            ProjectId = 1,
+                            RequirementText = "Experience with hacking"
                         });
                 });
 
@@ -531,7 +611,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 9, 14, 26, 17, 689, DateTimeKind.Local).AddTicks(1047),
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 632, DateTimeKind.Local).AddTicks(2384),
                             UserId = 1
                         });
                 });
@@ -679,12 +759,10 @@ namespace Lagalt_Backend.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Education")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
@@ -888,6 +966,17 @@ namespace Lagalt_Backend.Migrations
                     b.Navigation("Updates");
                 });
 
+            modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.Requirement", b =>
+                {
+                    b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.Project", "Project")
+                        .WithMany("Requirements")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.Update", b =>
                 {
                     b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", "User")
@@ -996,6 +1085,8 @@ namespace Lagalt_Backend.Migrations
                     b.Navigation("Milestones");
 
                     b.Navigation("ProjectRequests");
+
+                    b.Navigation("Requirements");
                 });
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.ProjectModels.ProjectStatus", b =>

@@ -74,7 +74,7 @@ namespace Lagalt_Backend.Migrations
                             CreatorId = 1,
                             CreatorType = "User",
                             MessageId = 1,
-                            Timestamp = new DateTime(2023, 10, 12, 9, 31, 35, 772, DateTimeKind.Local).AddTicks(6362)
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5161)
                         },
                         new
                         {
@@ -83,7 +83,7 @@ namespace Lagalt_Backend.Migrations
                             CreatorId = 1,
                             CreatorType = "Owner",
                             MessageId = 2,
-                            Timestamp = new DateTime(2023, 10, 12, 9, 31, 35, 772, DateTimeKind.Local).AddTicks(6413)
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5182)
                         });
                 });
 
@@ -145,7 +145,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Hi, I need a link",
                             ProjectId = 1,
                             Subject = "Need link",
-                            Timestamp = new DateTime(2023, 10, 12, 9, 31, 35, 768, DateTimeKind.Local).AddTicks(9067)
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9579)
                         },
                         new
                         {
@@ -155,7 +155,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Can someone explain how...",
                             ProjectId = 1,
                             Subject = "How to do...",
-                            Timestamp = new DateTime(2023, 10, 12, 9, 31, 35, 768, DateTimeKind.Local).AddTicks(9090)
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9600)
                         });
                 });
 
@@ -360,7 +360,8 @@ namespace Lagalt_Backend.Migrations
                             Description = "Hacking someone important",
                             ImageUrl = "www.example.no",
                             Name = "Happy Hacking",
-                            OwnerId = 1
+                            OwnerId = 1,
+                            ProjectTypeId = 10
                         },
                         new
                         {
@@ -368,7 +369,8 @@ namespace Lagalt_Backend.Migrations
                             Description = "Make a cool movie",
                             ImageUrl = "www.example.no",
                             Name = "Movie Maker",
-                            OwnerId = 1
+                            OwnerId = 1,
+                            ProjectTypeId = 4
                         });
                 });
 
@@ -402,7 +404,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectRequestId = 1,
                             ProjectId = 2,
-                            RequestDate = new DateTime(2023, 10, 12, 9, 31, 35, 766, DateTimeKind.Local).AddTicks(3696),
+                            RequestDate = new DateTime(2023, 10, 12, 10, 23, 22, 635, DateTimeKind.Local).AddTicks(4083),
                             UserId = 1
                         });
                 });
@@ -451,12 +453,52 @@ namespace Lagalt_Backend.Migrations
                         new
                         {
                             ProjectTypeId = 1,
-                            ProjectTypeName = "Coding"
+                            ProjectTypeName = "Software Development"
                         },
                         new
                         {
                             ProjectTypeId = 2,
-                            ProjectTypeName = "Movie"
+                            ProjectTypeName = "Graphic Design"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 3,
+                            ProjectTypeName = "Game Development"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 4,
+                            ProjectTypeName = "Film Production"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 5,
+                            ProjectTypeName = "Music Production"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 6,
+                            ProjectTypeName = "Photography"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 7,
+                            ProjectTypeName = "Fashion Design"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 8,
+                            ProjectTypeName = "Interior Design"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 9,
+                            ProjectTypeName = "Research and Analysis"
+                        },
+                        new
+                        {
+                            ProjectTypeId = 10,
+                            ProjectTypeName = "Hacking"
                         });
                 });
 
@@ -566,7 +608,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 12, 9, 31, 35, 763, DateTimeKind.Local).AddTicks(9570),
+                            Timestamp = new DateTime(2023, 10, 12, 10, 23, 22, 632, DateTimeKind.Local).AddTicks(2384),
                             UserId = 1
                         });
                 });

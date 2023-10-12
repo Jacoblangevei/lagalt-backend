@@ -4,6 +4,10 @@ using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.MessageModels;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
+using System.Reflection;
+using System;
 
 namespace Lagalt_Backend.Data
 {
@@ -47,8 +51,8 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<Project>().HasOne(p => p.ProjectType).WithMany(pt => pt.Projects).HasForeignKey(p => p.ProjectTypeId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Project>().HasData(
-                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1, ImageUrl = "www.example.no" },
-                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = 1, ImageUrl = "www.example.no" }
+                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1, ImageUrl = "www.example.no", ProjectTypeId = 10 },
+                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = 1, ImageUrl= "www.example.no", ProjectTypeId = 4 }
                 );
 
             //Owner
@@ -165,8 +169,16 @@ namespace Lagalt_Backend.Data
 
             //ProjectType
             modelBuilder.Entity<ProjectType>().HasData(
-                new ProjectType { ProjectTypeId = 1, ProjectTypeName = "Coding"},
-                new ProjectType { ProjectTypeId = 2, ProjectTypeName = "Movie"}
+                new ProjectType { ProjectTypeId = 1, ProjectTypeName = "Software Development" },
+                new ProjectType { ProjectTypeId = 2, ProjectTypeName = "Graphic Design"},
+                new ProjectType { ProjectTypeId = 3, ProjectTypeName = "Game Development" },
+                new ProjectType { ProjectTypeId = 4, ProjectTypeName = "Film Production" },
+                new ProjectType { ProjectTypeId = 5, ProjectTypeName = "Music Production" },
+                new ProjectType { ProjectTypeId = 6, ProjectTypeName = "Photography" },
+                new ProjectType { ProjectTypeId = 7, ProjectTypeName = "Fashion Design" },
+                new ProjectType { ProjectTypeId = 8, ProjectTypeName = "Interior Design" },
+                new ProjectType { ProjectTypeId = 9, ProjectTypeName = "Research and Analysis" },
+                new ProjectType { ProjectTypeId = 10, ProjectTypeName = "Hacking" }
                 );
 
             //UserReview
