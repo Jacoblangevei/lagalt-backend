@@ -4,6 +4,7 @@ using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Dtos.Projects;
 using Microsoft.Extensions.Options;
+using Lagalt_Backend.Data.Dtos.Owners;
 
 namespace Lagalt_Backend.Mappers
 {
@@ -24,6 +25,8 @@ namespace Lagalt_Backend.Mappers
                     pdto => pdto.Updates, options => options.MapFrom(p => p.Updates.Select(ud => ud.UpdateId).ToArray()))
                 .ForMember(
                     pdto => pdto.ProjectRequests, options => options.MapFrom(p => p.ProjectRequests.Select(pr => pr.ProjectRequestId).ToArray()))
+                .ForMember(
+                    pdto => pdto.Requirements, options => options.MapFrom(p => p.Requirements.Select(r => r.RequirementId).ToArray()))
                 .ForMember(
                     pdto => pdto.OwnerId, options => options.MapFrom(p => p.OwnerId))
                 .ForMember(

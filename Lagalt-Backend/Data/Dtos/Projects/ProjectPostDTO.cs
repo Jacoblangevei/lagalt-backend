@@ -10,5 +10,8 @@ namespace Lagalt_Backend.Data.Dtos.Projects
         [Required]
         [StringLength(255)]
         public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        [Required]
+        public int? ProjectTypeId { get; set; }
     }
 }

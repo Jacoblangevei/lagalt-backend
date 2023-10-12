@@ -8,6 +8,9 @@ using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Dtos.Projects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lagalt_Backend.Data.Models.ProjectModels;
+using Lagalt_Backend.Data.Dtos.Skills;
+using Lagalt_Backend.Data.Models.UserModels;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -117,6 +120,37 @@ namespace Lagalt_Backend.Controllers
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}/projects/{projectId}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOwnerProject(int id, int projectId)
+        {
+            try
+            {
+                var project = await _ownerService.GetOwnerProjectAsync(id, projectId);
+                return Ok(_mapper.Map<ProjectDTO>(project));
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/projects")]
+        public async Task<IActionResult> CreateOwnerProject(int id, [FromBody] ProjectPostDTO projectDto)
+        {
+            try
+            {
+                var projectModel = _mapper.Map<Project>(projectDto);
+
+                var createdProject = await _ownerService.CreateProjectAsync(id, projectModel);
+
+                return CreatedAtAction("GetOwnerProject", "Owners", new { id = id, projectId = createdProject.ProjectId }, createdProject);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

@@ -83,6 +83,7 @@ namespace Lagalt_Backend.Controllers
                 _mapper.Map<UserDTO>(newUser));
         }
 
+        //Should users be able to change their usernames?
         /// <summary>
         /// Updating a users description and education
         /// </summary>

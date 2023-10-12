@@ -26,6 +26,7 @@ namespace Lagalt_Backend.Data
         public DbSet<ProjectRequest> ProjectRequests { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Requirement> Requirements { get; set; }
 
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -46,8 +47,8 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<Project>().HasOne(p => p.ProjectType).WithMany(pt => pt.Projects).HasForeignKey(p => p.ProjectTypeId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Project>().HasData(
-                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1 },
-                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = 1}
+                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1, ImageUrl = "www.example.no" },
+                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = 1, ImageUrl = "www.example.no" }
                 );
 
             //Owner
@@ -229,6 +230,16 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<Comment>().HasData(
                 new Comment { CommentId = 1, CreatorId = 1, CreatorType = "User", CommentText = "I can help!", Timestamp = DateTime.Now, MessageId = 1},
                 new Comment { CommentId = 2, CreatorId = 1, CreatorType = "Owner", CommentText = "This is cool", Timestamp = DateTime.Now, MessageId = 2}
+                );
+
+            //Project requirements
+            modelBuilder.Entity<Requirement>()
+                .HasOne(r => r.Project)
+                .WithMany(p => p.Requirements)
+                .HasForeignKey(r => r.ProjectId);
+
+            modelBuilder.Entity<Requirement>().HasData(
+                new Requirement { RequirementId = 1, RequirementText = "Experience with hacking", ProjectId = 1}
                 );
         }
     }

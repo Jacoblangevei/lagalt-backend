@@ -7,6 +7,8 @@ namespace Lagalt_Backend.Services.Owners
     {
         //Get all projects owner owns
         Task<ICollection<Project>> GetAllProjectsOwnerOwnsAsync(int id);
+        Task<Project> GetOwnerProjectAsync(int id, int projectId);
+        Task<Project> CreateProjectAsync(int id, Project projectModel);
 
         //Add user to project from request
 

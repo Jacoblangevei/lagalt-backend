@@ -11,6 +11,7 @@ namespace Lagalt_Backend.Data.Dtos.Projects
         public int ProjectId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ImageUrl { get; set; }
         public int? OwnerId { get; set; }
 
         public int? ProjectStatusId { get; set; }
@@ -21,5 +22,6 @@ namespace Lagalt_Backend.Data.Dtos.Projects
         public int[] Milestones { get; set; }
         public int[] Tags { get; set; }
         public int[] ProjectRequests { get; set; }
+        public int[] Requirements { get; set; }
     }
 }

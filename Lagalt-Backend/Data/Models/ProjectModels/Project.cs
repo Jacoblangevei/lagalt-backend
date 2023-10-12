@@ -16,7 +16,7 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         [Required]
         [StringLength(255)]
         public string Description { get; set; }
-
+        public string ImageUrl { get; set; }
 
         [ForeignKey("Owner")]
         public int? OwnerId { get; set; }
@@ -35,6 +35,7 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         public ICollection<Milestone> Milestones { get; set; }
         public ICollection<Tag> Tags { get; set; }
         public ICollection<ProjectRequest> ProjectRequests { get; set; }
+        public ICollection<Requirement> Requirements { get; set; }
 
     }
 }
