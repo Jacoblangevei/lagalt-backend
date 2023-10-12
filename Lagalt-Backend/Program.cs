@@ -13,7 +13,19 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "LagaltAPI", Version = "v1" });
+    // Include XML Comments
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
+});
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -33,17 +45,7 @@ var builder = WebApplication.CreateBuilder(args);
             },
             ValidAudience = "account",
         };
-    });*/
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "LagaltAPI", Version = "v1" });
-    // Include XML Comments
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
-});
+    });
 
 builder.Services.AddDbContext<LagaltDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
@@ -74,8 +76,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //app.Environment.IsDevelopment()
 
-// TESTEST2345673
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -89,6 +89,7 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
