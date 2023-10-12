@@ -53,39 +53,40 @@ builder.Services.AddSwaggerGen(options =>
 
 //                              Versjon 2
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            IssuerSigningKeyResolver = async (token, securityToken, kid, parameters) =>
-            {
-                // Uses IHttpClientFactory to get an instance of HttpClient
-                var clientFactory = builder.Services.BuildServiceProvider().GetRequiredService<IHttpClientFactory>();
-                var client = clientFactory.CreateClient();
-                var keyuri = builder.Configuration["TokenSecrets:KeyURI"];
+//Keycloak
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            IssuerSigningKeyResolver = async (token, securityToken, kid, parameters) =>
+//            {
+//                // Uses IHttpClientFactory to get an instance of HttpClient
+//                var clientFactory = builder.Services.BuildServiceProvider().GetRequiredService<IHttpClientFactory>();
+//                var client = clientFactory.CreateClient();
+//                var keyuri = builder.Configuration["TokenSecrets:KeyURI"];
 
-                try
-                {
-                    var response = await client.GetAsync(keyuri);
-                    response.EnsureSuccessStatusCode(); // Throws an exception if the response is not successful.
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responseString);
-                    return keys.Keys;
-                }
-                catch (HttpRequestException e)
-                {
-                    // Log and handle exception
-                    throw new SecurityTokenException("Cannot retrieve keys", e);
-                }
-            },
-            ValidIssuers = new List<string>
-            {
-                builder.Configuration["TokenSecrets:IssuerURI"]
-            },
-            ValidAudience = "account",
-        };
-    });
+//                try
+//                {
+//                    var response = await client.GetAsync(keyuri);
+//                    response.EnsureSuccessStatusCode(); // Throws an exception if the response is not successful.
+//                    var responseString = await response.Content.ReadAsStringAsync();
+//                    var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responseString);
+//                    return keys.Keys;
+//                }
+//                catch (HttpRequestException e)
+//                {
+//                    // Log and handle exception
+//                    throw new SecurityTokenException("Cannot retrieve keys", e);
+//                }
+//            },
+//            ValidIssuers = new List<string>
+//            {
+//                builder.Configuration["TokenSecrets:IssuerURI"]
+//            },
+//            ValidAudience = "account",
+//        };
+//    });
 
 
 builder.Services.AddDbContext<LagaltDbContext>(options =>
