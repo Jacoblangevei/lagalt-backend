@@ -49,6 +49,19 @@ namespace Lagalt_Backend.Services.Projects
             await _context.SaveChangesAsync();
         }
 
+        //Projects
+        public async Task<ICollection<Project>> GetProjectsAsync(int id)
+        {
+            // Early exit if prof doesnt exist
+            if (!await ProjectTypeExistsAsync(id))
+                throw new EntityNotFoundException(nameof(ProjectType), id);
+
+            // Its a smaller SQL statement if we go from subjects (no joining)
+            return await _context.Projects
+                .Where(p => p.ProjectTypeId == id)
+                .ToListAsync();
+        }
+
         //Helping method
         private async Task<bool> ProjectTypeExistsAsync(int id)
         {
