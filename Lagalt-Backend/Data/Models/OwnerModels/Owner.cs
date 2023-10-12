@@ -14,6 +14,7 @@ namespace Lagalt_Backend.Data.Models.OwnerModels
         public string Username { get; set; }
         [StringLength(50)]
         public string Password { get; set; }
+        public string Role { get; set; }
 
         public ICollection<Project> Projects { get; set; }
         public ICollection<UserReview> UserReviews { get; set; }

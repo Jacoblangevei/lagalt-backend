@@ -1,5 +1,6 @@
 ﻿using Lagalt_Backend.Data.Exceptions;
 using Lagalt_Backend.Data.Models.MessageModels;
+using Lagalt_Backend.Data.Models.UserModels;
 
 namespace Lagalt_Backend.Services.Messages
 {
@@ -7,6 +8,8 @@ namespace Lagalt_Backend.Services.Messages
     {
         Task<ICollection<Comment>> GetAllCommentsInMessageAsync(int id);
 
-        //Add comment to message
+        Task<Skill> GetCommentInMessageByIdAsync(int messageId, int commentId);
+
+        Task AddNewCommentToMessageAsync(int messageId, string comment);
     }
 }

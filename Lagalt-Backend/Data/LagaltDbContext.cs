@@ -42,7 +42,7 @@ namespace Lagalt_Backend.Data
         {
             //User
             modelBuilder.Entity<User>().HasData(
-                new User { UserId = 1, UserName = "UserNr1", Password = "Qwerty12345", Description = "I love coding", Education = "Coding Academy"}
+                new User { UserId = 1, UserName = "UserNr1", Password = "Qwerty12345", Description = "I love coding", Education = "Coding Academy", Role = "User"}
                 );
 
             //Projects
@@ -57,7 +57,7 @@ namespace Lagalt_Backend.Data
 
             //Owner
             modelBuilder.Entity<Owner>().HasData(
-                new Owner { Id = 1, Username = "BestBoss", Password = "BestBoss123" }
+                new Owner { Id = 1, Username = "BestBoss", Password = "BestBoss123", Role = "Owner" }
                 );
 
             

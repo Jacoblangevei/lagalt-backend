@@ -123,6 +123,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets spesific projec by id that owner owns
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
         [HttpGet("{id}/projects/{projectId}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOwnerProject(int id, int projectId)
         {
@@ -137,6 +143,13 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Creats a new project for owner
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="projectDto"></param>
+        /// <returns></returns>
         [HttpPost("{id}/projects")]
         public async Task<IActionResult> CreateOwnerProject(int id, [FromBody] ProjectPostDTO projectDto)
         {

@@ -3,6 +3,7 @@ using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data;
 using Microsoft.EntityFrameworkCore;
+using Lagalt_Backend.Data.Models.UserModels;
 
 namespace Lagalt_Backend.Services.Messages
 {
@@ -59,6 +60,46 @@ namespace Lagalt_Backend.Services.Messages
             return await _context.Comments
                 .Where(c => c.MessageId == id)
                 .ToListAsync();
+        }
+
+        public async Task<Comment> GetCommentInMessageByIdAsync(int messageId, int commentId)
+        {
+            var message = await _context.Messages
+                .Include(m => m.Comments)
+                .FirstOrDefaultAsync(m => m.MessageId == messageId);
+
+            if (message == null)
+            {
+                throw new EntityNotFoundException(nameof(Message), messageId);
+            }
+
+            var comment = message.Comments.FirstOrDefault(c => c.CommentId == commentId);
+
+            if (comment == null)
+            {
+                throw new EntityNotFoundException(nameof(Comment), commentId);
+            }
+
+            return comment;
+        }
+
+        public async Task AddNewCommentToMessageAsync(int messageId, string comment)
+        {
+            var message = await _context.Messages
+                .Include(m => m.Comments)
+                .FirstOrDefaultAsync(m => m.MessageId == messageId);
+
+            if (message == null)
+            {
+                throw new EntityNotFoundException(nameof(Message), messageId);
+            }
+
+            var newComment = new Comment { CommentText = comment, Timestamp = DateTime.Now,  };
+            _context.Comments.Add(newComment);
+            await _context.SaveChangesAsync();
+            message.Comments.Add(newComment);
+
+            await _context.SaveChangesAsync();
         }
 
         //Helping methods
