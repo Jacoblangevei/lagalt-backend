@@ -5,8 +5,16 @@ namespace Lagalt_Backend.Services
 {
     public interface ICrudService<TEntity, TID>
     {
+        /// <summary>
+        /// Gets all <typeparamref name="TEntity"/> from the database
+        /// </summary>
+        /// <returns></returns>
         Task<ICollection<TEntity>> GetAllAsync();
-
+        /// <summary>
+        /// Gets one <typeparamref name="TEntity"/> from database using id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         Task<TEntity> GetByIdAsync(TID id);
         /// <summary>
         /// Adds an <typeparamref name="TEntity"/> to the database.
