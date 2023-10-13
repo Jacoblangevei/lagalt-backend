@@ -1,13 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
-using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.MessageModels;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Logging;
-using System.Reflection;
-using System;
+using System.Xml;
 
 namespace Lagalt_Backend.Data
 {
@@ -25,32 +20,33 @@ namespace Lagalt_Backend.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
         public DbSet<ProjectType> ProjectTypes { get; set; }
-        public DbSet<UserReview> UserReviews { get; set; }
         public DbSet<ProjectRequest> ProjectRequests { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Requirement> Requirements { get; set; }
 
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Data Source=N-NO-01-01-5733\\SQLEXPRESS; Initial Catalog=LagaltEF; Integrated Security= true; Trust Server Certificate= true;");
-            //Ida data source: N-NO-01-01-5733\SQLEXPRESS
-        }*/
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("Data Source=N-NO-01-01-5733\\SQLEXPRESS; Initial Catalog=LagaltEF; Integrated Security= true; Trust Server Certificate= true;");
+        //    //Ida data source: N-NO-01-01-5733\SQLEXPRESS
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //User
+            modelBuilder.Entity<User>().HasKey(u => u.UserId);
+
             modelBuilder.Entity<User>().HasData(
-                new User { UserId = 1, UserName = "UserNr1", Description = "I love coding", Education = "Coding Academy", Role = "User"}
+                new User { UserId = new Guid("00000000-0000-0000-0000-000000000001"), UserName = "UserNr1", Description = "I love coding", Education = "Coding Academy", Role = "User"}
                 );
 
             //Projects
-            modelBuilder.Entity<Project>().HasOne(p => p.Owner).WithMany(o => o.Projects).HasForeignKey(p => p.OwnerId).OnDelete(DeleteBehavior.SetNull); //<--- What should happen to projects if a owner gets deleted?
+            modelBuilder.Entity<Project>().HasOne(p => p.Owner).WithMany(u => u.ProjectsOwned).HasForeignKey(p => p.OwnerId).OnDelete(DeleteBehavior.SetNull); //<--- What should happen to projects if a owner gets deleted?
             modelBuilder.Entity<Project>().HasOne(p => p.ProjectStatus).WithMany(ps => ps.Projects).HasForeignKey(p => p.ProjectStatusId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<Project>().HasOne(p => p.ProjectType).WithMany(pt => pt.Projects).HasForeignKey(p => p.ProjectTypeId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Project>().HasData(
-                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1, ImageUrl = "www.example.no", ProjectTypeId = 10 },
-                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = 1, ImageUrl= "www.example.no", ProjectTypeId = 4 }
+                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), ImageUrl = "www.example.no", ProjectTypeId = 10 },
+                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), ImageUrl= "www.example.no", ProjectTypeId = 4 }
                 );
             
             //ProjectUser
@@ -66,8 +62,8 @@ namespace Lagalt_Backend.Data
                 );
 
             modelBuilder.Entity<ProjectUser>().HasData(
-                new ProjectUser() { ProjectId = 1, UserId = 1, Role = "Owner" },
-                new ProjectUser() { ProjectId = 2, UserId = 1, Role = "User"}
+                new ProjectUser() { ProjectId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Role = "Owner" },
+                new ProjectUser() { ProjectId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Role = "User"}
                 );
 
             //Skill
@@ -88,7 +84,7 @@ namespace Lagalt_Backend.Data
                 );
 
             modelBuilder.Entity<SkillUser>().HasData(
-                new SkillUser { SkillId = 1, UserId = 1 }
+                new SkillUser { SkillId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001") }
                 );
 
             //PortfolioProject
@@ -109,13 +105,13 @@ namespace Lagalt_Backend.Data
                 );
 
             modelBuilder.Entity<PortfolioProjectUser>().HasData(
-                new PortfolioProjectUser { PortfolioProjectId = 1, UserId = 1 }
+                new PortfolioProjectUser { PortfolioProjectId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001") }
                 );
 
             //Update
             modelBuilder.Entity<Update>().HasOne(ud => ud.User).WithMany(u => u.Updates).HasForeignKey(ud => ud.UserId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<Update>().HasData(
-                new Update { UpdateId = 1, UserId = 1, Description = "Fixed everything", Timestamp = DateTime.Now}
+                new Update { UpdateId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Description = "Fixed everything", Timestamp = DateTime.Now}
                 );
 
             //ProjectUpdate
@@ -179,29 +175,15 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<ProjectRequest>().HasOne(pr => pr.Project).WithMany(p => p.ProjectRequests).HasForeignKey(pr => pr.ProjectId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<ProjectRequest>().HasData(
-                new ProjectRequest { ProjectRequestId = 1, ProjectId = 2, UserId = 1, RequestDate = DateTime.Now}
+                new ProjectRequest { ProjectRequestId = 1, ProjectId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000001"), RequestDate = DateTime.Now}
                 );
 
             //Messages
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.User)
-                .WithMany()
-                .HasForeignKey(m => m.CreatorId)
-                .HasConstraintName("FK_Message_User")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Owner)
-                .WithMany()
-                .HasForeignKey(m => m.CreatorId)
-                .HasConstraintName("FK_Message_Owner")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
+            modelBuilder.Entity<Message>().HasOne(m => m.User).WithMany().HasForeignKey(m => m.CreatorId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
 
             modelBuilder.Entity<Message>().HasData(
-                new Message { MessageId = 1, CreatorId = 1, CreatorType = "User", Subject = "Need link", MessageContent = "Hi, I need a link", Timestamp = DateTime.Now, ProjectId = 1},
-                new Message { MessageId = 2, CreatorId = 1, CreatorType = "Owner", Subject = "How to do...", MessageContent = "Can someone explain how...", Timestamp = DateTime.Now, ProjectId = 1}
+                new Message { MessageId = 1, CreatorId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "Need link", MessageContent = "Hi, I need a link", Timestamp = DateTime.Now, ProjectId = 1},
+                new Message { MessageId = 2, CreatorId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "How to do...", MessageContent = "Can someone explain how...", Timestamp = DateTime.Now, ProjectId = 1}
                 );
 
             //Project requirements

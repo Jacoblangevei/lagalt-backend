@@ -4,30 +4,30 @@ using System.Security.Cryptography;
 
 namespace Lagalt_Backend.Services.Users
 {
-    public interface IUserService : ICrudService<User, int>
+    public interface IUserService : ICrudService<User, Guid>
     {
-        Task<User> UpdateAsync(int userId, UserPutDTO userPutDTO);
+        Task<User> UpdateAsync(Guid userId, UserPutDTO userPutDTO);
 
-        Task<User> GetUserProfileAsync(int userId);
+        Task<User> GetUserProfileAsync(Guid userId);
 
         //SKills
 
-        Task<ICollection<Skill>> GetUserSkillsAsync(int userId);
+        Task<ICollection<Skill>> GetUserSkillsAsync(Guid userId);
 
-        Task<Skill> GetSkillByIdAsync(int userId, int skillId);
+        Task<Skill> GetSkillByIdAsync(Guid userId, int skillId);
 
-        Task AddNewSkillToUserAsync(int userId, string skillName);
+        Task AddNewSkillToUserAsync(Guid userId, string skillName);
 
-        Task RemoveSkillFromUserAsync(int userId, int skillId);
+        Task RemoveSkillFromUserAsync(Guid userId, int skillId);
 
         //Portfolios
-        Task<ICollection<PortfolioProject>> GetUserPortfolioProjectsAsync(int userId);
+        Task<ICollection<PortfolioProject>> GetUserPortfolioProjectsAsync(Guid userId);
 
-        Task<PortfolioProject> GetPortfolioProjectByIdAsync(int userId, int portfolioProjectId);
+        Task<PortfolioProject> GetPortfolioProjectByIdAsync(Guid userId, int portfolioProjectId);
 
-        Task AddNewPortfolioProjectToUserAsync(int userId, string portfolioProjectName, string portfolioProjectDescription, string imageUrl, DateTime startDate, DateTime endDate);
+        Task AddNewPortfolioProjectToUserAsync(Guid userId, string portfolioProjectName, string portfolioProjectDescription, string imageUrl, DateTime startDate, DateTime endDate);
 
-        Task RemovePortfolioProjectFromUserAsync(int userId, int portfolioProjectId);
+        Task RemovePortfolioProjectFromUserAsync(Guid userId, int portfolioProjectId);
 
         //Requests
 

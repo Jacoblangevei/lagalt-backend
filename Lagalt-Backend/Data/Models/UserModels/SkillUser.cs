@@ -5,7 +5,7 @@
         public int SkillId { get; set; }
         public Skill? Skills { get; set; }
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public User? Users { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lagalt_Backend.Data.Models.MessageModels;
-using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.UserModels;
 
 namespace Lagalt_Backend.Data.Models.ProjectModels
@@ -20,8 +19,8 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         public string ImageUrl { get; set; }
 
         [ForeignKey("Owner")]
-        public int? OwnerId { get; set; }
-        public Owner? Owner { get; set; }
+        public Guid? OwnerId { get; set; }
+        public User? Owner { get; set; }
 
         [ForeignKey("ProjectStatus")]
         public int? ProjectStatusId { get; set; }

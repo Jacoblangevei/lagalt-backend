@@ -2,7 +2,6 @@
 using Lagalt_Backend.Data.Dtos.Projects;
 using Lagalt_Backend.Data.Dtos.Users;
 using Lagalt_Backend.Data.Models.MessageModels;
-using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.UserModels;
 
@@ -25,8 +24,6 @@ namespace Lagalt_Backend.Mappers
                     udto => udto.Updates, options => options.MapFrom(u => u.Updates.Select(ud => ud.UpdateId).ToArray()))
                 .ForMember(
                     udto => udto.ProjectRequests, options => options.MapFrom(u => u.ProjectRequests.Select(pr => pr.ProjectRequestId).ToArray()))
-                .ForMember(
-                    udto => udto.Comments, options => options.MapFrom(u => u.Comments.Select(c => c.CommentId).ToArray()))
                 .ForMember(
                     udto => udto.Messages, options => options.MapFrom(u => u.Messages.Select(m => m.MessageId).ToArray())).ReverseMap();
             

@@ -9,7 +9,7 @@ namespace Lagalt_Backend.Data.Models.UserModels
     public class User
     {
         [Key]
-        public int UserId { get; set; } // GUID
+        public Guid UserId { get; set; } // GUID
         [Required]
         [StringLength(50)]
         public string UserName { get; set; } = string.Empty;
@@ -21,12 +21,12 @@ namespace Lagalt_Backend.Data.Models.UserModels
 
         //Navigation
         public ICollection<Project> Projects { get; set; }
+        public ICollection<Project> ProjectsOwned { get; set; }
         public ICollection<Skill> Skills { get; set; }
         public ICollection<PortfolioProject> PortfolioProjects { get; set; }
         public ICollection<Update> Updates { get; set; }
         //public ICollection<UserReview> UserReviews { get; set; }
         public ICollection<ProjectRequest> ProjectRequests { get; set; }
-        public ICollection<Comment> Comments { get; set; }
         public ICollection<Message> Messages { get; set; }
     }
 }

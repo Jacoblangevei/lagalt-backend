@@ -1,5 +1,4 @@
 ﻿using Lagalt_Backend.Data.Models.MessageModels;
-using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.UserModels;
 using System.ComponentModel.DataAnnotations;

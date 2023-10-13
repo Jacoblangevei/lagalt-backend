@@ -22,12 +22,12 @@ namespace Lagalt_Backend.Services.Users
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User> GetByIdAsync(int id)
+        public async Task<User> GetByIdAsync(Guid id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
 
             if (user is null)
-                throw new EntityNotFoundException(nameof(User), id);
+                throw new UserNotFoundException(nameof(User), id);
 
             return user;
         }
@@ -41,10 +41,10 @@ namespace Lagalt_Backend.Services.Users
             return obj;
         }
 
-        public async Task DeleteByIdAsync(int id)
+        public async Task DeleteByIdAsync(Guid id)
         {
             if (!await UserExistsAsync(id))
-                throw new EntityNotFoundException(nameof(User), id);
+                throw new UserNotFoundException(nameof(User), id);
             var user = await _context.Users
             .Where(u => u.UserId == id)
                 .FirstAsync();
@@ -53,13 +53,13 @@ namespace Lagalt_Backend.Services.Users
             await _context.SaveChangesAsync();
         }
 
-        public async Task<User> UpdateAsync(int userId, UserPutDTO userPutDTO)
+        public async Task<User> UpdateAsync(Guid userId, UserPutDTO userPutDTO)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
 
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             if (!string.IsNullOrEmpty(userPutDTO.Description))
@@ -76,7 +76,7 @@ namespace Lagalt_Backend.Services.Users
             return user;
         }
 
-        public async Task<User> GetUserProfileAsync(int userId)
+        public async Task<User> GetUserProfileAsync(Guid userId)
         {
             var user = await _context.Users
                 .Include(u => u.Skills)
@@ -85,26 +85,26 @@ namespace Lagalt_Backend.Services.Users
             
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             return user;
         }
 
         //SKILLS
-        public async Task<ICollection<Skill>> GetUserSkillsAsync(int userId)
+        public async Task<ICollection<Skill>> GetUserSkillsAsync(Guid userId)
         {
             var user = await _context.Users
                 .Include(u => u.Skills)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
 
             if (user is null)
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
 
             return user.Skills;
         }
 
-        public async Task<Skill> GetSkillByIdAsync(int userId, int skillId)
+        public async Task<Skill> GetSkillByIdAsync(Guid userId, int skillId)
         {
             var user = await _context.Users
                 .Include(u => u.Skills)
@@ -112,7 +112,7 @@ namespace Lagalt_Backend.Services.Users
 
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             var skill = user.Skills.FirstOrDefault(s => s.SkillId == skillId);
@@ -125,7 +125,7 @@ namespace Lagalt_Backend.Services.Users
             return skill;
         }
 
-        public async Task AddNewSkillToUserAsync(int userId, string skillName)
+        public async Task AddNewSkillToUserAsync(Guid userId, string skillName)
         {
             var user = await _context.Users
                 .Include(u => u.Skills)
@@ -133,7 +133,7 @@ namespace Lagalt_Backend.Services.Users
 
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             // Check if the skill already exists
@@ -156,7 +156,7 @@ namespace Lagalt_Backend.Services.Users
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveSkillFromUserAsync(int userId, int skillId)
+        public async Task RemoveSkillFromUserAsync(Guid userId, int skillId)
         {
             var user = await _context.Users
                 .Include(u => u.Skills)
@@ -164,7 +164,7 @@ namespace Lagalt_Backend.Services.Users
 
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             var skill = await _context.Skills.FindAsync(skillId);
@@ -182,19 +182,19 @@ namespace Lagalt_Backend.Services.Users
         }
 
         //PortfolioProjects
-        public async Task<ICollection<PortfolioProject>> GetUserPortfolioProjectsAsync(int userId)
+        public async Task<ICollection<PortfolioProject>> GetUserPortfolioProjectsAsync(Guid userId)
         {
             var user = await _context.Users
                 .Include(u => u.PortfolioProjects)
                 .FirstOrDefaultAsync(pp => pp.UserId == userId);
 
             if (user is null)
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
 
             return user.PortfolioProjects;
         }
 
-        public async Task<PortfolioProject> GetPortfolioProjectByIdAsync(int userId, int portfolioProjectId)
+        public async Task<PortfolioProject> GetPortfolioProjectByIdAsync(Guid userId, int portfolioProjectId)
         {
             var user = await _context.Users
                 .Include(u => u.PortfolioProjects)
@@ -202,7 +202,7 @@ namespace Lagalt_Backend.Services.Users
             
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             var portfolioProject = user.PortfolioProjects.FirstOrDefault(pp => pp.PortfolioProjectId == portfolioProjectId);
@@ -215,7 +215,7 @@ namespace Lagalt_Backend.Services.Users
             return portfolioProject;
         }
 
-        public async Task AddNewPortfolioProjectToUserAsync(int userId, string portfolioProjectName, string portfolioProjectDescription, string imageUrl, DateTime startDate, DateTime endDate)
+        public async Task AddNewPortfolioProjectToUserAsync(Guid userId, string portfolioProjectName, string portfolioProjectDescription, string imageUrl, DateTime startDate, DateTime endDate)
         {
             var user = await _context.Users
                 .Include(u => u.PortfolioProjects)
@@ -223,7 +223,7 @@ namespace Lagalt_Backend.Services.Users
 
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             // Check if the user already has the same project (based on name, description, URL, start date, and end date)
@@ -258,7 +258,7 @@ namespace Lagalt_Backend.Services.Users
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemovePortfolioProjectFromUserAsync(int userId, int portfolioProjectId)
+        public async Task RemovePortfolioProjectFromUserAsync(Guid userId, int portfolioProjectId)
         {
             var user = await _context.Users
                 .Include(u => u.PortfolioProjects)
@@ -266,7 +266,7 @@ namespace Lagalt_Backend.Services.Users
 
             if (user == null)
             {
-                throw new EntityNotFoundException(nameof(User), userId);
+                throw new UserNotFoundException(nameof(User), userId);
             }
 
             var portfolioProject = await _context.PortfolioProjects.FindAsync(portfolioProjectId);
@@ -284,7 +284,7 @@ namespace Lagalt_Backend.Services.Users
         }
 
         //Helping methods
-        private async Task<bool> UserExistsAsync(int id)
+        private async Task<bool> UserExistsAsync(Guid id)
         {
             return await _context.Users.AnyAsync(u => u.UserId == id);
         }

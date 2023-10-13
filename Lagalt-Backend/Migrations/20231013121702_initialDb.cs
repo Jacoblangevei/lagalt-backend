@@ -27,20 +27,6 @@ namespace Lagalt_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Owner",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Owner", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PortfolioProject",
                 columns: table => new
                 {
@@ -113,11 +99,10 @@ namespace Lagalt_Backend.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Role = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Education = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -126,47 +111,11 @@ namespace Lagalt_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Project",
-                columns: table => new
-                {
-                    ProjectId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OwnerId = table.Column<int>(type: "int", nullable: true),
-                    ProjectStatusId = table.Column<int>(type: "int", nullable: true),
-                    ProjectTypeId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Project", x => x.ProjectId);
-                    table.ForeignKey(
-                        name: "FK_Project_Owner_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Owner",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Project_ProjectStatus_ProjectStatusId",
-                        column: x => x.ProjectStatusId,
-                        principalTable: "ProjectStatus",
-                        principalColumn: "StatusId",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Project_ProjectType_ProjectTypeId",
-                        column: x => x.ProjectTypeId,
-                        principalTable: "ProjectType",
-                        principalColumn: "ProjectTypeId",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PortfolioProjectUser",
                 columns: table => new
                 {
                     PortfolioProjectId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -186,11 +135,47 @@ namespace Lagalt_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Project",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProjectStatusId = table.Column<int>(type: "int", nullable: true),
+                    ProjectTypeId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Project", x => x.ProjectId);
+                    table.ForeignKey(
+                        name: "FK_Project_ProjectStatus_ProjectStatusId",
+                        column: x => x.ProjectStatusId,
+                        principalTable: "ProjectStatus",
+                        principalColumn: "StatusId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Project_ProjectType_ProjectTypeId",
+                        column: x => x.ProjectTypeId,
+                        principalTable: "ProjectType",
+                        principalColumn: "ProjectTypeId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Project_User_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SkillUser",
                 columns: table => new
                 {
                     SkillId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -217,7 +202,7 @@ namespace Lagalt_Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -231,68 +216,34 @@ namespace Lagalt_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserReview",
-                columns: table => new
-                {
-                    UserReviewId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Review = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    OwnerId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserReview", x => x.UserReviewId);
-                    table.ForeignKey(
-                        name: "FK_UserReview_Owner_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Owner",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_UserReview_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Message",
                 columns: table => new
                 {
                     MessageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatorType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
                     MessageContent = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
-                    OwnerId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Message", x => x.MessageId);
                     table.ForeignKey(
-                        name: "FK_Message_Owner",
-                        column: x => x.CreatorId,
-                        principalTable: "Owner",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Message_Owner_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Owner",
-                        principalColumn: "Id");
+                        name: "FK_Message_Message_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Message",
+                        principalColumn: "MessageId");
                     table.ForeignKey(
                         name: "FK_Message_Project_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Project",
                         principalColumn: "ProjectId");
                     table.ForeignKey(
-                        name: "FK_Message_User",
+                        name: "FK_Message_User_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -342,7 +293,7 @@ namespace Lagalt_Backend.Migrations
                     ProjectRequestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -391,7 +342,8 @@ namespace Lagalt_Backend.Migrations
                 columns: table => new
                 {
                     ProjectId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -454,62 +406,10 @@ namespace Lagalt_Backend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Comment",
-                columns: table => new
-                {
-                    CommentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CommentText = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreatorType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: true),
-                    MessageId = table.Column<int>(type: "int", nullable: true),
-                    OwnerId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comment", x => x.CommentId);
-                    table.ForeignKey(
-                        name: "FK_Comment_Message_MessageId",
-                        column: x => x.MessageId,
-                        principalTable: "Message",
-                        principalColumn: "MessageId",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Comment_Owner",
-                        column: x => x.CreatorId,
-                        principalTable: "Owner",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comment_Owner_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Owner",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Comment_User",
-                        column: x => x.CreatorId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comment_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId");
-                });
-
             migrationBuilder.InsertData(
                 table: "MilestoneStatus",
                 columns: new[] { "MilestoneStatusId", "MilestoneStatusName" },
                 values: new object[] { 1, "Completed" });
-
-            migrationBuilder.InsertData(
-                table: "Owner",
-                columns: new[] { "Id", "Password", "Username" },
-                values: new object[] { 1, "BestBoss123", "BestBoss" });
 
             migrationBuilder.InsertData(
                 table: "PortfolioProject",
@@ -550,8 +450,8 @@ namespace Lagalt_Backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "User",
-                columns: new[] { "UserId", "Description", "Education", "Password", "UserName" },
-                values: new object[] { 1, "I love coding", "Coding Academy", "Qwerty12345", "UserNr1" });
+                columns: new[] { "UserId", "Description", "Education", "Role", "UserName" },
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), "I love coding", "Coding Academy", "User", "UserNr1" });
 
             migrationBuilder.InsertData(
                 table: "Milestone",
@@ -561,49 +461,40 @@ namespace Lagalt_Backend.Migrations
             migrationBuilder.InsertData(
                 table: "PortfolioProjectUser",
                 columns: new[] { "PortfolioProjectId", "UserId" },
-                values: new object[] { 1, 1 });
+                values: new object[] { 1, new Guid("00000000-0000-0000-0000-000000000001") });
 
             migrationBuilder.InsertData(
                 table: "Project",
                 columns: new[] { "ProjectId", "Description", "ImageUrl", "Name", "OwnerId", "ProjectStatusId", "ProjectTypeId" },
                 values: new object[,]
                 {
-                    { 1, "Hacking someone important", "www.example.no", "Happy Hacking", 1, null, 10 },
-                    { 2, "Make a cool movie", "www.example.no", "Movie Maker", 1, null, 4 }
+                    { 1, "Hacking someone important", "www.example.no", "Happy Hacking", new Guid("00000000-0000-0000-0000-000000000001"), null, 10 },
+                    { 2, "Make a cool movie", "www.example.no", "Movie Maker", new Guid("00000000-0000-0000-0000-000000000001"), null, 4 }
                 });
 
             migrationBuilder.InsertData(
                 table: "SkillUser",
                 columns: new[] { "SkillId", "UserId" },
-                values: new object[] { 1, 1 });
+                values: new object[] { 1, new Guid("00000000-0000-0000-0000-000000000001") });
 
             migrationBuilder.InsertData(
                 table: "Update",
                 columns: new[] { "UpdateId", "Description", "Timestamp", "UserId" },
-                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 12, 10, 23, 22, 632, DateTimeKind.Local).AddTicks(2384), 1 });
-
-            migrationBuilder.InsertData(
-                table: "UserReview",
-                columns: new[] { "UserReviewId", "OwnerId", "Review", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 1, "Very good", 1 },
-                    { 2, 1, "Did a very good job", 1 }
-                });
+                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 13, 14, 17, 1, 938, DateTimeKind.Local).AddTicks(8568), new Guid("00000000-0000-0000-0000-000000000001") });
 
             migrationBuilder.InsertData(
                 table: "Message",
-                columns: new[] { "MessageId", "CreatorId", "CreatorType", "MessageContent", "OwnerId", "ProjectId", "Subject", "Timestamp", "UserId" },
+                columns: new[] { "MessageId", "CreatorId", "MessageContent", "ParentId", "ProjectId", "Subject", "Timestamp", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 1, "User", "Hi, I need a link", null, 1, "Need link", new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9579), null },
-                    { 2, 1, "Owner", "Can someone explain how...", null, 1, "How to do...", new DateTime(2023, 10, 12, 10, 23, 22, 638, DateTimeKind.Local).AddTicks(9600), null }
+                    { 1, new Guid("00000000-0000-0000-0000-000000000001"), "Hi, I need a link", null, 1, "Need link", new DateTime(2023, 10, 13, 14, 17, 1, 945, DateTimeKind.Local).AddTicks(4009), null },
+                    { 2, new Guid("00000000-0000-0000-0000-000000000001"), "Can someone explain how...", null, 1, "How to do...", new DateTime(2023, 10, 13, 14, 17, 1, 945, DateTimeKind.Local).AddTicks(4040), null }
                 });
 
             migrationBuilder.InsertData(
                 table: "ProjectRequest",
                 columns: new[] { "ProjectRequestId", "ProjectId", "RequestDate", "UserId" },
-                values: new object[] { 1, 2, new DateTime(2023, 10, 12, 10, 23, 22, 635, DateTimeKind.Local).AddTicks(4083), 1 });
+                values: new object[] { 1, 2, new DateTime(2023, 10, 13, 14, 17, 1, 943, DateTimeKind.Local).AddTicks(5402), new Guid("00000000-0000-0000-0000-000000000001") });
 
             migrationBuilder.InsertData(
                 table: "ProjectUpdate",
@@ -612,42 +503,17 @@ namespace Lagalt_Backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "ProjectUser",
-                columns: new[] { "ProjectId", "UserId" },
-                values: new object[] { 1, 1 });
+                columns: new[] { "ProjectId", "UserId", "Role" },
+                values: new object[,]
+                {
+                    { 1, new Guid("00000000-0000-0000-0000-000000000001"), "Owner" },
+                    { 2, new Guid("00000000-0000-0000-0000-000000000001"), "User" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Requirement",
                 columns: new[] { "RequirementId", "ProjectId", "RequirementText" },
                 values: new object[] { 1, 1, "Experience with hacking" });
-
-            migrationBuilder.InsertData(
-                table: "Comment",
-                columns: new[] { "CommentId", "CommentText", "CreatorId", "CreatorType", "MessageId", "OwnerId", "Timestamp", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "I can help!", 1, "User", 1, null, new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5161), null },
-                    { 2, "This is cool", 1, "Owner", 2, null, new DateTime(2023, 10, 12, 10, 23, 22, 642, DateTimeKind.Local).AddTicks(5182), null }
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comment_CreatorId",
-                table: "Comment",
-                column: "CreatorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comment_MessageId",
-                table: "Comment",
-                column: "MessageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comment_OwnerId",
-                table: "Comment",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comment_UserId",
-                table: "Comment",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_CreatorId",
@@ -655,9 +521,9 @@ namespace Lagalt_Backend.Migrations
                 column: "CreatorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_OwnerId",
+                name: "IX_Message_ParentId",
                 table: "Message",
-                column: "OwnerId");
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_ProjectId",
@@ -738,23 +604,13 @@ namespace Lagalt_Backend.Migrations
                 name: "IX_Update_UserId",
                 table: "Update",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserReview_OwnerId",
-                table: "UserReview",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserReview_UserId",
-                table: "UserReview",
-                column: "UserId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comment");
+                name: "Message");
 
             migrationBuilder.DropTable(
                 name: "Milestone");
@@ -781,12 +637,6 @@ namespace Lagalt_Backend.Migrations
                 name: "SkillUser");
 
             migrationBuilder.DropTable(
-                name: "UserReview");
-
-            migrationBuilder.DropTable(
-                name: "Message");
-
-            migrationBuilder.DropTable(
                 name: "MilestoneStatus");
 
             migrationBuilder.DropTable(
@@ -799,22 +649,19 @@ namespace Lagalt_Backend.Migrations
                 name: "Update");
 
             migrationBuilder.DropTable(
-                name: "Skill");
-
-            migrationBuilder.DropTable(
                 name: "Project");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
-                name: "Owner");
+                name: "Skill");
 
             migrationBuilder.DropTable(
                 name: "ProjectStatus");
 
             migrationBuilder.DropTable(
                 name: "ProjectType");
+
+            migrationBuilder.DropTable(
+                name: "User");
         }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Lagalt_Backend.Services.Messages;
 using Lagalt_Backend.Data.Dtos.Messages;
-using Lagalt_Backend.Data.Dtos.Comments;
 using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Exceptions;
 using System.Collections.Generic;

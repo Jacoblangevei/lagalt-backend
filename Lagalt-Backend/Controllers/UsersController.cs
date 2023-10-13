@@ -54,7 +54,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id">The ID of the user.</param>
         /// <returns>The user DTO if found.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> GetUser(int id)
+        public async Task<ActionResult<UserDTO>> GetUser(Guid id)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="userPutDTO"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserDTO>> UpdateUser(int id, [FromBody] UserPutDTO userPutDTO)
+        public async Task<ActionResult<UserDTO>> UpdateUser(Guid id, [FromBody] UserPutDTO userPutDTO)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id">The ID of the user.</param>
         /// <returns>The user's profile DTO.</returns>
         [HttpGet("{id}/profile")]
-        public async Task<ActionResult<UserProfileDTO>> GetUserProfile(int id)
+        public async Task<ActionResult<UserProfileDTO>> GetUserProfile(Guid id)
         {
             var user = await _userService.GetByIdAsync(id);
 
@@ -137,7 +137,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}/skills")]
-        public async Task<ActionResult<IEnumerable<SkillDTO>>> GetSkills(int id)
+        public async Task<ActionResult<IEnumerable<SkillDTO>>> GetSkills(Guid id)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="skillId"></param>
         /// <returns></returns>
         [HttpGet("{id}/skills/{skillId}")]
-        public async Task<ActionResult<SkillDTO>> GetSkillById(int id, int skillId)
+        public async Task<ActionResult<SkillDTO>> GetSkillById(Guid id, int skillId)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="skillPostDto"></param>
         /// <returns></returns>
         [HttpPost("{id}/skills")]
-        public async Task<IActionResult> AddNewSkillToUser(int id, [FromBody] SkillPostDTO skillPostDto)
+        public async Task<IActionResult> AddNewSkillToUser(Guid id, [FromBody] SkillPostDTO skillPostDto)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="skillId"></param>
         /// <returns></returns>
         [HttpDelete("{id}/skills/{skillId}")]
-        public async Task<ActionResult> RemoveSkillFromUser(int id, int skillId)
+        public async Task<ActionResult> RemoveSkillFromUser(Guid id, int skillId)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}/portfolioprojects")]
-        public async Task<ActionResult<IEnumerable<PortfolioProjectDTO>>> GetPortfolioProjects(int id)
+        public async Task<ActionResult<IEnumerable<PortfolioProjectDTO>>> GetPortfolioProjects(Guid id)
         {
             try
             {
@@ -238,7 +238,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="portfolioProjectId"></param>
         /// <returns></returns>
         [HttpGet("{id}/portfolioprojects/{portfolioProjectId}")]
-        public async Task<ActionResult<PortfolioProjectDTO>> GetPortfolioProjectById(int id, int portfolioProjectId)
+        public async Task<ActionResult<PortfolioProjectDTO>> GetPortfolioProjectById(Guid id, int portfolioProjectId)
         {
             try
             {
@@ -258,7 +258,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="projectDTO"></param>
         /// <returns></returns>
         [HttpPost("{id}/portfolioprojects")]
-        public async Task<IActionResult> AddPortfolioProjectToUser(int id, [FromBody] PortfolioProjectPostDTO projectDTO)
+        public async Task<IActionResult> AddPortfolioProjectToUser(Guid id, [FromBody] PortfolioProjectPostDTO projectDTO)
         {
             try
             {
@@ -282,7 +282,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="portfolioProjectId"></param>
         /// <returns></returns>
         [HttpDelete("{id}/portfolioprojects/{portfolioProjectId}")]
-        public async Task<ActionResult> RemovePortfolioProjectFromUser(int id, int portfolioProjectId)
+        public async Task<ActionResult> RemovePortfolioProjectFromUser(Guid id, int portfolioProjectId)
         {
             try
             {

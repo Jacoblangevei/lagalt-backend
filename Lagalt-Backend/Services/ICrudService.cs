@@ -1,5 +1,4 @@
 ﻿using Lagalt_Backend.Data.Exceptions;
-using Lagalt_Backend.Data.Models.OwnerModels;
 
 namespace Lagalt_Backend.Services
 {

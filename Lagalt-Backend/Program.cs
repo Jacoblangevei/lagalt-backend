@@ -152,7 +152,7 @@ builder.Services.AddCors(options =>
         builder.WithOrigins("https://lagalt.azurewebsites.net")
                .AllowAnyMethod()
                .AllowAnyHeader()
-               .AllowCredentials();        
+               .AllowCredentials();
     });
 });
 

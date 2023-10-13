@@ -4,7 +4,7 @@
     {
         public int PortfolioProjectId { get; set; }
         public PortfolioProject? PortfolioProjects { get; set; }
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public User? Users { get; set; }
     }
 }

@@ -2,10 +2,8 @@
 using Lagalt_Backend.Data.Models;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.MessageModels;
-using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Dtos.Projects;
 using Microsoft.Extensions.Options;
-using Lagalt_Backend.Data.Dtos.Owners;
 
 namespace Lagalt_Backend.Mappers
 {

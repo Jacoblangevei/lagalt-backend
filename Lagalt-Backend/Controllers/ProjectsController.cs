@@ -8,7 +8,6 @@ using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Exceptions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lagalt_Backend.Data.Dtos.Comments;
 
 namespace Lagalt_Backend.Controllers
 {
