@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Lagalt_Backend.Data.Models;
 using Lagalt_Backend.Data.Models.ProjectModels;
+using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Dtos.Projects;
 using Microsoft.Extensions.Options;
@@ -27,6 +28,8 @@ namespace Lagalt_Backend.Mappers
                     pdto => pdto.ProjectRequests, options => options.MapFrom(p => p.ProjectRequests.Select(pr => pr.ProjectRequestId).ToArray()))
                 .ForMember(
                     pdto => pdto.Requirements, options => options.MapFrom(p => p.Requirements.Select(r => r.RequirementId).ToArray()))
+                .ForMember(
+                    pdto => pdto.Messages, options => options.MapFrom(p => p.Messages.Select(msg => msg.MessageId).ToArray()))
                 .ForMember(
                     pdto => pdto.OwnerId, options => options.MapFrom(p => p.OwnerId))
                 .ForMember(

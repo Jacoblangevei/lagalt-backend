@@ -11,10 +11,9 @@ namespace Lagalt_Backend.Data.Dtos.Comments
         public string CommentText { get; set; }
         public string CreatorType { get; set; }
         public DateTime Timestamp { get; set; }
-        public int? CreatorId { get; set; }
-        public User? User { get; set; }
-        public Owner? Owner { get; set; }
-        public int? MessageId { get; set; }
-        public Message? Message { get; set; }
+        public int CreatorId { get; set; }
+        public User User { get; set; }
+        public Owner Owner { get; set; }
+        public int MessageId { get; set; }
     }
 }

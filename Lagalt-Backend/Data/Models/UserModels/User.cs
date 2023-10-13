@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lagalt_Backend.Data.Models.MessageModels;
-using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.ProjectModels;
 
 namespace Lagalt_Backend.Data.Models.UserModels
@@ -10,13 +9,13 @@ namespace Lagalt_Backend.Data.Models.UserModels
     public class User
     {
         [Key]
-        public int UserId { get; set; }
+        public int UserId { get; set; } // GUID
         [Required]
         [StringLength(50)]
         public string UserName { get; set; } = string.Empty;
         [Required]
         [StringLength(50)]
-        public string Password { get; set; }
+        public string Password { get; set; } // remove
         [StringLength(255)]
         public string Role { get; set; }
         public string? Description { get; set; }

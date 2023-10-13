@@ -1,20 +1,25 @@
 using Lagalt_Backend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Lagalt_Backend.Services.Projects;
 using Lagalt_Backend.Services.Messages;
 using Lagalt_Backend.Services.Users;
 using Lagalt_Backend.Services.Owners;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text.Json.Serialization;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpClient();
 
@@ -29,15 +34,17 @@ builder.Services.AddSwaggerGen(options =>
 //                              Versjon 1
 
 // Add Authentication 
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            ValidateIssuer = true,
+            ValidateAudience = false,
             IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
             {
                 using var client = new HttpClient();
-                var keyuri = builder.Configuration["TokenSecrets:KeyURI"];
+                var keyuri = builder.Configuration["TokenSecrets:KeyURI"]; // .../openid/certs from sample/notes
                 var response = client.GetAsync(keyuri).Result;
                 var responseString = response.Content.ReadAsStringAsync().Result;
                 var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responseString);
@@ -45,11 +52,12 @@ builder.Services.AddSwaggerGen(options =>
             },
             ValidIssuers = new List<string>
             {
-                builder.Configuration["TokenSecrets:IssuerURI"]
-            },
-            ValidAudience = "account",
+                builder.Configuration["TokenSecrets:IssuerURI"] // url to kc realm
+                //https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-7.0&tabs=windows
+                //https://gitlab.com/NicholasLennox/securityaugust2023/-/blob/main/SecurityClass/Program.cs?ref_type=heads
+            }
         };
-    });*/
+    });
 
 //                              Versjon 2
 
@@ -87,6 +95,43 @@ builder.Services.AddSwaggerGen(options =>
 //            ValidAudience = "account",
 //        };
 //    });
+
+//Version 3
+//Keycloak
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            IssuerSigningKeyResolver = (token, securitytoken, kid, parameters) =>
+//            {
+//                // uses ihttpclientfactory to get an instance of httpclient
+//                var clientfactory = builder.Services.BuildServiceProvider().GetRequiredService<IHttpClientFactory>();
+//                var client = clientfactory.CreateClient();
+//                var keyuri = builder.Configuration["tokensecrets:keyuri"]; // .../openid/certs from sample/notes
+
+//                try
+//                {
+//                    var response = await client.GetAsync(keyuri);
+//                    response.EnsureSuccessStatusCode(); // throws an exception if the response is not successful.
+//                    var responsestring = await response.Content.ReadAsStringAsync();
+//                    var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responsestring);
+//                    return keys.Keys;
+//                }
+//                catch (HttpRequestException e)
+//                {
+//                    // log and handle exception
+//                    throw new SecurityTokenException("cannot retrieve keys", e);
+//                }
+//            },
+//            ValidIssuers = new List<string>
+//            {
+//                builder.Configuration["tokensecrets:issueruri"] // url to kc realm
+//            },
+//            ValidAudience = "account",
+//        };
+//    });
+
 
 
 builder.Services.AddDbContext<LagaltDbContext>(options =>

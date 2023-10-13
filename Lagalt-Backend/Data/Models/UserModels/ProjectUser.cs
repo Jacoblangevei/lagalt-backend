@@ -8,6 +8,7 @@ namespace Lagalt_Backend.Data.Models.UserModels
         public Project? Projects { get; set; }
         public int UserId { get; set; }
         public User? Users { get; set; }
+        public string Role { get; set; }
 
     }
 }

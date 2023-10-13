@@ -108,7 +108,7 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
-        //Might not working properly anymore
+        //Might not work properly anymore
         /// <summary>
         /// Gets the profile of a specific user.
         /// </summary>

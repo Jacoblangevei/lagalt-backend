@@ -14,6 +14,8 @@ namespace Lagalt_Backend.Data.Models.MessageModels
         [Required]
         [StringLength(100)]
         public string Subject { get; set; }
+        public int? ParentId { get; set; }
+        public Message? Parent { get; set; }    
         public string CreatorType { get; set; }
         [StringLength(255)]
         public string MessageContent { get; set; }
@@ -26,6 +28,6 @@ namespace Lagalt_Backend.Data.Models.MessageModels
         [ForeignKey("ProjectId")]
         public int? ProjectId { get; set;}
         public Project? Project { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Message> Replies  { get; set; }
     }
 }

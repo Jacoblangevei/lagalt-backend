@@ -8,6 +8,7 @@ using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Exceptions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lagalt_Backend.Data.Dtos.Comments;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -146,5 +147,24 @@ namespace Lagalt_Backend.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        //Get message from project by id
+
+        [HttpGet("{id}/messages/{messageId}")]
+        public async Task<ActionResult<MessageDTO>> GetMessageFromProjectById(int id, int messageId)
+        {
+            try
+            {
+                var message = await _projService.GetMessageFromProjectByIdAsync(id, messageId);
+                return Ok(_mapper.Map<MessageDTO>(message));
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        //Post message to project
+
     }
 }

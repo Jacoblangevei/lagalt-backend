@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Models.OwnerModels;
 using Lagalt_Backend.Data.Models.UserModels;
 
@@ -36,6 +37,7 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         public ICollection<Tag> Tags { get; set; }
         public ICollection<ProjectRequest> ProjectRequests { get; set; }
         public ICollection<Requirement> Requirements { get; set; }
+        public ICollection<Message> Messages { get; set; }
 
     }
 }

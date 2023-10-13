@@ -12,6 +12,9 @@ using Lagalt_Backend.Data.Dtos.Skills;
 
 namespace Lagalt_Backend.Controllers
 {
+    //messages remade
+
+
     /// <summary>
     /// Handles API endpoints for operations related to Messages.
     /// </summary>
@@ -35,6 +38,14 @@ namespace Lagalt_Backend.Controllers
             _mapper = mapper;
         }
 
+        //Get all messages
+
+        //Get message by id
+
+        //Create message
+
+
+
         /// <summary>
         /// Gets all comments in a specific message.
         /// </summary>
@@ -54,6 +65,12 @@ namespace Lagalt_Backend.Controllers
                 return NotFound(ex.Message);
             }
         }
+        /// <summary>
+        /// Gets a spesific comment from a message
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="commentId"></param>
+        /// <returns></returns>
 
         [HttpGet("{id}/comments/{commentId}")]
         public async Task<ActionResult<CommentDTO>> GetCommentInMessageById(int id, int commentId)
@@ -68,18 +85,23 @@ namespace Lagalt_Backend.Controllers
                 return NotFound(ex.Message);
             }
         }
-
+        /// <summary>
+        /// Creats a new comment to message
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="commentDto"></param>
+        /// <returns></returns>
         [HttpPost("{id}/comments")]
-        public async Task<ActionResult<CommentDTO>> AddCommentToMessage(int messageId, [FromBody] CommentPostDTO commentDto)
+        public async Task<ActionResult<CommentDTO>> AddCommentToMessage(int id, [FromBody] CommentPostDTO commentDto)
         {
             try
             {
                 var creatorId = 1; // Needs to be replaced when keycloak is set up 
-                var creatorRole = "user"; // Needs to be replaced when keycloak is set up
+                var creatorRole = "User"; // Needs to be replaced when keycloak is set up
 
-                Comment newComment = await _msgService.AddNewCommentToMessageAsync(messageId, commentDto.CommentText, creatorId, creatorRole);
+                Comment newComment = await _msgService.AddNewCommentToMessageAsync(id, commentDto.CommentText, creatorId, creatorRole);
 
-                return CreatedAtAction("GetCommentInMessageById", new { id = messageId, commentId = newComment.CommentId }, _mapper.Map<CommentDTO>(newComment));
+                return CreatedAtAction("GetCommentInMessageById", new { id = id, commentId = newComment.CommentId }, _mapper.Map<CommentDTO>(newComment));
             }
             catch (EntityNotFoundException ex)
             {
