@@ -17,7 +17,6 @@ namespace Lagalt_Backend.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<Owner> Owners { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<PortfolioProject> PortfolioProjects { get; set; }
         public DbSet<Update> Updates { get; set; }
@@ -29,7 +28,6 @@ namespace Lagalt_Backend.Data
         public DbSet<UserReview> UserReviews { get; set; }
         public DbSet<ProjectRequest> ProjectRequests { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<Comment> Comments { get; set; }
         public DbSet<Requirement> Requirements { get; set; }
 
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -42,7 +40,7 @@ namespace Lagalt_Backend.Data
         {
             //User
             modelBuilder.Entity<User>().HasData(
-                new User { UserId = 1, UserName = "UserNr1", Password = "Qwerty12345", Description = "I love coding", Education = "Coding Academy", Role = "User"}
+                new User { UserId = 1, UserName = "UserNr1", Description = "I love coding", Education = "Coding Academy", Role = "User"}
                 );
 
             //Projects
@@ -54,12 +52,6 @@ namespace Lagalt_Backend.Data
                 new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = 1, ImageUrl = "www.example.no", ProjectTypeId = 10 },
                 new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = 1, ImageUrl= "www.example.no", ProjectTypeId = 4 }
                 );
-
-            //Owner
-            modelBuilder.Entity<Owner>().HasData(
-                new Owner { Id = 1, Username = "BestBoss", Password = "BestBoss123", Role = "Owner" }
-                );
-
             
             //ProjectUser
             modelBuilder.Entity<ProjectUser>().HasKey(pu => new { pu.ProjectId, pu.UserId });
@@ -74,7 +66,8 @@ namespace Lagalt_Backend.Data
                 );
 
             modelBuilder.Entity<ProjectUser>().HasData(
-                new ProjectUser() { ProjectId = 1, UserId = 1 }
+                new ProjectUser() { ProjectId = 1, UserId = 1, Role = "Owner" },
+                new ProjectUser() { ProjectId = 2, UserId = 1, Role = "User"}
                 );
 
             //Skill
@@ -181,15 +174,6 @@ namespace Lagalt_Backend.Data
                 new ProjectType { ProjectTypeId = 10, ProjectTypeName = "Hacking" }
                 );
 
-            //UserReview
-            modelBuilder.Entity<UserReview>().HasOne(ur => ur.User).WithMany(u => u.UserReviews).HasForeignKey(ur => ur.UserId).OnDelete(DeleteBehavior.SetNull);
-            modelBuilder.Entity<UserReview>().HasOne(ur => ur.Owner).WithMany(o => o.UserReviews).HasForeignKey(ur => ur.OwnerId).OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<UserReview>().HasData(
-                new UserReview { UserReviewId = 1, UserId = 1, OwnerId = 1, Review = "Very good"},
-                new UserReview { UserReviewId = 2, UserId = 1, OwnerId = 1, Review = "Did a very good job" }
-                );
-
             //ProjectRequest
             modelBuilder.Entity<ProjectRequest>().HasOne(pr => pr.User).WithMany(u => u.ProjectRequests).HasForeignKey(pr => pr.UserId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<ProjectRequest>().HasOne(pr => pr.Project).WithMany(p => p.ProjectRequests).HasForeignKey(pr => pr.ProjectId).OnDelete(DeleteBehavior.SetNull);
@@ -218,30 +202,6 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<Message>().HasData(
                 new Message { MessageId = 1, CreatorId = 1, CreatorType = "User", Subject = "Need link", MessageContent = "Hi, I need a link", Timestamp = DateTime.Now, ProjectId = 1},
                 new Message { MessageId = 2, CreatorId = 1, CreatorType = "Owner", Subject = "How to do...", MessageContent = "Can someone explain how...", Timestamp = DateTime.Now, ProjectId = 1}
-                );
-
-            //Comments
-            modelBuilder.Entity<Comment>().HasOne(c => c.Message).WithMany(m => m.Comments).HasForeignKey(c => c.MessageId).OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Comment>()
-                .HasOne(c => c.User)
-                .WithMany()
-                .HasForeignKey(c => c.CreatorId)
-                .HasConstraintName("FK_Comment_User")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Comment>()
-                .HasOne(c => c.Owner)
-                .WithMany()
-                .HasForeignKey(c => c.CreatorId)
-                .HasConstraintName("FK_Comment_Owner")
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Comment>().HasData(
-                new Comment { CommentId = 1, CreatorId = 1, CreatorType = "User", CommentText = "I can help!", Timestamp = DateTime.Now, MessageId = 1},
-                new Comment { CommentId = 2, CreatorId = 1, CreatorType = "Owner", CommentText = "This is cool", Timestamp = DateTime.Now, MessageId = 2}
                 );
 
             //Project requirements

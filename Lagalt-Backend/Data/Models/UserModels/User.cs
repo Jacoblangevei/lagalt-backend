@@ -13,9 +13,7 @@ namespace Lagalt_Backend.Data.Models.UserModels
         [Required]
         [StringLength(50)]
         public string UserName { get; set; } = string.Empty;
-        [Required]
-        [StringLength(50)]
-        public string Password { get; set; } // remove
+
         [StringLength(255)]
         public string Role { get; set; }
         public string? Description { get; set; }
@@ -26,7 +24,7 @@ namespace Lagalt_Backend.Data.Models.UserModels
         public ICollection<Skill> Skills { get; set; }
         public ICollection<PortfolioProject> PortfolioProjects { get; set; }
         public ICollection<Update> Updates { get; set; }
-        public ICollection<UserReview> UserReviews { get; set; }
+        //public ICollection<UserReview> UserReviews { get; set; }
         public ICollection<ProjectRequest> ProjectRequests { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Message> Messages { get; set; }

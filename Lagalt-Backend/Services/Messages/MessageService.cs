@@ -51,65 +51,6 @@ namespace Lagalt_Backend.Services.Messages
             await _context.SaveChangesAsync();
         }
 
-        //Comments
-        public async Task<ICollection<Comment>> GetAllCommentsInMessageAsync(int id)
-        {
-            if (!await MessageExistsAsync(id))
-                throw new EntityNotFoundException(nameof(Message), id);
-
-            return await _context.Comments
-                .Where(c => c.MessageId == id)
-                .ToListAsync();
-        }
-
-        public async Task<Comment> GetCommentInMessageByIdAsync(int messageId, int commentId)
-        {
-            var message = await _context.Messages
-                .Include(m => m.Comments)
-                .FirstOrDefaultAsync(m => m.MessageId == messageId);
-
-            if (message == null)
-            {
-                throw new EntityNotFoundException(nameof(Message), messageId);
-            }
-
-            var comment = message.Comments.FirstOrDefault(c => c.CommentId == commentId);
-
-            if (comment == null)
-            {
-                throw new EntityNotFoundException(nameof(Comment), commentId);
-            }
-
-            return comment;
-        }
-
-        public async Task<Comment> AddNewCommentToMessageAsync(int messageId, string commentText, int creatorId, string creatorRole)
-        {
-            var message = await _context.Messages
-                .Include(m => m.Comments)
-                .FirstOrDefaultAsync(m => m.MessageId == messageId);
-
-            if (message == null)
-            {
-                throw new EntityNotFoundException(nameof(Message), messageId);
-            }
-
-            var newComment = new Comment
-            {
-                CommentText = commentText,
-                Timestamp = DateTime.Now,
-                CreatorType = creatorRole,
-                CreatorId = creatorId
-            };
-            _context.Comments.Add(newComment);
-            await _context.SaveChangesAsync();
-            message.Comments.Add(newComment);
-
-            await _context.SaveChangesAsync();
-
-            return newComment;
-        }
-
         //Helping methods
         private async Task<bool> MessageExistsAsync(int id)
         {

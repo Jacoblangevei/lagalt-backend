@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Lagalt_Backend.Services.Projects;
 using Lagalt_Backend.Services.Messages;
 using Lagalt_Backend.Services.Users;
-using Lagalt_Backend.Services.Owners;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -44,7 +43,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
             {
                 using var client = new HttpClient();
-                var keyuri = builder.Configuration["TokenSecrets:KeyURI"]; // .../openid/certs from sample/notes
+                var keyuri = builder.Configuration["https://lemur-10.cloud-iam.com/auth/realms/lagaltfrontend/protocol/openid-connect/certs"]; // .../openid/certs from sample/notes
                 var response = client.GetAsync(keyuri).Result;
                 var responseString = response.Content.ReadAsStringAsync().Result;
                 var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responseString);
@@ -52,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             },
             ValidIssuers = new List<string>
             {
-                builder.Configuration["TokenSecrets:IssuerURI"] // url to kc realm
+                builder.Configuration["https://lemur-10.cloud-iam.com/auth/realms/lagaltfrontend/"] // url to kc realm
                 //https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-7.0&tabs=windows
                 //https://gitlab.com/NicholasLennox/securityaugust2023/-/blob/main/SecurityClass/Program.cs?ref_type=heads
             }
@@ -141,7 +140,6 @@ builder.Services.AddDbContext<LagaltDbContext>(options =>
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IProjectTypeService, ProjectTypeService>();
 // Add automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
