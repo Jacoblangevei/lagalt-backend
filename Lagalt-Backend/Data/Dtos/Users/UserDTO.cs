@@ -7,7 +7,7 @@ namespace Lagalt_Backend.Data.Dtos.Users
 {
     public class UserDTO
     {
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; }
         public string? Description { get; set; }
@@ -18,7 +18,6 @@ namespace Lagalt_Backend.Data.Dtos.Users
         public int[] Updates { get; set; }
         public int[] UserReviews { get; set; }
         public int[] ProjectRequests { get; set; }
-        public int[] Comments { get; set; }
         public int[] Messages { get; set; }
     }
 }

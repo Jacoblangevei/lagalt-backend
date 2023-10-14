@@ -5,6 +5,7 @@ using Lagalt_Backend.Data.Exceptions;
 using Lagalt_Backend.Services.Projects;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,6 +13,7 @@ namespace Lagalt_Backend.Controllers
 {
     [Route("api/v1/projecttypes")]
     [ApiController]
+    [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ProjectTypesController : ControllerBase
@@ -30,6 +32,7 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ProjectTypeDTO>>> GetProjectTypes()
         {
             return Ok(_mapper
@@ -43,6 +46,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ProjectTypeDTO>> GetProjectType(int id)
         {
             try
@@ -65,6 +69,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}/projects")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects(int id)
         {
             try

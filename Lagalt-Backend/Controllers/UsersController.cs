@@ -10,6 +10,12 @@ using Lagalt_Backend.Data.Exceptions;
 using Azure.Core;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using System;
+using Lagalt_Backend.Data;
+using Lagalt_Backend.Data.Dtos.Projects;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -18,54 +24,110 @@ namespace Lagalt_Backend.Controllers
     /// </summary>
     [Route("api/v1/users")]
     [ApiController]
+    [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly LagaltDbContext _context;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userService">The service object for accessing user operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public UsersController(IUserService userService, IMapper mapper)
+        public UsersController(IUserService userService, IMapper mapper, LagaltDbContext context)
         {
             _userService = userService;
             _mapper = mapper;
+            _context = context;
         }
 
+        //New, not done, using keycloak
         /// <summary>
-        /// Gets all users.
+        /// Gets all users from the database
         /// </summary>
-        /// <returns>A list of users.</returns>
+        /// <returns>A list of the DTOs if the users if found </returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
-            return Ok(_mapper
-                .Map<IEnumerable<UserDTO>>(
-                    await _userService.GetAllAsync()));
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var users = await _context.Users.ToListAsync();
+
+            var userDTOs = users.Select(user => _mapper.Map<UserDTO>(user)).ToList();
+            return userDTOs;
         }
 
+        //New, not done
         /// <summary>
         /// Gets a user by ID.
         /// </summary>
         /// <param name="id">The ID of the user.</param>
         /// <returns>The user DTO if found.</returns>
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<UserDTO>> GetUser(Guid id)
         {
-            try
+            if (_context.Users == null)
             {
-                return Ok(_mapper
-                    .Map<UserDTO>(
-                        await _userService.GetByIdAsync(id)));
+                return NotFound();
             }
-            catch (EntityNotFoundException ex)
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
             {
-                return NotFound(ex.Message);
+                return NotFound();
             }
+
+            var userDTO = _mapper.Map<UserDTO>(user);
+            return userDTO;
+        }
+
+        //New,not done
+        [HttpGet("exists")]
+        [Authorize]
+        public ActionResult<User> GetIfExists()
+        {
+            string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = _context.Users.Where(x => x.UserId.ToString() == subject).FirstOrDefault();
+            return user is null ? NotFound() : user;
+        }
+
+        //New,not done
+        [HttpPost("register")]
+        [Authorize]
+        public async Task<ActionResult<User>> AddToDb()
+        {
+            // Retrieve the user's ID from Keycloak claims.
+            string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string username = User.FindFirst(ClaimTypes.Name).Value;
+
+            // Check if the user already exists in your database.
+            var existingUser = await _context.Users.FindAsync(Guid.Parse(subject));
+            if (existingUser != null)
+            {
+                // User already exists, you can return an appropriate response.
+                return Conflict("User already registered.");
+            }
+
+            // If the user doesn't exist, create a new user and add it to the database.
+            User user = new User()
+            {
+                UserId = Guid.Parse(subject),
+                UserName = username
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Return the newly created user.
+            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
         }
 
         /// <summary>
@@ -73,60 +135,101 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="user">The user data to create.</param>
         /// <returns>A newly created user.</returns>
-        [HttpPost("user")]
-        public async Task<ActionResult<UserDTO>> PostUser(UserPostDTO user)
-        {
-            var newUser = await _userService.AddAsync(_mapper.Map<User>(user));
+        //[HttpPost("user")]
+        //public async Task<ActionResult<UserDTO>> PostUser(UserPostDTO user)
+        //{
+        //    var newUser = await _userService.AddAsync(_mapper.Map<User>(user));
 
-            return CreatedAtAction("GetUser",
-                new { id = newUser.UserId },
-                _mapper.Map<UserDTO>(newUser));
-        }
+        //    return CreatedAtAction("GetUser",
+        //        new { id = newUser.UserId },
+        //        _mapper.Map<UserDTO>(newUser));
+        //}
 
-        //Should users be able to change their usernames?
         /// <summary>
         /// Updating a users description and education
         /// </summary>
         /// <param name="id"></param>
         /// <param name="userPutDTO"></param>
         /// <returns></returns>
+        //[HttpPut("{id}")]
+        //public async Task<ActionResult<UserDTO>> UpdateUser(Guid id, [FromBody] UserPutDTO userPutDTO)
+        //{
+        //    try
+        //    {
+        //        var updatedUser = await _userService.UpdateAsync(id, userPutDTO);
+        //        return Ok(_mapper.Map<UserDTO>(updatedUser));
+        //    }
+        //    catch (EntityNotFoundException ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+
+        //new, not done
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserDTO>> UpdateUser(Guid id, [FromBody] UserPutDTO userPutDTO)
+        [Authorize]
+        public async Task<IActionResult> PutAppUser(Guid id, [FromBody] UserPutDTO userPutDTO)
         {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId != id.ToString())
+            {
+                return Forbid();
+            }
+
             try
             {
-                var updatedUser = await _userService.UpdateAsync(id, userPutDTO);
-                return Ok(_mapper.Map<UserDTO>(updatedUser));
+                // Load the user from the database and update the properties.
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.Description = userPutDTO.Description;
+                user.Education = userPutDTO.Education;
+
+                // Save the changes to the database.
+                await _context.SaveChangesAsync();
+
+                return Ok("User updated successfully");
             }
-            catch (EntityNotFoundException ex)
+            catch (DbUpdateConcurrencyException)
             {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
-        //Might not work properly anymore
-        /// <summary>
-        /// Gets the profile of a specific user.
-        /// </summary>
-        /// <param name="id">The ID of the user.</param>
-        /// <returns>The user's profile DTO.</returns>
-        [HttpGet("{id}/profile")]
-        public async Task<ActionResult<UserProfileDTO>> GetUserProfile(Guid id)
+        //New,not done
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult<UserDTO>> PostUser2(User user)
         {
-            var user = await _userService.GetByIdAsync(id);
-
-            if (user == null)
+            if (_context.Users == null)
             {
-                return NotFound();
+                return Problem("Entity set 'LagaltDbContext.Users'  is null.");
             }
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-            var userProfileDto = _mapper.Map<UserProfileDTO>(user);
+            return CreatedAtAction("GetUser2", new { id = user.UserId }, user);
+        }
 
-            return Ok(userProfileDto);
+
+        private bool UserExists(Guid id)
+        {
+            return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
 
         //Skill
@@ -137,6 +240,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}/skills")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<SkillDTO>>> GetSkills(Guid id)
         {
             try
@@ -157,6 +261,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="skillId"></param>
         /// <returns></returns>
         [HttpGet("{id}/skills/{skillId}")]
+        [AllowAnonymous]
         public async Task<ActionResult<SkillDTO>> GetSkillById(Guid id, int skillId)
         {
             try
@@ -177,8 +282,18 @@ namespace Lagalt_Backend.Controllers
         /// <param name="skillPostDto"></param>
         /// <returns></returns>
         [HttpPost("{id}/skills")]
+        [Authorize]
         public async Task<IActionResult> AddNewSkillToUser(Guid id, [FromBody] SkillPostDTO skillPostDto)
         {
+            // Retrieve the user's ID from the claim.
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Compare userId with id to ensure the user is working on their own data.
+            if (userId != id.ToString())
+            {
+                return Forbid(); // Return a 403 Forbidden status if access is denied.
+            }
+
             try
             {
                 await _userService.AddNewSkillToUserAsync(id, skillPostDto.SkillName);
@@ -197,8 +312,17 @@ namespace Lagalt_Backend.Controllers
         /// <param name="skillId"></param>
         /// <returns></returns>
         [HttpDelete("{id}/skills/{skillId}")]
+        [Authorize]
         public async Task<ActionResult> RemoveSkillFromUser(Guid id, int skillId)
         {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Compare userId with id to ensure the user is working on their own data.
+            if (userId != id.ToString())
+            {
+                return Forbid(); // Return a 403 Forbidden status if access is denied.
+            }
+
             try
             {
                 await _userService.RemoveSkillFromUserAsync(id, skillId);
@@ -258,8 +382,17 @@ namespace Lagalt_Backend.Controllers
         /// <param name="projectDTO"></param>
         /// <returns></returns>
         [HttpPost("{id}/portfolioprojects")]
+        [Authorize]
         public async Task<IActionResult> AddPortfolioProjectToUser(Guid id, [FromBody] PortfolioProjectPostDTO projectDTO)
         {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Compare userId with id to ensure the user is working on their own data.
+            if (userId != id.ToString())
+            {
+                return Forbid(); // Return a 403 Forbidden status if access is denied.
+            }
+
             try
             {
                 await _userService.AddNewPortfolioProjectToUserAsync(id, projectDTO.PortfolioProjectName, projectDTO.PortfolioProjectDescription, projectDTO.ImageUrl, projectDTO.StartDate, projectDTO.EndDate);
@@ -282,12 +415,52 @@ namespace Lagalt_Backend.Controllers
         /// <param name="portfolioProjectId"></param>
         /// <returns></returns>
         [HttpDelete("{id}/portfolioprojects/{portfolioProjectId}")]
+        [Authorize]
         public async Task<ActionResult> RemovePortfolioProjectFromUser(Guid id, int portfolioProjectId)
         {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Compare userId with id to ensure the user is working on their own data.
+            if (userId != id.ToString())
+            {
+                return Forbid(); // Return a 403 Forbidden status if access is denied.
+            }
+
             try
             {
                 await _userService.RemovePortfolioProjectFromUserAsync(id, portfolioProjectId);
                 return Ok("Portfolio project removed from user successfully.");
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        //Lagalt projects
+        [HttpGet("{id}/teammemberprojects")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetTeamMemberProjects(Guid id)
+        {
+            try
+            {
+                var teamMemberProjects = await _userService.GetUserTeamMemberProjectsAsync(id);
+                return Ok(_mapper.Map<IEnumerable<ProjectDTO>>(teamMemberProjects));
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}/ownerprojects")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOwnerProjects(Guid id)
+        {
+            try
+            {
+                var ownerProjects = await _userService.GetUserOwnerProjectsAsync(id);
+                return Ok(_mapper.Map<IEnumerable<ProjectDTO>>(ownerProjects));
             }
             catch (EntityNotFoundException ex)
             {

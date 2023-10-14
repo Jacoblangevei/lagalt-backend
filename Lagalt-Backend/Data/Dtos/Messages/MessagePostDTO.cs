@@ -9,5 +9,6 @@ namespace Lagalt_Backend.Data.Dtos.Messages
         public string Subject { get; set; }
         [StringLength(255)]
         public string MessageContent { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

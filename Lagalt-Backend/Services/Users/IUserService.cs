@@ -1,6 +1,7 @@
 ﻿using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Data.Dtos.Users;
 using System.Security.Cryptography;
+using Lagalt_Backend.Data.Models.ProjectModels;
 
 namespace Lagalt_Backend.Services.Users
 {
@@ -28,6 +29,11 @@ namespace Lagalt_Backend.Services.Users
         Task AddNewPortfolioProjectToUserAsync(Guid userId, string portfolioProjectName, string portfolioProjectDescription, string imageUrl, DateTime startDate, DateTime endDate);
 
         Task RemovePortfolioProjectFromUserAsync(Guid userId, int portfolioProjectId);
+
+        //Projects
+        Task<ICollection<Project>> GetUserTeamMemberProjectsAsync(Guid userId);
+
+        Task<ICollection<Project>> GetUserOwnerProjectsAsync(Guid userId);
 
         //Requests
 

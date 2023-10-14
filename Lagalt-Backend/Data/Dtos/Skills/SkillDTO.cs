@@ -7,6 +7,6 @@ namespace Lagalt_Backend.Data.Dtos.Skills
     {
         public int SkillId { get; set; }
         public string SkillName { get; set; }
-        public int[] Users { get; set; }
+        public Guid[] Users { get; set; }
     }
 }

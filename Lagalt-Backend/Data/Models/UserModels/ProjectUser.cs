@@ -9,6 +9,5 @@ namespace Lagalt_Backend.Data.Models.UserModels
         public Guid UserId { get; set; }
         public User? Users { get; set; }
         public string Role { get; set; }
-
     }
 }

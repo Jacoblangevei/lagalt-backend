@@ -11,6 +11,6 @@ namespace Lagalt_Backend.Data.Dtos.PortfolioProjects
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string ImageUrl { get; set; }
-        public int[] Users { get; set; }
+        public Guid[] Users { get; set; }
     }
 }

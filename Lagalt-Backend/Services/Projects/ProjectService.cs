@@ -95,8 +95,33 @@ namespace Lagalt_Backend.Services.Projects
             return message;
         }
 
-        //public async Task<Message> AddNewMessageToProjectAsync(int id, string messageSubject, string messageContent, string messageImage, int creatorId, string creatorRole)
-        //{ }
+        public async Task<Message> AddNewMessageToProjectAsync(int id, Guid userId, string messageSubject, string messageContent, string messageImage)
+        {
+            var project = await _context.Projects
+                .Include(p => p.Messages)
+                .SingleOrDefaultAsync(p => p.ProjectId == id);
+
+            if (project == null)
+            {
+                return null;
+            }
+
+            var message = new Message
+            {
+                ProjectId = id,
+                UserId = userId,
+                Subject = messageSubject,
+                MessageContent = messageContent,
+                ImageUrl = messageImage,
+                Timestamp = DateTime.UtcNow
+            };
+
+            project.Messages.Add(message);
+
+            await _context.SaveChangesAsync();
+
+            return message;
+        }
 
         //Helping methods
         private async Task<bool> ProjectExistsAsync(int id)

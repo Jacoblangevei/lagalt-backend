@@ -36,9 +36,6 @@ namespace Lagalt_Backend.Mappers
                     pdto => pdto.ProjectTypeId, options => options.MapFrom(p => p.ProjectTypeId)).ReverseMap();
 
             CreateMap<Project, ProjectPutDTO>().ReverseMap();
-        }
-
-        
-
+        } 
     }
 }

@@ -4,6 +4,7 @@ using Lagalt_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    partial class LagaltDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231013125101_m3")]
+    partial class m3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +82,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Hi, I need a link",
                             ProjectId = 1,
                             Subject = "Need link",
-                            Timestamp = new DateTime(2023, 10, 14, 14, 8, 19, 821, DateTimeKind.Local).AddTicks(4369),
+                            Timestamp = new DateTime(2023, 10, 13, 14, 51, 1, 264, DateTimeKind.Local).AddTicks(8636),
                             UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         },
                         new
@@ -89,7 +92,7 @@ namespace Lagalt_Backend.Migrations
                             MessageContent = "Can someone explain how...",
                             ProjectId = 1,
                             Subject = "How to do...",
-                            Timestamp = new DateTime(2023, 10, 14, 14, 8, 19, 821, DateTimeKind.Local).AddTicks(4386),
+                            Timestamp = new DateTime(2023, 10, 13, 14, 51, 1, 264, DateTimeKind.Local).AddTicks(8665),
                             UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         });
                 });
@@ -264,7 +267,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectRequestId = 1,
                             ProjectId = 2,
-                            RequestDate = new DateTime(2023, 10, 14, 14, 8, 19, 820, DateTimeKind.Local).AddTicks(3206),
+                            RequestDate = new DateTime(2023, 10, 13, 14, 51, 1, 263, DateTimeKind.Local).AddTicks(5422),
                             UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         });
                 });
@@ -468,7 +471,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 14, 14, 8, 19, 817, DateTimeKind.Local).AddTicks(8254),
+                            Timestamp = new DateTime(2023, 10, 13, 14, 51, 1, 259, DateTimeKind.Local).AddTicks(6350),
                             UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         });
                 });

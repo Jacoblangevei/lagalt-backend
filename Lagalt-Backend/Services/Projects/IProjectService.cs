@@ -18,7 +18,7 @@ namespace Lagalt_Backend.Services.Projects
         Task<Message> GetMessageFromProjectByIdAsync(int id, int messageId);
         
         //Add message to project
-        //Task<Message> AddNewMessageToProjectAsync(int id, string messageSubject,string messageContent, string messageImage,  int creatorId, string creatorRole);
+        Task<Message> AddNewMessageToProjectAsync(int id, Guid userId, string messageSubject,string messageContent, string messageImage);
 
     }
 }

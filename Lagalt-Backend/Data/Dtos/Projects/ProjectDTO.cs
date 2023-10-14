@@ -11,12 +11,12 @@ namespace Lagalt_Backend.Data.Dtos.Projects
         public string Name { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
-        public int? OwnerId { get; set; }
+        public Guid? OwnerId { get; set; }
 
         public int? ProjectStatusId { get; set; }
         public int? ProjectTypeId { get; set; }
 
-        public int[] Users { get; set; }
+        public Guid[] Users { get; set; }
         public int[] Updates { get; set; }
         public int[] Milestones { get; set; }
         public int[] Tags { get; set; }

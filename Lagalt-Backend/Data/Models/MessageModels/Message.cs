@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lagalt_Backend.Data.Models.ProjectModels;
+using System.Reflection.Metadata;
 
 namespace Lagalt_Backend.Data.Models.MessageModels
 {
@@ -17,9 +18,10 @@ namespace Lagalt_Backend.Data.Models.MessageModels
         public Message? Parent { get; set; }    
         [StringLength(255)]
         public string MessageContent { get; set; }
+        public string ImageUrl { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public Guid? CreatorId { get; set; }
+        public Guid? UserId { get; set; }
         public User? User { get; set; }
 
         [ForeignKey("ProjectId")]

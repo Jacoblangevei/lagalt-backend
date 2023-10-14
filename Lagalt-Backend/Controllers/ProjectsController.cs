@@ -164,6 +164,26 @@ namespace Lagalt_Backend.Controllers
         }
 
         //Post message to project
+        [HttpPost]
+        [Route("{id}/message")]
+        public async Task<IActionResult> AddMessageToProject(int id, [FromBody] MessagePostDTO messageDTO)
+        {
+            try
+            {
+                Guid userId = new Guid("00000000-0000-0000-0000-000000000001"); //Gonna get this from somehwee else later
+
+                await _projService.AddNewMessageToProjectAsync(id, userId, messageDTO.Subject,messageDTO.MessageContent, messageDTO.ImageUrl);
+                return Ok("Portfolio project added to the user successfully.");
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
     }
 }

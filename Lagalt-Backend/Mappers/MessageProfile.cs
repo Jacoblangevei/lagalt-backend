@@ -14,7 +14,7 @@ namespace Lagalt_Backend.Mappers
                 .ForMember(
                     mdto => mdto.ProjectId, options => options.MapFrom(m => m.ProjectId))
                 .ForMember(
-                    mdto => mdto.CreatorId, options => options.MapFrom(m => m.CreatorId)).ReverseMap();
+                    mdto => mdto.CreatorId, options => options.MapFrom(m => m.UserId)).ReverseMap();
         }
     }
 }

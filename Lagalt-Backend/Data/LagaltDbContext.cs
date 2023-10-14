@@ -23,6 +23,7 @@ namespace Lagalt_Backend.Data
         public DbSet<ProjectRequest> ProjectRequests { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Requirement> Requirements { get; set; }
+        public DbSet<ProjectUser> ProjectUsers { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -179,11 +180,11 @@ namespace Lagalt_Backend.Data
                 );
 
             //Messages
-            modelBuilder.Entity<Message>().HasOne(m => m.User).WithMany().HasForeignKey(m => m.CreatorId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+            modelBuilder.Entity<Message>().HasOne(m => m.User).WithMany().HasForeignKey(m => m.UserId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
 
             modelBuilder.Entity<Message>().HasData(
-                new Message { MessageId = 1, CreatorId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "Need link", MessageContent = "Hi, I need a link", Timestamp = DateTime.Now, ProjectId = 1},
-                new Message { MessageId = 2, CreatorId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "How to do...", MessageContent = "Can someone explain how...", Timestamp = DateTime.Now, ProjectId = 1}
+                new Message { MessageId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "Need link", MessageContent = "Hi, I need a link", ImageUrl="www.image.no", Timestamp = DateTime.Now, ProjectId = 1},
+                new Message { MessageId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "How to do...", MessageContent = "Can someone explain how...", ImageUrl = "www.image.no", Timestamp = DateTime.Now, ProjectId = 1}
                 );
 
             //Project requirements

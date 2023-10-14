@@ -30,9 +30,7 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
 });
 
-//                              Versjon 1
 
-// Add Authentication 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -57,80 +55,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
-
-//                              Versjon 2
-
-//Keycloak
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            IssuerSigningKeyResolver = async (token, securityToken, kid, parameters) =>
-//            {
-//                // Uses IHttpClientFactory to get an instance of HttpClient
-//                var clientFactory = builder.Services.BuildServiceProvider().GetRequiredService<IHttpClientFactory>();
-//                var client = clientFactory.CreateClient();
-//                var keyuri = builder.Configuration["TokenSecrets:KeyURI"];
-
-//                try
-//                {
-//                    var response = await client.GetAsync(keyuri);
-//                    response.EnsureSuccessStatusCode(); // Throws an exception if the response is not successful.
-//                    var responseString = await response.Content.ReadAsStringAsync();
-//                    var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responseString);
-//                    return keys.Keys;
-//                }
-//                catch (HttpRequestException e)
-//                {
-//                    // Log and handle exception
-//                    throw new SecurityTokenException("Cannot retrieve keys", e);
-//                }
-//            },
-//            ValidIssuers = new List<string>
-//            {
-//                builder.Configuration["TokenSecrets:IssuerURI"]
-//            },
-//            ValidAudience = "account",
-//        };
-//    });
-
-//Version 3
-//Keycloak
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            IssuerSigningKeyResolver = (token, securitytoken, kid, parameters) =>
-//            {
-//                // uses ihttpclientfactory to get an instance of httpclient
-//                var clientfactory = builder.Services.BuildServiceProvider().GetRequiredService<IHttpClientFactory>();
-//                var client = clientfactory.CreateClient();
-//                var keyuri = builder.Configuration["tokensecrets:keyuri"]; // .../openid/certs from sample/notes
-
-//                try
-//                {
-//                    var response = await client.GetAsync(keyuri);
-//                    response.EnsureSuccessStatusCode(); // throws an exception if the response is not successful.
-//                    var responsestring = await response.Content.ReadAsStringAsync();
-//                    var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responsestring);
-//                    return keys.Keys;
-//                }
-//                catch (HttpRequestException e)
-//                {
-//                    // log and handle exception
-//                    throw new SecurityTokenException("cannot retrieve keys", e);
-//                }
-//            },
-//            ValidIssuers = new List<string>
-//            {
-//                builder.Configuration["tokensecrets:issueruri"] // url to kc realm
-//            },
-//            ValidAudience = "account",
-//        };
-//    });
-
 
 
 builder.Services.AddDbContext<LagaltDbContext>(options =>

@@ -4,6 +4,8 @@ using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Data.Dtos.Users;
 using Microsoft.EntityFrameworkCore;
 using Lagalt_Backend.Data.Dtos.PortfolioProjects;
+using Lagalt_Backend.Data.Models.ProjectModels;
+using System.Data;
 
 namespace Lagalt_Backend.Services.Users
 {
@@ -281,6 +283,27 @@ namespace Lagalt_Backend.Services.Users
                 user.PortfolioProjects.Remove(portfolioProject);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        //Projects
+        public async Task<ICollection<Project>> GetUserTeamMemberProjectsAsync(Guid userId)
+        {
+            var projects = await _context.ProjectUsers
+            .Where(pu => pu.UserId == userId && pu.Role == "User")
+            .Select(pu => pu.Projects)
+            .ToListAsync();
+
+            return projects;
+        }
+
+        public async Task<ICollection<Project>> GetUserOwnerProjectsAsync(Guid userId)
+        {
+            var projects = await _context.ProjectUsers
+            .Where(pu => pu.UserId == userId && pu.Role == "Owner")
+            .Select(pu => pu.Projects)
+            .ToListAsync();
+
+            return projects;
         }
 
         //Helping methods
