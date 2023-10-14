@@ -8,6 +8,8 @@ using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Exceptions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -16,11 +18,13 @@ namespace Lagalt_Backend.Controllers
     /// </summary>
     [Route("api/v1/projects")]
     [ApiController]
+    [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projService;
+        private readonly IProjectTypeService _projectTypeService;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -28,9 +32,10 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="projService">The service object for accessing project operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public ProjectsController(IProjectService projService, IMapper mapper)
+        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper)
         {
             _projService = projService;
+            _projectTypeService = projectTypeService;
             _mapper = mapper;
         }
 
@@ -39,6 +44,7 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <returns>A list of projects.</returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
         {
             return Ok(_mapper
@@ -52,6 +58,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id">The ID of the project.</param>
         /// <returns>The project DTO if found.</returns>
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
             try
@@ -71,10 +78,26 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="id">The ID of the project to update.</param>
         /// <param name="project">The project data to use for the update.</param>
-        /// <returns>An IActionResult object.</returns>
+        /// <returns></returns>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutProject(int id, ProjectPutDTO project)
         {
+
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(id);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
             if (id != project.ProjectId)
             {
                 return BadRequest();
@@ -98,13 +121,32 @@ namespace Lagalt_Backend.Controllers
         /// <param name="project">The new project's data.</param>
         /// <returns>A newly created project.</returns>
         [HttpPost]
-        public async Task<ActionResult<ProjectDTO>> PostProject(ProjectPostDTO project)
+        [Authorize]
+        public async Task<ActionResult<ProjectDTO>> PostProject([FromBody] ProjectPostDTO projectPostDTO)
         {
-            var newProj = await _projService.AddAsync(_mapper.Map<Project>(project));
+            try
+            {
+                string ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            return CreatedAtAction("GetProject",
-                new { id = newProj.ProjectId },
-                _mapper.Map<ProjectDTO>(newProj));
+                ProjectType projectType = await _projectTypeService.GetByIdAsync(projectPostDTO.ProjectTypeId.Value);
+
+                var newProject = new Project
+                {
+                    Name = projectPostDTO.Name,
+                    Description = projectPostDTO.Description,
+                    ImageUrl = projectPostDTO.ImageUrl,
+                    ProjectType = projectType
+                };
+
+                var createdProject = await _projService.CreateProjectAsync(newProject, Guid.Parse(ownerId));
+                var projectDTO = _mapper.Map<ProjectDTO>(createdProject);
+
+                return CreatedAtAction("GetProject", new { id = projectDTO.ProjectId }, projectDTO);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -113,11 +155,98 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id">The ID of the project to delete.</param>
         /// <returns>An IActionResult object.</returns>
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProject(int id)
         {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(id);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
             try
             {
                 await _projService.DeleteByIdAsync(id);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        //Tags
+
+        /// <summary>
+        /// Adding tags to a project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="tagIds"></param>
+        /// <returns>If owner, a NoContent</returns>
+        [HttpPost("{projectId}/tags/add")]
+        [Authorize]
+        public async Task<IActionResult> AddTags(int projectId, [FromBody] int[] tagIds)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(projectId);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _projService.AddTagsToProjectAsync(projectId, tagIds);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Removes a tag from project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="tagId"></param>
+        /// <returns>If project owner, no content</returns>
+        [HttpDelete("{projectId}/tags/remove/{tagId}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveTag(int projectId, int tagId)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(projectId);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _projService.RemoveTagFromProjectAsync(projectId, tagId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)

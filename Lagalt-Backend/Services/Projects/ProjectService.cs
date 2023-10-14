@@ -39,6 +39,16 @@ namespace Lagalt_Backend.Services.Projects
             return obj;
         }
 
+        public async Task<Project> CreateProjectAsync(Project project, Guid ownerId)
+        {
+            project.OwnerId = ownerId;
+
+            _context.Projects.Add(project);
+            await _context.SaveChangesAsync();
+
+            return project;
+        }
+
         public async Task DeleteByIdAsync(int id)
         {
             if (!await ProjectExistsAsync(id))
@@ -58,9 +68,59 @@ namespace Lagalt_Backend.Services.Projects
                 throw new EntityNotFoundException(nameof(Project), obj.ProjectId);
 
             _context.Entry(obj).State = EntityState.Modified;
+            _context.Entry(obj).Collection(p => p.Tags).IsModified = false; // Ignore tags
             _context.SaveChanges();
 
             return obj;
+        }
+
+        //Tags
+        public async Task<Project> AddTagsToProjectAsync(int projectId, int[] tagIds)
+        {
+            var project = await _context.Projects
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+            if (project == null)
+            {
+                throw new EntityNotFoundException(nameof(Project), projectId);
+            }
+
+            var tagsToAdd = await _context.Tags
+                .Where(t => tagIds.Contains(t.TagId))
+                .ToListAsync();
+
+            var newTagsList = new List<Tag>(project.Tags);
+
+            newTagsList.AddRange(tagsToAdd);
+
+            project.Tags = newTagsList;
+
+            _context.SaveChanges();
+
+            return project;
+        }
+
+        public async Task<Project> RemoveTagFromProjectAsync(int projectId, int tagId)
+        {
+            var project = await _context.Projects
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+            if (project == null)
+            {
+                throw new EntityNotFoundException(nameof(Project), projectId);
+            }
+
+            var tagToRemove = project.Tags.FirstOrDefault(t => t.TagId == tagId);
+
+            if (tagToRemove != null)
+            {
+                project.Tags.Remove(tagToRemove);
+                _context.SaveChanges();
+            }
+
+            return project;
         }
 
         //Messages

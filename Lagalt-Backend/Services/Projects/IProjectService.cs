@@ -10,9 +10,15 @@ namespace Lagalt_Backend.Services.Projects
 
         Task<Project> GetByIdAsync(int id);
 
+        Task<Project> CreateProjectAsync(Project project, Guid ownerId);
+
         Task<Project> UpdateAsync(Project obj);
 
         Task<ICollection<Message>> GetMessagesAsync(int id);
+
+        //Tags
+        Task<Project> AddTagsToProjectAsync(int projectId, int[] tagIds);
+        Task<Project> RemoveTagFromProjectAsync(int projectId, int tagId);
 
         //Get message from project
         Task<Message> GetMessageFromProjectByIdAsync(int id, int messageId);

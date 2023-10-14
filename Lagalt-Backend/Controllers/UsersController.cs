@@ -420,10 +420,9 @@ namespace Lagalt_Backend.Controllers
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // Compare userId with id to ensure the user is working on their own data.
             if (userId != id.ToString())
             {
-                return Forbid(); // Return a 403 Forbidden status if access is denied.
+                return Forbid();
             }
 
             try

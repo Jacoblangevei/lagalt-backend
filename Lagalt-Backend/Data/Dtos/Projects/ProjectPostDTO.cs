@@ -13,5 +13,7 @@ namespace Lagalt_Backend.Data.Dtos.Projects
         public string ImageUrl { get; set; }
         [Required]
         public int? ProjectTypeId { get; set; }
+
+        public int[] Tags { get; set; }
     }
 }
