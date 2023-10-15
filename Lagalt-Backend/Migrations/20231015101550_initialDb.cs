@@ -103,7 +103,8 @@ namespace Lagalt_Backend.Migrations
                     UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Role = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Education = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Education = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnonymousModeOn = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -224,10 +225,12 @@ namespace Lagalt_Backend.Migrations
                     Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ParentId = table.Column<int>(type: "int", nullable: true),
                     MessageContent = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ProjectId1 = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -241,16 +244,22 @@ namespace Lagalt_Backend.Migrations
                         name: "FK_Message_Project_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Project",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Message_Project_ProjectId1",
+                        column: x => x.ProjectId1,
+                        principalTable: "Project",
                         principalColumn: "ProjectId");
                     table.ForeignKey(
-                        name: "FK_Message_User_CreatorId",
-                        column: x => x.CreatorId,
+                        name: "FK_Message_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Message_User_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Message_User_UserId1",
+                        column: x => x.UserId1,
                         principalTable: "User",
                         principalColumn: "UserId");
                 });
@@ -450,8 +459,8 @@ namespace Lagalt_Backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "User",
-                columns: new[] { "UserId", "Description", "Education", "Role", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), "I love coding", "Coding Academy", "User", "UserNr1" });
+                columns: new[] { "UserId", "AnonymousModeOn", "Description", "Education", "Role", "UserName" },
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), false, "I love coding", "Coding Academy", "User", "UserNr1" });
 
             migrationBuilder.InsertData(
                 table: "Milestone",
@@ -480,21 +489,21 @@ namespace Lagalt_Backend.Migrations
             migrationBuilder.InsertData(
                 table: "Update",
                 columns: new[] { "UpdateId", "Description", "Timestamp", "UserId" },
-                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 13, 14, 17, 1, 938, DateTimeKind.Local).AddTicks(8568), new Guid("00000000-0000-0000-0000-000000000001") });
+                values: new object[] { 1, "Fixed everything", new DateTime(2023, 10, 15, 12, 15, 50, 734, DateTimeKind.Local).AddTicks(7394), new Guid("00000000-0000-0000-0000-000000000001") });
 
             migrationBuilder.InsertData(
                 table: "Message",
-                columns: new[] { "MessageId", "CreatorId", "MessageContent", "ParentId", "ProjectId", "Subject", "Timestamp", "UserId" },
+                columns: new[] { "MessageId", "ImageUrl", "MessageContent", "ParentId", "ProjectId", "ProjectId1", "Subject", "Timestamp", "UserId", "UserId1" },
                 values: new object[,]
                 {
-                    { 1, new Guid("00000000-0000-0000-0000-000000000001"), "Hi, I need a link", null, 1, "Need link", new DateTime(2023, 10, 13, 14, 17, 1, 945, DateTimeKind.Local).AddTicks(4009), null },
-                    { 2, new Guid("00000000-0000-0000-0000-000000000001"), "Can someone explain how...", null, 1, "How to do...", new DateTime(2023, 10, 13, 14, 17, 1, 945, DateTimeKind.Local).AddTicks(4040), null }
+                    { 1, "www.image.no", "Hi, I need a link", null, 1, null, "Need link", new DateTime(2023, 10, 15, 12, 15, 50, 738, DateTimeKind.Local).AddTicks(8721), new Guid("00000000-0000-0000-0000-000000000001"), null },
+                    { 2, "www.image.no", "Can someone explain how...", null, 1, null, "How to do...", new DateTime(2023, 10, 15, 12, 15, 50, 738, DateTimeKind.Local).AddTicks(8749), new Guid("00000000-0000-0000-0000-000000000001"), null }
                 });
 
             migrationBuilder.InsertData(
                 table: "ProjectRequest",
                 columns: new[] { "ProjectRequestId", "ProjectId", "RequestDate", "UserId" },
-                values: new object[] { 1, 2, new DateTime(2023, 10, 13, 14, 17, 1, 943, DateTimeKind.Local).AddTicks(5402), new Guid("00000000-0000-0000-0000-000000000001") });
+                values: new object[] { 1, 2, new DateTime(2023, 10, 15, 12, 15, 50, 737, DateTimeKind.Local).AddTicks(1439), new Guid("00000000-0000-0000-0000-000000000001") });
 
             migrationBuilder.InsertData(
                 table: "ProjectUpdate",
@@ -516,11 +525,6 @@ namespace Lagalt_Backend.Migrations
                 values: new object[] { 1, 1, "Experience with hacking" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_CreatorId",
-                table: "Message",
-                column: "CreatorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Message_ParentId",
                 table: "Message",
                 column: "ParentId");
@@ -531,9 +535,19 @@ namespace Lagalt_Backend.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Message_ProjectId1",
+                table: "Message",
+                column: "ProjectId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Message_UserId",
                 table: "Message",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Message_UserId1",
+                table: "Message",
+                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Milestone_MilestoneStatusId",

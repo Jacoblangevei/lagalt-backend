@@ -37,7 +37,7 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<User>().HasKey(u => u.UserId);
 
             modelBuilder.Entity<User>().HasData(
-                new User { UserId = new Guid("00000000-0000-0000-0000-000000000001"), UserName = "UserNr1", Description = "I love coding", Education = "Coding Academy", Role = "User"}
+                new User { UserId = new Guid("00000000-0000-0000-0000-000000000001"), UserName = "UserNr1", Description = "I love coding", Education = "Coding Academy", Role = "User", AnonymousModeOn = false}
                 );
 
             //Projects
@@ -180,7 +180,17 @@ namespace Lagalt_Backend.Data
                 );
 
             //Messages
-            modelBuilder.Entity<Message>().HasOne(m => m.User).WithMany().HasForeignKey(m => m.UserId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.User)
+                .WithMany(u => u.Messages)
+                .HasForeignKey(m => m.UserId)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Project)
+                .WithMany(p => p.Messages)
+                .HasForeignKey(m => m.ProjectId)
+                .IsRequired(false);
 
             modelBuilder.Entity<Message>().HasData(
                 new Message { MessageId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "Need link", MessageContent = "Hi, I need a link", ImageUrl="www.image.no", Timestamp = DateTime.Now, ProjectId = 1},

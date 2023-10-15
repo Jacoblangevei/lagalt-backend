@@ -18,6 +18,7 @@ namespace Lagalt_Backend.Data.Models.UserModels
         public string Role { get; set; }
         public string? Description { get; set; }
         public string? Education { get; set; }
+        public bool AnonymousModeOn { get; set; }
 
         //Navigation
         public ICollection<Project> Projects { get; set; }

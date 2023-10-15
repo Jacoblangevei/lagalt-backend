@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lagalt_Backend.Migrations
 {
     [DbContext(typeof(LagaltDbContext))]
-    [Migration("20231013121702_initialDb")]
+    [Migration("20231015101550_initialDb")]
     partial class initialDb
     {
         /// <inheritdoc />
@@ -33,8 +33,9 @@ namespace Lagalt_Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
 
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageContent")
                         .IsRequired()
@@ -45,6 +46,9 @@ namespace Lagalt_Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectId1")
                         .HasColumnType("int");
 
                     b.Property<string>("Subject")
@@ -58,15 +62,20 @@ namespace Lagalt_Backend.Migrations
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("MessageId");
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("CreatorId");
+                    b.HasKey("MessageId");
 
                     b.HasIndex("ParentId");
 
                     b.HasIndex("ProjectId");
 
+                    b.HasIndex("ProjectId1");
+
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Message");
 
@@ -74,20 +83,22 @@ namespace Lagalt_Backend.Migrations
                         new
                         {
                             MessageId = 1,
-                            CreatorId = new Guid("00000000-0000-0000-0000-000000000001"),
+                            ImageUrl = "www.image.no",
                             MessageContent = "Hi, I need a link",
                             ProjectId = 1,
                             Subject = "Need link",
-                            Timestamp = new DateTime(2023, 10, 13, 14, 17, 1, 945, DateTimeKind.Local).AddTicks(4009)
+                            Timestamp = new DateTime(2023, 10, 15, 12, 15, 50, 738, DateTimeKind.Local).AddTicks(8721),
+                            UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         },
                         new
                         {
                             MessageId = 2,
-                            CreatorId = new Guid("00000000-0000-0000-0000-000000000001"),
+                            ImageUrl = "www.image.no",
                             MessageContent = "Can someone explain how...",
                             ProjectId = 1,
                             Subject = "How to do...",
-                            Timestamp = new DateTime(2023, 10, 13, 14, 17, 1, 945, DateTimeKind.Local).AddTicks(4040)
+                            Timestamp = new DateTime(2023, 10, 15, 12, 15, 50, 738, DateTimeKind.Local).AddTicks(8749),
+                            UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         });
                 });
 
@@ -261,7 +272,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             ProjectRequestId = 1,
                             ProjectId = 2,
-                            RequestDate = new DateTime(2023, 10, 13, 14, 17, 1, 943, DateTimeKind.Local).AddTicks(5402),
+                            RequestDate = new DateTime(2023, 10, 15, 12, 15, 50, 737, DateTimeKind.Local).AddTicks(1439),
                             UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         });
                 });
@@ -465,7 +476,7 @@ namespace Lagalt_Backend.Migrations
                         {
                             UpdateId = 1,
                             Description = "Fixed everything",
-                            Timestamp = new DateTime(2023, 10, 13, 14, 17, 1, 938, DateTimeKind.Local).AddTicks(8568),
+                            Timestamp = new DateTime(2023, 10, 15, 12, 15, 50, 734, DateTimeKind.Local).AddTicks(7394),
                             UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         });
                 });
@@ -621,6 +632,9 @@ namespace Lagalt_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("AnonymousModeOn")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -645,6 +659,7 @@ namespace Lagalt_Backend.Migrations
                         new
                         {
                             UserId = new Guid("00000000-0000-0000-0000-000000000001"),
+                            AnonymousModeOn = false,
                             Description = "I love coding",
                             Education = "Coding Academy",
                             Role = "User",
@@ -669,22 +684,27 @@ namespace Lagalt_Backend.Migrations
 
             modelBuilder.Entity("Lagalt_Backend.Data.Models.MessageModels.Message", b =>
                 {
-                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", "User")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Lagalt_Backend.Data.Models.MessageModels.Message", "Parent")
                         .WithMany("Replies")
                         .HasForeignKey("ParentId");
 
                     b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Lagalt_Backend.Data.Models.ProjectModels.Project", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ProjectId");
+                        .HasForeignKey("ProjectId1");
+
+                    b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Lagalt_Backend.Data.Models.UserModels.User", null)
                         .WithMany("Messages")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Parent");
 
