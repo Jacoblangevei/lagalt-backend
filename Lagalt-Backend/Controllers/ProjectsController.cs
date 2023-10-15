@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Lagalt_Backend.Data.Dtos.Tags;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -186,18 +187,59 @@ namespace Lagalt_Backend.Controllers
         //Tags
 
         /// <summary>
+        /// Get all tags in a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/tags")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAllTagsInProject(int id)
+        {
+            try
+            {
+                var tags = await _projService.GetAllTagsInProjectAsync(id);
+                return Ok(tags);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get a tag in a project by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/tags/{tagId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetTagInProject(int id, int tagId)
+        {
+            try
+            {
+                var tag = await _projService.GetTagInProjectByIdAsync(id, tagId);
+                return Ok(tag);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Adding tags to a project
         /// </summary>
         /// <param name="projectId"></param>
         /// <param name="tagIds"></param>
         /// <returns>If owner, a NoContent</returns>
-        [HttpPost("{projectId}/tags/add")]
+        [HttpPost("{id}/tags/add")]
         [Authorize]
-        public async Task<IActionResult> AddTags(int projectId, [FromBody] int[] tagIds)
+        public async Task<IActionResult> AddTagToProject(int id, [FromBody] TagPostDTO tagPostDTO)
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            Project existingProject = await _projService.GetByIdAsync(projectId);
+            Project existingProject = await _projService.GetByIdAsync(id);
 
             if (existingProject == null)
             {
@@ -211,7 +253,7 @@ namespace Lagalt_Backend.Controllers
 
             try
             {
-                await _projService.AddTagsToProjectAsync(projectId, tagIds);
+                await _projService.AddTagToProjectAsync(id, tagPostDTO.TagName);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
@@ -255,12 +297,115 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        //Requirements Working on it
+
+        /// <summary>
+        /// Get all tags in a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/requirements")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAllRequirementsInProject(int id)
+        {
+            try
+            {
+                var requirements = await _projService.GetAllRequirementsInProjectAsync(id);
+                return Ok(requirements);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="requirementId"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/requirements/{requirementId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetRequirementInProject(int id, int requirementId)
+        {
+            try
+            {
+                var requirement = await _projService.GetRequirementInProjectByIdAsync(id, requirementId);
+                return Ok(requirementId);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        
+        [HttpPost("{id}/requirement/add")]
+        [Authorize]
+        public async Task<IActionResult> AddRequirements(int id, [FromBody] int[] requirementIds)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(id);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _projService.AddRequirementsToProjectAsync(id, requirementIds);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
+        [HttpDelete("{projectId}/requirements/remove/{requirementId}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveRequirement(int id, int requirementId)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(id);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _projService.RemoveTagFromProjectAsync(id, requirementId);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        //Messages
         /// <summary>
         /// Gets messages for a specific project.
         /// </summary>
         /// <param name="id">The ID of the project.</param>
         /// <returns>A list of messages for the specified project.</returns>
-        //Messages
         [HttpGet("{id}/messages")]
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages(int id)
         {

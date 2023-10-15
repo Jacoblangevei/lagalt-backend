@@ -25,6 +25,8 @@ namespace Lagalt_Backend.Data
         public DbSet<Requirement> Requirements { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
 
+        public DbSet<ProjectTag> ProjectTags { get; set; }
+
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
         //    optionsBuilder.UseSqlServer("Data Source=N-NO-01-01-5733\\SQLEXPRESS; Initial Catalog=LagaltEF; Integrated Security= true; Trust Server Certificate= true;");
@@ -152,6 +154,22 @@ namespace Lagalt_Backend.Data
                 new Tag { TagId = 1 , TagName = ".NET"}
                 );
 
+            //ProjectTag
+            modelBuilder.Entity<ProjectTag>().HasKey(pt => new { pt.ProjectId, pt.TagId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(left => left.Tags)
+                .WithMany(right => right.Projects)
+                .UsingEntity<ProjectTag>(
+                    right => right.HasOne(e => e.Tags).WithMany(),
+                    left => left.HasOne(e => e.Projects).WithMany().HasForeignKey(e => e.ProjectId),
+                    join => join.ToTable("ProjectTag")
+                );
+
+            modelBuilder.Entity<ProjectTag>().HasData(
+                new ProjectTag { ProjectId = 1, TagId = 1 }
+                );
+
             //ProjectStatus
             modelBuilder.Entity<ProjectStatus>().HasData(
                 new ProjectStatus { StatusId = 1, StatusName = "Completed" }
@@ -197,14 +215,26 @@ namespace Lagalt_Backend.Data
                 new Message { MessageId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Subject = "How to do...", MessageContent = "Can someone explain how...", ImageUrl = "www.image.no", Timestamp = DateTime.Now, ProjectId = 1}
                 );
 
-            //Project requirements
-            modelBuilder.Entity<Requirement>()
-                .HasOne(r => r.Project)
-                .WithMany(p => p.Requirements)
-                .HasForeignKey(r => r.ProjectId);
+            //Requirements
 
             modelBuilder.Entity<Requirement>().HasData(
-                new Requirement { RequirementId = 1, RequirementText = "Experience with hacking", ProjectId = 1}
+                new Requirement { RequirementId = 1, RequirementText = "Experience with hacking"}
+                );
+
+            //ProjectRequirements
+            modelBuilder.Entity<ProjectRequirement>().HasKey(pr => new { pr.ProjectId, pr.RequirementId });
+
+            modelBuilder.Entity<Project>()
+                .HasMany(left => left.Requirements)
+                .WithMany(right => right.Projects)
+                .UsingEntity<ProjectRequirement>(
+                    right => right.HasOne(e => e.Requirements).WithMany(),
+                    left => left.HasOne(e => e.Projects).WithMany().HasForeignKey(e => e.ProjectId),
+                    join => join.ToTable("ProjectRequirement")
+                );
+
+            modelBuilder.Entity<ProjectRequirement>().HasData(
+                new ProjectRequirement { ProjectId = 1, RequirementId = 1 }
                 );
         }
     }

@@ -17,13 +17,20 @@ namespace Lagalt_Backend.Services.Projects
         Task<ICollection<Message>> GetMessagesAsync(int id);
 
         //Tags
-        Task<Project> AddTagsToProjectAsync(int projectId, int[] tagIds);
-        Task<Project> RemoveTagFromProjectAsync(int projectId, int tagId);
+        Task<List<Tag>> GetAllTagsInProjectAsync(int id);
+        Task<Tag> GetTagInProjectByIdAsync(int id, int tagId);
+        Task<Project> AddTagToProjectAsync(int id, string tagName);
+        Task<Project> RemoveTagFromProjectAsync(int id, int tagId);
 
-        //Get message from project
+        //Requirements
+        Task<List<Requirement>> GetAllRequirementsInProjectAsync(int id);
+        Task<Requirement> GetRequirementInProjectByIdAsync(int id, int requirementId);
+        Task<Project> AddRequirementsToProjectAsync(int id, int[] requirementIds);
+        Task<Project> RemoveRequirementFromProjectAsync(int id, int requirementId);
+
+        //Messages
         Task<Message> GetMessageFromProjectByIdAsync(int id, int messageId);
         
-        //Add message to project
         Task<Message> AddNewMessageToProjectAsync(int id, Guid userId, string messageSubject,string messageContent, string messageImage);
 
     }

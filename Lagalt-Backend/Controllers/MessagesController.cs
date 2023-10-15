@@ -8,6 +8,7 @@ using Lagalt_Backend.Data.Exceptions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lagalt_Backend.Data.Dtos.Skills;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -19,6 +20,7 @@ namespace Lagalt_Backend.Controllers
     /// </summary>
     [Route("api/v1/messages")]
     [ApiController]
+    [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class MessagesController : ControllerBase
@@ -39,9 +41,20 @@ namespace Lagalt_Backend.Controllers
 
         //Get all messages
 
+
         //Get message by id
 
-        //Create message
+        //Add message to project
+
+        //Delete message from project
+
+        //Get all comments from message
+
+        //Get comment in project by id
+
+        //Add comment to message
+
+        //Delete comment from message
 
     }
 }
