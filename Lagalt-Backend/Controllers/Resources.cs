@@ -18,7 +18,7 @@ namespace Lagalt_Backend.Controllers
             return Ok(new { Message = "Public resource" });
         }
 
-        [HttpGet("{id}/protected")]
+        [HttpGet("protected")]
         public ActionResult GetProtected()
         {
 
