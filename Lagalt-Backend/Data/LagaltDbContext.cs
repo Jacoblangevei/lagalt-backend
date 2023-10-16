@@ -202,6 +202,11 @@ namespace Lagalt_Backend.Data
 
             //Messages
             modelBuilder.Entity<Message>()
+                .HasMany(m => m.Replies)
+                .WithOne(r => r.Parent)
+                .HasForeignKey(r => r.ParentId);
+
+            modelBuilder.Entity<Message>()
                 .HasOne(m => m.User)
                 .WithMany(u => u.Messages)
                 .HasForeignKey(m => m.UserId)

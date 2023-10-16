@@ -130,45 +130,6 @@ namespace Lagalt_Backend.Controllers
             return CreatedAtAction("GetUser", new { id = user.UserId }, user);
         }
 
-        /// <summary>
-        /// Creates a new user.
-        /// </summary>
-        /// <param name="user">The user data to create.</param>
-        /// <returns>A newly created user.</returns>
-        //[HttpPost("user")]
-        //public async Task<ActionResult<UserDTO>> PostUser(UserPostDTO user)
-        //{
-        //    var newUser = await _userService.AddAsync(_mapper.Map<User>(user));
-
-        //    return CreatedAtAction("GetUser",
-        //        new { id = newUser.UserId },
-        //        _mapper.Map<UserDTO>(newUser));
-        //}
-
-        /// <summary>
-        /// Updating a users description and education
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="userPutDTO"></param>
-        /// <returns></returns>
-        //[HttpPut("{id}")]
-        //public async Task<ActionResult<UserDTO>> UpdateUser(Guid id, [FromBody] UserPutDTO userPutDTO)
-        //{
-        //    try
-        //    {
-        //        var updatedUser = await _userService.UpdateAsync(id, userPutDTO);
-        //        return Ok(_mapper.Map<UserDTO>(updatedUser));
-        //    }
-        //    catch (EntityNotFoundException ex)
-        //    {
-        //        return NotFound(ex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
-
         //new, not done
         [HttpPut("{id}")]
         [Authorize]
@@ -214,7 +175,7 @@ namespace Lagalt_Backend.Controllers
         //New,not done
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<UserDTO>> PostUser2(User user)
+        public async Task<ActionResult<UserDTO>> PostUser(User user)
         {
             if (_context.Users == null)
             {
@@ -223,7 +184,7 @@ namespace Lagalt_Backend.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser2", new { id = user.UserId }, user);
+            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
         }
 
 
@@ -285,13 +246,12 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddNewSkillToUser(Guid id, [FromBody] SkillPostDTO skillPostDto)
         {
-            // Retrieve the user's ID from the claim.
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            string userId =User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //"00000000-0000-0000-0000-000000000001";
 
-            // Compare userId with id to ensure the user is working on their own data.
             if (userId != id.ToString())
             {
-                return Forbid(); // Return a 403 Forbidden status if access is denied.
+                return Forbid();
             }
 
             try
@@ -342,6 +302,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}/portfolioprojects")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PortfolioProjectDTO>>> GetPortfolioProjects(Guid id)
         {
             try
@@ -362,6 +323,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="portfolioProjectId"></param>
         /// <returns></returns>
         [HttpGet("{id}/portfolioprojects/{portfolioProjectId}")]
+        [AllowAnonymous]
         public async Task<ActionResult<PortfolioProjectDTO>> GetPortfolioProjectById(Guid id, int portfolioProjectId)
         {
             try
