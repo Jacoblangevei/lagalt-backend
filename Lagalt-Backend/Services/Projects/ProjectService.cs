@@ -119,7 +119,7 @@ namespace Lagalt_Backend.Services.Projects
 
             var tag = await _context.ProjectTags
                 .Where(pt => pt.ProjectId == id && pt.TagId == tagId)
-                .Select(pt => pt.Tags)  // Select the Tag entity, not the TagId
+                .Select(pt => pt.Tags)
                 .FirstOrDefaultAsync();
 
             if (tag == null)

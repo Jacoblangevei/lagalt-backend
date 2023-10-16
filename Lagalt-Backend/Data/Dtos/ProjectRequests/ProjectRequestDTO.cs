@@ -7,7 +7,6 @@
         public string? ProjectName { get; internal set; }
         public Guid? UserId { get; set; }
         public DateTime RequestDate { get; set; }
-        public Guid? OwnerId { get; internal set; }
 
         /* 
         public string ProjectName { get; set; }

@@ -498,11 +498,19 @@ namespace Lagalt_Backend.Controllers
 
         // Request Project
         [HttpPost("{projectId}/requests")]
-        public async Task<IActionResult> RequestToJoinProject(int projectId, ProjectRequestDTO requestDto)
+        [AllowAnonymous]
+        public async Task<IActionResult> RequestToJoinProject(int projectId)
         {
-            var projectRequest = _mapper.Map<ProjectRequest>(requestDto);
-            projectRequest.ProjectId = projectId;
-            projectRequest.RequestDate = DateTime.UtcNow; // Set request date to current time
+            //Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            string userId = "00000000-0000-0000-0000-000000000001";
+            Guid userGuid = Guid.Parse(userId);
+
+            var projectRequest = new ProjectRequest
+            {
+                UserId = userGuid,
+                ProjectId = projectId,
+                RequestDate = DateTime.UtcNow
+            };
 
             // Call service layer to add the request
             var result = await _projectRequestService.CreateRequestAsync(projectRequest);
@@ -511,6 +519,7 @@ namespace Lagalt_Backend.Controllers
         }
 
         [HttpGet("{projectId}/requests")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetProjectRequests(int projectId)
         {
             // Check if the project exists

@@ -9,17 +9,11 @@ namespace Lagalt_Backend.Mappers
     {
         public ProjectRequestProfile()
         {
-            // Mapping from Entity to DTO
             CreateMap<ProjectRequest, ProjectRequestDTO>()
                 .ForMember(
-                    dto => dto.ProjectName,
-                    options => options.MapFrom(pr => pr.Project.Name)) 
+                    prdto => prdto.UserId, options => options.MapFrom(u => u.UserId))
                 .ForMember(
-                    dto => dto.UserId,
-                    options => options.MapFrom(pr => pr.User.UserName));
-
-            // Mapping from DTO to Entity 
-            CreateMap<ProjectRequestDTO, ProjectRequest>();
+                    prdto => prdto.ProjectId, options => options.MapFrom(p => p.ProjectId)).ReverseMap();
         }
     }
 }

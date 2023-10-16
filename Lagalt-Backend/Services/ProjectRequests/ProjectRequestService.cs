@@ -44,10 +44,14 @@ namespace Lagalt_Backend.Services.ProjectRequests
 
         public async Task<IEnumerable<ProjectRequest>> GetAllRequestsForProjectAsync(int projectId)
         {
-            return await _context.ProjectRequests
+            //Needs to check if user already has requested to join this project
+
+            var requests = await _context.ProjectRequests
                 .Where(r => r.ProjectId == projectId)
                 .Include(r => r.User)
                 .ToListAsync();
+
+            return requests;
         }
 
         public async Task<IEnumerable<ProjectRequest>> GetAllRequestsForUserAsync(Guid userId)

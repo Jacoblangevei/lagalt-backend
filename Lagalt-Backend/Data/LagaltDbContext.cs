@@ -193,8 +193,15 @@ namespace Lagalt_Backend.Data
                 );
 
             //ProjectRequest
-            modelBuilder.Entity<ProjectRequest>().HasOne(pr => pr.User).WithMany(u => u.ProjectRequests).HasForeignKey(pr => pr.UserId).OnDelete(DeleteBehavior.SetNull);
-            modelBuilder.Entity<ProjectRequest>().HasOne(pr => pr.Project).WithMany(p => p.ProjectRequests).HasForeignKey(pr => pr.ProjectId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<ProjectRequest>()
+                .HasOne(pr => pr.User)
+                .WithMany(u => u.ProjectRequests)
+                .HasForeignKey(pr => pr.UserId);
+
+            modelBuilder.Entity<ProjectRequest>()
+                .HasOne(pr => pr.Project)
+                .WithMany(p => p.ProjectRequests)
+                .HasForeignKey(pr => pr.ProjectId);
 
             modelBuilder.Entity<ProjectRequest>().HasData(
                 new ProjectRequest { ProjectRequestId = 1, ProjectId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000001"), RequestDate = DateTime.Now}
