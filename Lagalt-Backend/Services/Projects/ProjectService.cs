@@ -197,12 +197,16 @@ namespace Lagalt_Backend.Services.Projects
                 throw new EntityNotFoundException(nameof(Project), id);
             }
 
-            if (project.Requirements == null)
-            {
-                return new List<Requirement>();
-            }
+            var requirementIds = await _context.ProjectRequirements
+                .Where(pr => pr.ProjectId == id)
+                .Select(pr => pr.RequirementId)
+                .ToListAsync();
 
-            return project.Requirements.ToList();
+            var requirements = await _context.Requirements
+                .Where(r => requirementIds.Contains(r.RequirementId))
+                .ToListAsync();
+
+            return requirements;
         }
 
         public async Task<Requirement> GetRequirementInProjectByIdAsync(int id, int requirementId)
@@ -214,12 +218,10 @@ namespace Lagalt_Backend.Services.Projects
                 throw new EntityNotFoundException(nameof(Project), id);
             }
 
-            if (project.Requirements == null)
-            {
-                throw new EntityNotFoundException(nameof(Requirement), requirementId);
-            }
-
-            var requirement = project.Requirements.FirstOrDefault(r => r.RequirementId == requirementId);
+            var requirement = await _context.ProjectRequirements
+                .Where(pr => pr.ProjectId == id && pr.RequirementId == requirementId)
+                .Select(pt => pt.Requirements)
+                .FirstOrDefaultAsync();
 
             if (requirement == null)
             {
@@ -229,7 +231,7 @@ namespace Lagalt_Backend.Services.Projects
             return requirement;
         }
 
-        public async Task<Project> AddRequirementsToProjectAsync(int id, int[] requirementIds)
+        public async Task<Project> AddRequirementToProjectAsync(int id, string requirementText)
         {
             var project = await _context.Projects
                 .Include(p => p.Requirements)
@@ -240,18 +242,27 @@ namespace Lagalt_Backend.Services.Projects
                 throw new EntityNotFoundException(nameof(Project), id);
             }
 
-            var requirementsToAdd = await _context.Requirements
-                .Where(r => requirementIds.Contains(r.RequirementId))
-                .ToListAsync();
+            // Check if the requirement already exists in the database
+            var existingRequirement = await _context.Requirements
+                .FirstOrDefaultAsync(r => r.RequirementText == requirementText);
 
-            var newRequirementsList = new List<Requirement>(project.Requirements);
+            if (existingRequirement == null)
+            {
+                // Create a new if it doesn't exist
+                var newRequirement = new Requirement { RequirementText = requirementText };
+                _context.Requirements.Add(newRequirement);
+                await _context.SaveChangesAsync(); // Save changes to generate the new ID
+                existingRequirement = newRequirement;
+            }
 
-            newRequirementsList.AddRange(requirementsToAdd);
-
-            project.Requirements = newRequirementsList;
-
-            _context.SaveChanges();
-
+            // Check if it is already associated with the project
+            if (!project.Requirements.Any(r => r.RequirementId == existingRequirement.RequirementId))
+            {
+                project.Requirements.Add(existingRequirement);
+                var projectRequirement = new ProjectRequirement { ProjectId = id, RequirementId = existingRequirement.RequirementId };
+                _context.ProjectRequirements.Add(projectRequirement);
+                await _context.SaveChangesAsync();
+            }
             return project;
         }
 

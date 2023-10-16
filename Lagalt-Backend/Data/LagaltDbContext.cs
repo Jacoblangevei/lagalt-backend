@@ -24,8 +24,8 @@ namespace Lagalt_Backend.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Requirement> Requirements { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
-
         public DbSet<ProjectTag> ProjectTags { get; set; }
+        public DbSet<ProjectRequirement> ProjectRequirements { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

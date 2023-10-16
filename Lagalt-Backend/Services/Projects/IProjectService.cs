@@ -25,7 +25,7 @@ namespace Lagalt_Backend.Services.Projects
         //Requirements
         Task<List<Requirement>> GetAllRequirementsInProjectAsync(int id);
         Task<Requirement> GetRequirementInProjectByIdAsync(int id, int requirementId);
-        Task<Project> AddRequirementsToProjectAsync(int id, int[] requirementIds);
+        Task<Project> AddRequirementToProjectAsync(int id, string requirementText);
         Task<Project> RemoveRequirementFromProjectAsync(int id, int requirementId);
 
         //Messages
