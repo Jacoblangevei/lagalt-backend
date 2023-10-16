@@ -40,6 +40,11 @@ namespace Lagalt_Backend.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Gets all replies a message has
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/replies")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Message>>> GetRepliesInMessage(int id)
@@ -48,6 +53,12 @@ namespace Lagalt_Backend.Controllers
             return Ok(replies);
         }
 
+        /// <summary>
+        /// Gets reply from message by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="replyId"></param>
+        /// <returns></returns>
         [HttpGet("{id}/replies/{replyId}")]
         [AllowAnonymous]
         public async Task<ActionResult<Message>> GetReplyInMessageById(int id, int replyId)
@@ -62,6 +73,12 @@ namespace Lagalt_Backend.Controllers
             return Ok(reply);
         }
 
+        /// <summary>
+        /// Adds reply to message
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="messagePostDTO"></param>
+        /// <returns></returns>
         [HttpPost("{id}/replies")]
         [Authorize]
         public async Task<ActionResult<MessageDTO>> AddReplyToMessage(int id, [FromBody] MessagePostDTO messagePostDTO)

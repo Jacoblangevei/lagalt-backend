@@ -302,6 +302,11 @@ namespace Lagalt_Backend.Controllers
 
         //Requirements
 
+        /// <summary>
+        /// Gets all requirements in a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/requirements")]
         [AllowAnonymous]
         public async Task<ActionResult> GetAllRequirementsInProject(int id)
@@ -317,6 +322,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets requirement from project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="requirementId"></param>
+        /// <returns></returns>
         [HttpGet("{id}/requirements/{requirementId}")]
         [AllowAnonymous]
         public async Task<ActionResult> GetRequirementInProject(int id, int requirementId)
@@ -332,6 +343,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds requirement to project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="requirementPostDTO"></param>
+        /// <returns></returns>
         [HttpPost("{id}/requirements/add")]
         [Authorize]
         public async Task<IActionResult> AddRequirementToProject(int id, [FromBody] RequirementPostDTO requirementPostDTO)
@@ -361,6 +378,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Removes requirement from project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="requirementId"></param>
+        /// <returns></returns>
         [HttpDelete("{id}/requirements/remove/{requirementId}")]
         [Authorize]
         public async Task<IActionResult> RemoveRequirement(int id, int requirementId)
@@ -391,6 +414,12 @@ namespace Lagalt_Backend.Controllers
         }
 
         //Messages
+
+        /// <summary>
+        /// Gets all messages in project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/messages")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllMessagesInProject(int id)
@@ -408,6 +437,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets message in project by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="messageId"></param>
+        /// <returns></returns>
         [HttpGet("{id}/messages/{messageId}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetMessageInProjectById(int id, int messageId)
@@ -425,6 +460,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds message to project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="messagePostDTO"></param>
+        /// <returns></returns>
         [HttpPost("{id}/messages")]
         [Authorize]
         public async Task<IActionResult> AddMessageToProject(int id, [FromBody] MessagePostDTO messagePostDTO)

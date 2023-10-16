@@ -399,6 +399,12 @@ namespace Lagalt_Backend.Controllers
         }
 
         //Lagalt projects
+
+        /// <summary>
+        /// Gets all project user is a part of as user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/teammemberprojects")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetTeamMemberProjects(Guid id)
@@ -414,6 +420,11 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all projects user owns
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/ownerprojects")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOwnerProjects(Guid id)
