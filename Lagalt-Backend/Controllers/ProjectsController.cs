@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Lagalt_Backend.Data.Dtos.Tags;
+using Lagalt_Backend.Data.Dtos.Requirements;
+using Lagalt_Backend.Data.Models.MessageModels;
+using Lagalt_Backend.Data.Models.UserModels;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -60,7 +63,7 @@ namespace Lagalt_Backend.Controllers
         /// <returns>The project DTO if found.</returns>
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<ProjectDTO>> GetProject(int id)
+        public async Task<ActionResult<ProjectDTO>> GetProject([FromRoute] int id)
         {
             try
             {
@@ -268,13 +271,13 @@ namespace Lagalt_Backend.Controllers
         /// <param name="projectId"></param>
         /// <param name="tagId"></param>
         /// <returns>If project owner, no content</returns>
-        [HttpDelete("{projectId}/tags/remove/{tagId}")]
+        [HttpDelete("{id}/tags/remove/{tagId}")]
         [Authorize]
-        public async Task<IActionResult> RemoveTag(int projectId, int tagId)
+        public async Task<IActionResult> RemoveTag(int id, int tagId)
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            Project existingProject = await _projService.GetByIdAsync(projectId);
+            Project existingProject = await _projService.GetByIdAsync(id);
 
             if (existingProject == null)
             {
@@ -288,7 +291,7 @@ namespace Lagalt_Backend.Controllers
 
             try
             {
-                await _projService.RemoveTagFromProjectAsync(projectId, tagId);
+                await _projService.RemoveTagFromProjectAsync(id, tagId);
                 return NoContent();
             }
             catch (EntityNotFoundException ex)
@@ -297,23 +300,16 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
-        //Requirements Working on it
-          
+        //Requirements
 
-        //Messages Not correct
-        /// <summary>
-        /// Gets messages for a specific project.
-        /// </summary>
-        /// <param name="id">The ID of the project.</param>
-        /// <returns>A list of messages for the specified project.</returns>
-        [HttpGet("{id}/messages")]
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessages(int id)
+        [HttpGet("{id}/requirements")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAllRequirementsInProject(int id)
         {
             try
             {
-                return Ok(_mapper
-                    .Map<IEnumerable<MessageDTO>>(
-                        await _projService.GetMessagesAsync(id)));
+                var requirements = await _projService.GetAllRequirementsInProjectAsync(id);
+                return Ok(requirements);
             }
             catch (EntityNotFoundException ex)
             {
@@ -321,15 +317,107 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
-        //Get message from project by id
+        [HttpGet("{id}/requirements/{requirementId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetRequirementInProject(int id, int requirementId)
+        {
+            try
+            {
+                var requirement = await _projService.GetRequirementInProjectByIdAsync(id, requirementId);
+                return Ok(requirement);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/requirements/add")]
+        [Authorize]
+        public async Task<IActionResult> AddRequirementToProject(int id, [FromBody] RequirementPostDTO requirementPostDTO)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(id);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _projService.AddTagToProjectAsync(id, requirementPostDTO.RequirementText);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}/requirements/remove/{requirementId}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveRequirement(int id, int requirementId)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(id);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _projService.RemoveRequirementFromProjectAsync(id, requirementId);
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        //Messages
+        [HttpGet("{id}/messages")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllMessagesInProject(int id)
+        {
+            try
+            {
+                var messages = await _projService.GetAllMessagesInProjectAsync(id);
+                var messageDtos = _mapper.Map<List<MessageDTO>>(messages);
+
+                return Ok(messageDtos);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
 
         [HttpGet("{id}/messages/{messageId}")]
-        public async Task<ActionResult<MessageDTO>> GetMessageFromProjectById(int id, int messageId)
+        [AllowAnonymous]
+        public async Task<IActionResult> GetMessageInProjectById(int id, int messageId)
         {
             try
             {
-                var message = await _projService.GetMessageFromProjectByIdAsync(id, messageId);
-                return Ok(_mapper.Map<MessageDTO>(message));
+                var message = await _projService.GetMessageInProjectByIdAsync(id, messageId);
+                var messageDto = _mapper.Map<MessageDTO>(message);
+
+                return Ok(messageDto);
             }
             catch (EntityNotFoundException ex)
             {
@@ -337,27 +425,30 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
-        //Post message to project
-        [HttpPost]
-        [Route("{id}/message")]
-        public async Task<IActionResult> AddMessageToProject(int id, [FromBody] MessagePostDTO messageDTO)
+        [HttpPost("{id}/messages")]
+        [Authorize]
+        public async Task<IActionResult> AddMessageToProject(int id, [FromBody] MessagePostDTO messagePostDTO)
         {
-            try
-            {
-                Guid userId = new Guid("00000000-0000-0000-0000-000000000001"); //Gonna get this from somehwee else later
+            //string userId = "00000000-0000-0000-0000-000000000001";
+            //string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //Guid userGuid = Guid.Parse(userId);
 
-                await _projService.AddNewMessageToProjectAsync(id, userId, messageDTO.Subject,messageDTO.MessageContent, messageDTO.ImageUrl);
-                return Ok("Portfolio project added to the user successfully.");
-            }
-            catch (EntityNotFoundException ex)
+            var newMessage = new Message
             {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+                Subject = messagePostDTO.Subject,
+                MessageContent = messagePostDTO.MessageContent,
+                ImageUrl = messagePostDTO.ImageUrl,
+                Timestamp = DateTime.UtcNow,
+                UserId = userGuid,
+                ProjectId = id,
+            };
+
+            newMessage.ParentId = null;
+
+            var addedMessage = await _projService.AddMessageToProjectAsync(id, newMessage);
+
+            return Ok(addedMessage);
         }
-
     }
 }

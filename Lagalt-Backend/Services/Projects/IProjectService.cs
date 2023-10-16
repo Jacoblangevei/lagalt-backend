@@ -14,8 +14,6 @@ namespace Lagalt_Backend.Services.Projects
 
         Task<Project> UpdateAsync(Project obj);
 
-        Task<ICollection<Message>> GetMessagesAsync(int id);
-
         //Tags
         Task<List<Tag>> GetAllTagsInProjectAsync(int id);
         Task<Tag> GetTagInProjectByIdAsync(int id, int tagId);
@@ -29,9 +27,9 @@ namespace Lagalt_Backend.Services.Projects
         Task<Project> RemoveRequirementFromProjectAsync(int id, int requirementId);
 
         //Messages
-        Task<Message> GetMessageFromProjectByIdAsync(int id, int messageId);
-        
-        Task<Message> AddNewMessageToProjectAsync(int id, Guid userId, string messageSubject,string messageContent, string messageImage);
+        Task<List<Message>> GetAllMessagesInProjectAsync(int id);
+        Task<Message> GetMessageInProjectByIdAsync(int id, int messageId);
+        Task<Message> AddMessageToProjectAsync(int projectId, Message message);
 
     }
 }

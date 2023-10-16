@@ -15,6 +15,6 @@ namespace Lagalt_Backend.Data.Dtos.Messages
         public DateTime Timestamp { get; set; }
         public Guid? CreatorId { get; set; }
         public int? ProjectId { get; set; }
-        public int[] Comments { get; set; }
+        public int[] Replies { get; set; }
     }
 }

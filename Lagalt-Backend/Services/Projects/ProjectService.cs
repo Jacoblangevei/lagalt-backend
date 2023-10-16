@@ -289,28 +289,22 @@ namespace Lagalt_Backend.Services.Projects
         }
 
         //Messages
-        public async Task<ICollection<Message>> GetMessagesAsync(int id)
+        public async Task<List<Message>> GetAllMessagesInProjectAsync(int id)
         {
-            if (!await ProjectExistsAsync(id))
-                throw new EntityNotFoundException(nameof(Project), id);
+            var messages = await _context.Messages
+            .Include(m => m.Replies)
+            .Where(m => m.ProjectId == id && m.ParentId == null)
+            .ToListAsync();
 
-            return await _context.Messages
-                .Where(m => m.ProjectId == id)
-                .ToListAsync();
+            return messages;
         }
 
-        public async Task<Message> GetMessageFromProjectByIdAsync(int id, int messageId) 
+        public async Task<Message> GetMessageInProjectByIdAsync(int id, int messageId)
         {
-            var project = await _context.Projects
-                .Include(p => p.Messages)
-                .FirstOrDefaultAsync(p => p.ProjectId == id);
-
-            if (project == null)
-            {
-                throw new EntityNotFoundException(nameof(Project), id);
-            }
-
-            var message = project.Messages.FirstOrDefault(m => m.MessageId == messageId);
+            var message = await _context.Messages
+               .Include(m => m.Replies)
+               .Where(m => m.ProjectId == id && m.MessageId == messageId)
+               .SingleOrDefaultAsync();
 
             if (message == null)
             {
@@ -320,31 +314,11 @@ namespace Lagalt_Backend.Services.Projects
             return message;
         }
 
-        public async Task<Message> AddNewMessageToProjectAsync(int id, Guid userId, string messageSubject, string messageContent, string messageImage)
+        public async Task<Message> AddMessageToProjectAsync(int projectId, Message message)
         {
-            var project = await _context.Projects
-                .Include(p => p.Messages)
-                .SingleOrDefaultAsync(p => p.ProjectId == id);
-
-            if (project == null)
-            {
-                return null;
-            }
-
-            var message = new Message
-            {
-                ProjectId = id,
-                UserId = userId,
-                Subject = messageSubject,
-                MessageContent = messageContent,
-                ImageUrl = messageImage,
-                Timestamp = DateTime.UtcNow
-            };
-
-            project.Messages.Add(message);
-
+            message.ProjectId = projectId;
+            _context.Messages.Add(message);
             await _context.SaveChangesAsync();
-
             return message;
         }
 

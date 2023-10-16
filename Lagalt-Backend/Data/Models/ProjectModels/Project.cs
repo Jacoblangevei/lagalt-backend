@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Models.UserModels;
+using Newtonsoft.Json;
 
 namespace Lagalt_Backend.Data.Models.ProjectModels
 {

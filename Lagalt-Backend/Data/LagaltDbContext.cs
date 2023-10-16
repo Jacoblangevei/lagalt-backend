@@ -8,7 +8,10 @@ namespace Lagalt_Backend.Data
 {
     public class LagaltDbContext : DbContext
     {
-        public LagaltDbContext(DbContextOptions<LagaltDbContext> options) : base(options) { }
+        public LagaltDbContext(DbContextOptions<LagaltDbContext> options) : base(options) 
+        {
+            ChangeTracker.LazyLoadingEnabled = false;
+        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
