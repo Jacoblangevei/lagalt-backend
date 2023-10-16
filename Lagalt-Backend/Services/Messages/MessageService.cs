@@ -16,40 +16,47 @@ namespace Lagalt_Backend.Services.Messages
             _context = context;
         }
 
-        public async Task<ICollection<Message>> GetAllAsync()
+        public async Task<Message> AddAsync(Message message)
         {
-            return await _context.Messages.ToListAsync();
+            _context.Messages.Add(message);
+            await _context.SaveChangesAsync();
+            return message;
         }
-
         public async Task<Message> GetByIdAsync(int id)
         {
-            var msg = await _context.Messages.Where(m => m.MessageId == id).FirstAsync();
-
-            if (msg is null)
-                throw new EntityNotFoundException(nameof(msg), id);
-
-            return msg;
+            var message = await _context.Messages.FindAsync(id);
+            if (message == null)
+            {
+                throw new EntityNotFoundException(nameof(Message), id);
+            }
+            return message;
         }
 
-        public async Task<Message> AddAsync(Message obj)
+        public Task DeleteByIdAsync(int id)
         {
-            await _context.Messages.AddAsync(obj);
-            await _context.SaveChangesAsync();
-            return obj;
+            throw new NotImplementedException();
         }
 
-        public async Task DeleteByIdAsync(int id)
+        public Task<ICollection<Message>> GetAllAsync()
         {
-            if (!await MessageExistsAsync(id))
-                throw new EntityNotFoundException(nameof(Project), id);
-
-            var msg = await _context.Messages
-                .Where(m => m.MessageId == id)
-                .FirstAsync();
-
-            _context.Messages.Remove(msg);
-            await _context.SaveChangesAsync();
+            throw new NotImplementedException();
         }
+
+        public async Task<IEnumerable<Message>> GetRepliesInMessageAsync(int id)
+        {
+            return await _context.Messages
+                .Where(m => m.ParentId == id)
+                .ToListAsync();
+        }
+        public async Task<Message> GetReplyInMessageByIdAsync(int id, int replyId)
+        {
+            return await _context.Messages
+                .Where(m => m.MessageId == replyId && m.ParentId == id)
+                .SingleOrDefaultAsync();
+        }
+
+
+        //Add reply to message
 
         //Helping methods
         private async Task<bool> MessageExistsAsync(int id)

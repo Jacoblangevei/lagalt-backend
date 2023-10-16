@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lagalt_Backend.Data.Dtos.Skills;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -39,22 +40,59 @@ namespace Lagalt_Backend.Controllers
             _mapper = mapper;
         }
 
-        //Get all messages
+        [HttpGet("{id}/replies")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<Message>>> GetRepliesInMessage(int id)
+        {
+            var replies = await _msgService.GetRepliesInMessageAsync(id);
+            return Ok(replies);
+        }
 
+        [HttpGet("{id}/replies/{replyId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Message>> GetReplyInMessageById(int id, int replyId)
+        {
+            var reply = await _msgService.GetReplyInMessageByIdAsync(id, replyId);
 
-        //Get message by id
+            if (reply == null)
+            {
+                return NotFound();
+            }
 
-        //Add message to project
+            return Ok(reply);
+        }
 
-        //Delete message from project
+        [HttpPost("{id}/replies")]
+        [Authorize]
+        public async Task<ActionResult<MessageDTO>> AddReplyToMessage(int id, [FromBody] MessagePostDTO messagePostDTO)
+        {
+            //string userId = "00000000-0000-0000-0000-000000000001";
+            //string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //Guid userGuid = Guid.Parse(userId);
 
-        //Get all comments from message
+            var parentMessage = await _msgService.GetByIdAsync(id);
 
-        //Get comment in project by id
+            if (parentMessage == null)
+            {
+                return NotFound(); 
+            }
 
-        //Add comment to message
+            var newReply = new Message
+            {
+                Subject = messagePostDTO.Subject,
+                MessageContent = messagePostDTO.MessageContent,
+                ImageUrl = messagePostDTO.ImageUrl,
+                Timestamp = DateTime.UtcNow,
+                UserId = userGuid,
+                ParentId = id
+            };
 
-        //Delete comment from message
+            var addedReply = await _msgService.AddAsync(newReply);
 
+            var addedReplyDTO = _mapper.Map<MessageDTO>(addedReply);
+
+            return Ok(addedReplyDTO);
+        }
     }
 }

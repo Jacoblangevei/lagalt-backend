@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using System.Reflection.Metadata;
+using Newtonsoft.Json;
 
 namespace Lagalt_Backend.Data.Models.MessageModels
 {
@@ -27,6 +28,7 @@ namespace Lagalt_Backend.Data.Models.MessageModels
         [ForeignKey("ProjectId")]
         public int? ProjectId { get; set;}
         public Project? Project { get; set; }
+        [JsonIgnore]
         public ICollection<Message> Replies  { get; set; }
     }
 }
