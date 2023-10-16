@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Lagalt_Backend.Services.Projects;
 using Lagalt_Backend.Data.Dtos.Projects;
+using Lagalt_Backend.Data.Dtos.ProjectRequests;
 using Lagalt_Backend.Data.Dtos.Messages;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Exceptions;
@@ -14,6 +15,7 @@ using Lagalt_Backend.Data.Dtos.Tags;
 using Lagalt_Backend.Data.Dtos.Requirements;
 using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Models.UserModels;
+using Lagalt_Backend.Services.ProjectRequests;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -29,6 +31,7 @@ namespace Lagalt_Backend.Controllers
     {
         private readonly IProjectService _projService;
         private readonly IProjectTypeService _projectTypeService;
+        private readonly IProjectRequestService _projectRequestService;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -36,10 +39,11 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="projService">The service object for accessing project operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper)
+        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService)
         {
             _projService = projService;
             _projectTypeService = projectTypeService;
+            _projectRequestService = projectRequestService;
             _mapper = mapper;
         }
 
@@ -449,6 +453,42 @@ namespace Lagalt_Backend.Controllers
             var addedMessage = await _projService.AddMessageToProjectAsync(id, newMessage);
 
             return Ok(addedMessage);
+        }
+
+        // Request Project
+        [HttpPost("{projectId}/requests")]
+        public async Task<IActionResult> RequestToJoinProject(int projectId, ProjectRequestDTO requestDto)
+        {
+            var projectRequest = _mapper.Map<ProjectRequest>(requestDto);
+            projectRequest.ProjectId = projectId;
+            projectRequest.RequestDate = DateTime.UtcNow; // Set request date to current time
+
+            // Call service layer to add the request
+            var result = await _projectRequestService.CreateRequestAsync(projectRequest);
+
+            return CreatedAtAction(nameof(GetProjectRequests), new { projectId = projectId }, result);
+        }
+
+        [HttpGet("{projectId}/requests")]
+        public async Task<IActionResult> GetProjectRequests(int projectId)
+        {
+            // Check if the project exists
+            var project = await _projService.GetByIdAsync(projectId);
+            if (project == null)
+            {
+                return NotFound($"Project with id {projectId} not found.");
+            }
+
+            var requests = await _projectRequestService.GetAllRequestsForProjectAsync(projectId);
+
+            if (requests == null || !requests.Any())
+            {
+                return NoContent();
+            }
+
+            var requestDtos = _mapper.Map<IEnumerable<ProjectRequestDTO>>(requests);
+
+            return Ok(requestDtos);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Lagalt_Backend.Services.ProjectRequests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,21 +39,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuer = true,
             ValidateAudience = false,
+            
             IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
             {
                 using var client = new HttpClient();
-                var keyuri = builder.Configuration["https://lemur-10.cloud-iam.com/auth/realms/lagaltfrontend/protocol/openid-connect/certs"]; // .../openid/certs from sample/notes
+                var keyuri = "https://lemur-10.cloud-iam.com/auth/realms/lagaltfrontend/protocol/openid-connect/certs"; // .../openid/certs from sample/notes
                 var response = client.GetAsync(keyuri).Result;
                 var responseString = response.Content.ReadAsStringAsync().Result;
                 var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(responseString);
                 return keys.Keys;
             },
-            ValidIssuers = new List<string>
-            {
-                builder.Configuration["https://lemur-10.cloud-iam.com/auth/realms/lagaltfrontend/"] // url to kc realm
-                //https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-7.0&tabs=windows
-                //https://gitlab.com/NicholasLennox/securityaugust2023/-/blob/main/SecurityClass/Program.cs?ref_type=heads
-            }
+            ValidIssuer = "https://lemur-10.cloud-iam.com/auth/realms/lagaltfrontend",
+            //{
+            //     // url to kc realm
+            //    //https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-7.0&tabs=windows
+            //    //https://gitlab.com/NicholasLennox/securityaugust2023/-/blob/main/SecurityClass/Program.cs?ref_type=heads
+            //}
         };
     });
 
@@ -65,6 +67,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectTypeService, ProjectTypeService>();
+builder.Services.AddScoped<IProjectRequestService, ProjectRequestService>();
 // Add automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
