@@ -91,27 +91,27 @@ namespace Lagalt_Backend.Controllers
 
         [HttpGet("user")]
         [Authorize]
-        public async Task<ActionResult<User>> GetOrRegisterUser()
+        public ActionResult<User> GetOrRegisterUser()
         {
-            Guid subject = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             string username = User.FindFirst(ClaimTypes.Name).Value;
+            var user = _context.Users.Where(x => x.UserId.ToString() == userId).FirstOrDefault();
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.UserId == subject);
-
-            if (user == null)
+            if (user is null)
             {
-                user = new User
+                User newUser = new User()
                 {
-                    UserId = subject,
-                    UserName = username
+                    UserId = Guid.Parse(userId),
+                    UserName = username,
+                    AnonymousModeOn = false
+
                 };
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                _context.Users.Add(newUser);
+                _context.SaveChanges();
             }
 
             return user;
         }
-
 
         //New,not done
         //[HttpGet("exists")]

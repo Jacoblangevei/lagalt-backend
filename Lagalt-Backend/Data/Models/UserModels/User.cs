@@ -15,7 +15,6 @@ namespace Lagalt_Backend.Data.Models.UserModels
         public string UserName { get; set; } = string.Empty;
 
         [StringLength(255)]
-        public string Role { get; set; }
         public string? Description { get; set; }
         public string? Education { get; set; }
         public bool AnonymousModeOn { get; set; }

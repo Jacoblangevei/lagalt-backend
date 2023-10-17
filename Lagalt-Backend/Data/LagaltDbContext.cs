@@ -42,7 +42,7 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<User>().HasKey(u => u.UserId);
 
             modelBuilder.Entity<User>().HasData(
-                new User { UserId = new Guid("00000000-0000-0000-0000-000000000001"), UserName = "UserNr1", Description = "I love coding", Education = "Coding Academy", Role = "User", AnonymousModeOn = false}
+                new User { UserId = new Guid("00000000-0000-0000-0000-000000000001"), UserName = "UserNr1", Description = "I love coding", Education = "Coding Academy", AnonymousModeOn = false}
                 );
 
             //Projects
