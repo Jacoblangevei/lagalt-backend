@@ -99,8 +99,9 @@ namespace Lagalt_Backend.Controllers
 
             if (user != null)
             {
-                // User already exists, you can return an appropriate response.
-                return user;
+                // User already exists in database, you can return an appropriate response.
+                var userDTO = _mapper.Map<UserDTO>(user);
+                return Ok(userDTO);
             }
 
             string username = User.FindFirst(ClaimTypes.Name).Value;
@@ -115,7 +116,8 @@ namespace Lagalt_Backend.Controllers
             await _context.SaveChangesAsync();
 
             // Return the newly created user.
-            return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
+            var newUserDTO = _mapper.Map<UserDTO>(newUser);
+            return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUserDTO);
         }
 
         //new, not done
