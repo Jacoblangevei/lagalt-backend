@@ -89,6 +89,10 @@ namespace Lagalt_Backend.Controllers
             return userDTO;
         }
 
+        /// <summary>
+        /// Get the id from the database
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("register")]
         [Authorize]
         public ActionResult<User> RegisterUser()
@@ -108,13 +112,13 @@ namespace Lagalt_Backend.Controllers
                     return Conflict("User already registered.");
                 }
 
-                string username = User.FindFirst(ClaimTypes.Name)?.Value;
+                var username = User.Claims.FirstOrDefault(claim => claim.Type == "preferred_username");
 
                 // Create a new user
                 User user = new User
                 {
                     UserId = userId,
-                    UserName = username ?? "Unknown", //just in case
+                    UserName = username.Value ?? "Unknown", //just in case
                     AnonymousModeOn = false
                 };
 
