@@ -91,7 +91,7 @@ namespace Lagalt_Backend.Controllers
 
         //New,not done
         [HttpGet("exists")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> GetIfExistsOrRegistrateToDatabase()
         {
             string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;

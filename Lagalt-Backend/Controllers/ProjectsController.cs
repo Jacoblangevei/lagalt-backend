@@ -501,13 +501,25 @@ namespace Lagalt_Backend.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> RequestToJoinProject(int projectId)
         {
-            //Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            string userId = "00000000-0000-0000-0000-000000000001";
-            Guid userGuid = Guid.Parse(userId);
+            //string userId = "00000000-0000-0000-0000-000000000001";
+
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(projectId);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
 
             var projectRequest = new ProjectRequest
             {
-                UserId = userGuid,
+                UserId = Guid.Parse(userId),
                 ProjectId = projectId,
                 RequestDate = DateTime.UtcNow
             };
@@ -522,13 +534,20 @@ namespace Lagalt_Backend.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetProjectRequests(int projectId)
         {
-            //Check if user is the project owner
+            //string userId = "00000000-0000-0000-0000-000000000001";
 
-            // Check if the project exists
-            var project = await _projService.GetByIdAsync(projectId);
-            if (project == null)
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(projectId);
+
+            if (existingProject == null)
             {
-                return NotFound($"Project with id {projectId} not found.");
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
             }
 
             var requests = await _projectRequestService.GetAllRequestsForProjectAsync(projectId);
@@ -553,7 +572,21 @@ namespace Lagalt_Backend.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> RemoveRequestFromProject(int projectId, int requestId)
         {
-            //Check if user is owner
+            //string userId = "00000000-0000-0000-0000-000000000001";
+
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(projectId);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid();
+            }
 
             try
             {
