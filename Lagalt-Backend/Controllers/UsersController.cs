@@ -95,6 +95,9 @@ namespace Lagalt_Backend.Controllers
         {
             string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             string username = User.FindFirst(ClaimTypes.Name).Value;
+
+            Console.WriteLine($"Subject: {subject}, Username: {username}");
+
             var user = _context.Users.Where(x => x.UserId.ToString() == subject).FirstOrDefault();
 
             if (user is null)
