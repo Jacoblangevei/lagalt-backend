@@ -103,10 +103,12 @@ namespace Lagalt_Backend.Controllers
                     return user;
                 }
 
+                string username = User.FindFirst(ClaimTypes.Name).Value;
+
                 User newUser = new User
                 {
                     UserId = Guid.Parse(subject),
-                    UserName = User.FindFirst(ClaimTypes.Name)?.Value,
+                    UserName = username ?? "Unknown",
                     AnonymousModeOn = false
                 };
 
