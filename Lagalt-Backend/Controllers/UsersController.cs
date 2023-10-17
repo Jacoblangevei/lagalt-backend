@@ -100,25 +100,25 @@ namespace Lagalt_Backend.Controllers
             try
             {
                 var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var usernameClaim = User.Claims.FirstOrDefault(claim => claim.Type == "preferred_username");
+                string username = usernameClaim.Value;
+
                 if (claim == null || !Guid.TryParse(claim.Value, out var userId))
                 {
                     return BadRequest("Invalid user data.");
                 }
 
                 var existingUser = _context.Users.Find(userId);
-
                 if (existingUser != null)
                 {
                     return Conflict("User already registered.");
                 }
 
-                var username = User.Claims.FirstOrDefault(claim => claim.Type == "preferred_username");
-
                 // Create a new user
                 User user = new User
                 {
                     UserId = userId,
-                    UserName = username.Value ?? "Unknown", //just in case
+                    UserName = username ?? "Unknown", //just in case
                     AnonymousModeOn = false
                 };
 
