@@ -100,28 +100,31 @@ namespace Lagalt_Backend.Controllers
 
                 if (user != null)
                 {
-                    return user;
+                    return Conflict("User already registered.");
                 }
 
+                string username = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                // Create a new user
                 User newUser = new User
                 {
                     UserId = Guid.Parse(subject),
-                    UserName = User.FindFirst(ClaimTypes.Name)?.Value,
+                    UserName = username ?? "Unknown", //just in case
                     AnonymousModeOn = false
                 };
 
                 _context.Users.Add(newUser);
                 _context.SaveChanges();
 
-                return newUser;
+                return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
             }
             catch (Exception ex)
             {
+                // Log the exception for debugging
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
 
         //New,not done
         //[HttpGet("exists")]
