@@ -89,29 +89,32 @@ namespace Lagalt_Backend.Controllers
             return userDTO;
         }
 
-        [HttpGet("user")]
+        [HttpPost("register")]
         [Authorize]
-        public ActionResult<User> GetOrRegisterUser()
+        public ActionResult<User> RegisterUser()
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            string username = User.FindFirst(ClaimTypes.Name).Value;
-            var user = _context.Users.Where(x => x.UserId.ToString() == userId).FirstOrDefault();
+            string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var existingUser = _context.Users.FirstOrDefault(x => x.UserId.ToString() == subject);
 
-            if (user is null)
+            if (existingUser != null)
             {
-                User newUser = new User()
-                {
-                    UserId = Guid.Parse(userId),
-                    UserName = username,
-                    AnonymousModeOn = false
-
-                };
-                _context.Users.Add(newUser);
-                _context.SaveChanges();
+                return Conflict("User already registered.");
             }
 
+            string username = User.FindFirst(ClaimTypes.Name).Value;
+
+            User user = new User()
+            {
+                UserId = Guid.Parse(subject),
+                UserName = username,
+                AnonymousModeOn = false
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
             return user;
         }
+
 
         //New,not done
         //[HttpGet("exists")]
