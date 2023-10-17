@@ -95,10 +95,15 @@ namespace Lagalt_Backend.Controllers
         {
             try
             {
-                string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var user = _context.Users.Where(x => x.UserId.ToString() == subject).FirstOrDefault();
+                var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (claim == null || !Guid.TryParse(claim.Value, out var userId))
+                {
+                    return BadRequest("Invalid user data.");
+                }
 
-                if (user != null)
+                var existingUser = _context.Users.Find(userId);
+
+                if (existingUser != null)
                 {
                     return Conflict("User already registered.");
                 }
@@ -106,17 +111,17 @@ namespace Lagalt_Backend.Controllers
                 string username = User.FindFirst(ClaimTypes.Name)?.Value;
 
                 // Create a new user
-                User newUser = new User
+                User user = new User
                 {
-                    UserId = Guid.Parse(subject),
+                    UserId = userId,
                     UserName = username ?? "Unknown", //just in case
                     AnonymousModeOn = false
                 };
 
-                _context.Users.Add(newUser);
+                _context.Users.Add(user);
                 _context.SaveChanges();
 
-                return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
+                return CreatedAtAction("GetUser", new { id = user.UserId }, user);
             }
             catch (Exception ex)
             {
