@@ -89,36 +89,58 @@ namespace Lagalt_Backend.Controllers
             return userDTO;
         }
 
-        //New,not done
-        [HttpGet("exists")]
-        [AllowAnonymous]
-        public async Task<ActionResult<User>> GetIfExistsOrRegistrateToDatabase()
+        [HttpGet("user")]
+        [Authorize]
+        public ActionResult<User> GetOrRegisterUser()
         {
             string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string username = User.FindFirst(ClaimTypes.Name).Value;
             var user = _context.Users.Where(x => x.UserId.ToString() == subject).FirstOrDefault();
 
-            if (user != null)
+            if (user is null)
             {
-                // User already exists in database, you can return an appropriate response.
-                var userDTO = _mapper.Map<UserDTO>(user);
-                return Ok(userDTO);
+                user = new User
+                {
+                    UserId = Guid.Parse(subject),
+                    UserName = username
+                };
+                _context.Users.Add(user);
+                _context.SaveChanges();
             }
 
-            string username = User.FindFirst(ClaimTypes.Name).Value;
-            // If the user doesn't exist, create a new user and add it to the database.
-            User newUser = new User()
-            {
-                UserId = Guid.Parse(subject),
-                UserName = username
-            };
-
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            // Return the newly created user.
-            var newUserDTO = _mapper.Map<UserDTO>(newUser);
-            return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUserDTO);
+            return user;
         }
+
+        //New,not done
+        //[HttpGet("exists")]
+        //[AllowAnonymous]
+        //public async Task<ActionResult<User>> GetIfExistsOrRegistrateToDatabase()
+        //{
+        //    string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        //    var user = _context.Users.Where(x => x.UserId.ToString() == subject).FirstOrDefault();
+
+        //    if (user != null)
+        //    {
+        //        // User already exists in database, you can return an appropriate response.
+        //        var userDTO = _mapper.Map<UserDTO>(user);
+        //        return Ok(userDTO);
+        //    }
+
+        //    string username = User.FindFirst(ClaimTypes.Name).Value;
+        //    // If the user doesn't exist, create a new user and add it to the database.
+        //    User newUser = new User()
+        //    {
+        //        UserId = Guid.Parse(subject),
+        //        UserName = username
+        //    };
+
+        //    _context.Users.Add(newUser);
+        //    await _context.SaveChangesAsync();
+
+        //    // Return the newly created user.
+        //    var newUserDTO = _mapper.Map<UserDTO>(newUser);
+        //    return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUserDTO);
+        //}
 
         //new, not done
         [HttpPut("{id}")]
