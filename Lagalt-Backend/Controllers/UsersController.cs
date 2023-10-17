@@ -90,50 +90,37 @@ namespace Lagalt_Backend.Controllers
         }
 
         [HttpPost("register")]
+        [Authorize]
         public ActionResult<User> RegisterUser()
         {
             try
             {
-                // Retrieve the user's unique identifier from the token
-                var claim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (claim == null || !Guid.TryParse(claim.Value, out var userId))
+                string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var user = _context.Users.Where(x => x.UserId.ToString() == subject).FirstOrDefault();
+
+                if (user != null)
                 {
-                    return BadRequest("Invalid user data.");
+                    return user;
                 }
 
-                // Check if the user already exists
-                var existingUser = _context.Users.Find(userId);
-
-                if (existingUser != null)
+                User newUser = new User
                 {
-                    return Conflict("User already registered.");
-                }
-
-                // Optionally, set default values or perform additional validation
-                string username = User.FindFirst(ClaimTypes.Name)?.Value;
-
-                // Create a new user
-                User user = new User
-                {
-                    UserId = userId,
-                    UserName = username ?? "Unknown", // Provide a default if username is missing
+                    UserId = Guid.Parse(subject),
+                    UserName = User.FindFirst(ClaimTypes.Name)?.Value,
                     AnonymousModeOn = false
                 };
 
-                // Add the user to the database
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
-                return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+                return user;
             }
             catch (Exception ex)
             {
-                // Log the exception for debugging
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
 
         //New,not done
         //[HttpGet("exists")]
