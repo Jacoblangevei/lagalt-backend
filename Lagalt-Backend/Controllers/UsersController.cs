@@ -90,29 +90,48 @@ namespace Lagalt_Backend.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize]
         public ActionResult<User> RegisterUser()
         {
-            string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var existingUser = _context.Users.FirstOrDefault(x => x.UserId.ToString() == subject);
-
-            if (existingUser != null)
+            try
             {
-                return Conflict("User already registered.");
+                // Retrieve the user's unique identifier from the token
+                var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (claim == null || !Guid.TryParse(claim.Value, out var userId))
+                {
+                    return BadRequest("Invalid user data.");
+                }
+
+                // Check if the user already exists
+                var existingUser = _context.Users.Find(userId);
+
+                if (existingUser != null)
+                {
+                    return Conflict("User already registered.");
+                }
+
+                // Optionally, set default values or perform additional validation
+                string username = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                // Create a new user
+                User user = new User
+                {
+                    UserId = userId,
+                    UserName = username ?? "Unknown", // Provide a default if username is missing
+                    AnonymousModeOn = false
+                };
+
+                // Add the user to the database
+                _context.Users.Add(user);
+                _context.SaveChanges();
+
+                return CreatedAtAction("GetUser", new { id = user.UserId }, user);
             }
-
-            string username = User.FindFirst(ClaimTypes.Name).Value;
-
-            User user = new User()
+            catch (Exception ex)
             {
-                UserId = Guid.Parse(subject),
-                UserName = username,
-                AnonymousModeOn = false
-            };
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            return user;
+                // Log the exception for debugging
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
 
