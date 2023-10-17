@@ -92,42 +92,30 @@ namespace Lagalt_Backend.Controllers
         //New,not done
         [HttpGet("exists")]
         [Authorize]
-        public ActionResult<User> GetIfExists()
+        public async Task<ActionResult<User>> GetIfExistsOrRegistrateToDatabase()
         {
             string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var user = _context.Users.Where(x => x.UserId.ToString() == subject).FirstOrDefault();
-            return user is null ? NotFound() : user;
-        }
 
-        //New,not done
-        [HttpPost("register")]
-        [Authorize]
-        public async Task<ActionResult<User>> AddToDb()
-        {
-            // Retrieve the user's ID from Keycloak claims.
-            string subject = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            string username = User.FindFirst(ClaimTypes.Name).Value;
-
-            // Check if the user already exists in your database.
-            var existingUser = await _context.Users.FindAsync(Guid.Parse(subject));
-            if (existingUser != null)
+            if (user != null)
             {
                 // User already exists, you can return an appropriate response.
-                return Conflict("User already registered.");
+                return user;
             }
 
+            string username = User.FindFirst(ClaimTypes.Name).Value;
             // If the user doesn't exist, create a new user and add it to the database.
-            User user = new User()
+            User newUser = new User()
             {
                 UserId = Guid.Parse(subject),
                 UserName = username
             };
 
-            _context.Users.Add(user);
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
             // Return the newly created user.
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+            return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
         }
 
         //new, not done
