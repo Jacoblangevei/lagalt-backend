@@ -103,19 +103,17 @@ namespace Lagalt_Backend.Controllers
                     return user;
                 }
 
-                string username = User.FindFirst(ClaimTypes.Name).Value;
-
                 User newUser = new User
                 {
                     UserId = Guid.Parse(subject),
-                    UserName = username ?? "Unknown",
+                    UserName = User.FindFirst(ClaimTypes.Name)?.Value,
                     AnonymousModeOn = false
                 };
 
-                _context.Users.Add(user);
+                _context.Users.Add(newUser);
                 _context.SaveChanges();
 
-                return user;
+                return newUser;
             }
             catch (Exception ex)
             {
@@ -123,6 +121,7 @@ namespace Lagalt_Backend.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
 
         //New,not done
         //[HttpGet("exists")]
