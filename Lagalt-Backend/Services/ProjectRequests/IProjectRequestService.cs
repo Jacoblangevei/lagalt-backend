@@ -12,6 +12,6 @@ namespace Lagalt_Backend.Services.ProjectRequests
         Task<IEnumerable<ProjectRequest>> GetAllRequestsForProjectAsync(int projectId);
         Task<IEnumerable<ProjectRequest>> GetAllRequestsForUserAsync(Guid userId);
         Task<bool> DeleteRequestAsync(int requestId);
-        // Add other methods as needed, like for updating (approving/rejecting) requests
+        Task RemoveProjectFromProjectAsync(int projectId, int requestId);
     }
 }

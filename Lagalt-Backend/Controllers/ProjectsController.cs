@@ -522,6 +522,8 @@ namespace Lagalt_Backend.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetProjectRequests(int projectId)
         {
+            //Check if user is the project owner
+
             // Check if the project exists
             var project = await _projService.GetByIdAsync(projectId);
             if (project == null)
@@ -539,6 +541,29 @@ namespace Lagalt_Backend.Controllers
             var requestDtos = _mapper.Map<IEnumerable<ProjectRequestDTO>>(requests);
 
             return Ok(requestDtos);
+        }
+
+        /// <summary>
+        /// Removes a request from project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+        [HttpDelete("{projectId}/requests/{requestId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult> RemoveRequestFromProject(int projectId, int requestId)
+        {
+            //Check if user is owner
+
+            try
+            {
+                await _projectRequestService.RemoveProjectFromProjectAsync(projectId, requestId);
+                return Ok("Request removed from project successfully.");
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

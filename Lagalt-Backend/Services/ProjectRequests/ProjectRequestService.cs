@@ -7,6 +7,8 @@ using Lagalt_Backend.Data;
 using System.Data;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Dtos.ProjectRequests;
+using Lagalt_Backend.Data.Exceptions;
+using Lagalt_Backend.Data.Models.UserModels;
 
 namespace Lagalt_Backend.Services.ProjectRequests
 {
@@ -74,6 +76,31 @@ namespace Lagalt_Backend.Services.ProjectRequests
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task RemoveProjectFromProjectAsync(int projectId, int requestId)
+        {
+            var project = await _context.Projects
+                .Include(p => p.ProjectRequests)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+            if (project == null)
+            {
+                throw new EntityNotFoundException(nameof(Project), projectId);
+            }
+
+            var request = await _context.ProjectRequests.FindAsync(requestId);
+
+            if (request == null)
+            {
+                throw new EntityNotFoundException(nameof(ProjectRequest), requestId);
+            }
+
+            if (project.ProjectRequests.Contains(request))
+            {
+                project.ProjectRequests.Remove(request);
+                await _context.SaveChangesAsync();
+            }
         }
 
         Task<ICollection<ProjectRequest>> ICrudService<ProjectRequest, int>.GetAllAsync()
