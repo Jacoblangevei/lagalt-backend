@@ -18,8 +18,9 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         [ForeignKey("User")]
         public Guid? UserId { get; set; }
         public User? User { get; set; }
-
-        public ICollection<Project> Projects { get; set; }
+        [ForeignKey("ProjectId")]
+        public int? ProjectId { get; set; }
+        public Project? Project { get; set; }
 
     }
 }

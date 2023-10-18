@@ -23,12 +23,12 @@ namespace Lagalt_Backend.Services.Projects
             return await _context.Projects.Include(p => p.Tags).ToListAsync();
         }
 
-        public async Task<Project> GetByIdAsync(int id)
+        public async Task<Project> GetByIdAsync(int projectId)
         {
-            var proj = await _context.Projects.Where(p => p.ProjectId == id).FirstAsync();
+            var proj = await _context.Projects.Where(p => p.ProjectId == projectId).FirstAsync();
 
             if (proj is null)
-                throw new EntityNotFoundException(nameof(proj), id);
+                throw new EntityNotFoundException(nameof(proj), projectId);
 
             return proj;
         }
@@ -286,40 +286,6 @@ namespace Lagalt_Backend.Services.Projects
             }
 
             return project;
-        }
-
-        //Messages
-        public async Task<List<Message>> GetAllMessagesInProjectAsync(int id)
-        {
-            var messages = await _context.Messages
-            .Include(m => m.Replies)
-            .Where(m => m.ProjectId == id && m.ParentId == null)
-            .ToListAsync();
-
-            return messages;
-        }
-
-        public async Task<Message> GetMessageInProjectByIdAsync(int id, int messageId)
-        {
-            var message = await _context.Messages
-               .Include(m => m.Replies)
-               .Where(m => m.ProjectId == id && m.MessageId == messageId)
-               .SingleOrDefaultAsync();
-
-            if (message == null)
-            {
-                throw new EntityNotFoundException(nameof(Message), messageId);
-            }
-
-            return message;
-        }
-
-        public async Task<Message> AddMessageToProjectAsync(int projectId, Message message)
-        {
-            message.ProjectId = projectId;
-            _context.Messages.Add(message);
-            await _context.SaveChangesAsync();
-            return message;
         }
 
         //Helping methods

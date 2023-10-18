@@ -144,27 +144,5 @@ namespace Lagalt_Backend.Services.ProjectRequests
 
             return existingRequest != null;
         }
-
-        Task<ICollection<ProjectRequest>> ICrudService<ProjectRequest, int>.GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ProjectRequest> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ProjectRequest> AddAsync(ProjectRequest obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        // Implement other methods as needed, like for updating (approving/rejecting) requests
     }
 }

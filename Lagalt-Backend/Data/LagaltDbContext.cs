@@ -117,24 +117,9 @@ namespace Lagalt_Backend.Data
 
             //Update
             modelBuilder.Entity<Update>().HasOne(ud => ud.User).WithMany(u => u.Updates).HasForeignKey(ud => ud.UserId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Update>().HasOne(ud => ud.Project).WithMany(u => u.Updates).HasForeignKey(ud => ud.ProjectId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<Update>().HasData(
-                new Update { UpdateId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001"), Description = "Fixed everything", Timestamp = DateTime.Now}
-                );
-
-            //ProjectUpdate
-            modelBuilder.Entity<ProjectUpdate>().HasKey(pud => new { pud.ProjectId, pud.UpdateId });
-
-            modelBuilder.Entity<Project>()
-                .HasMany(left => left.Updates)
-                .WithMany(right => right.Projects)
-                .UsingEntity<ProjectUpdate>(
-                    right => right.HasOne(e => e.Updates).WithMany(),
-                    left => left.HasOne(e => e.Projects).WithMany().HasForeignKey(e => e.ProjectId),
-                    join => join.ToTable("ProjectUpdate")
-                );
-
-            modelBuilder.Entity<ProjectUpdate>().HasData(
-                new ProjectUpdate { ProjectId = 1, UpdateId = 1 }
+                new Update { UpdateId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000001"), ProjectId = 1, Description = "Fixed everything", Timestamp = DateTime.Now}
                 );
 
             //Milestone

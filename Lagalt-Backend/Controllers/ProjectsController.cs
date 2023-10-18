@@ -7,8 +7,6 @@ using Lagalt_Backend.Data.Dtos.ProjectRequests;
 using Lagalt_Backend.Data.Dtos.Messages;
 using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Exceptions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Lagalt_Backend.Data.Dtos.Tags;
@@ -17,6 +15,9 @@ using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Services.ProjectRequests;
 using Microsoft.EntityFrameworkCore;
+using Lagalt_Backend.Services.Projects.Messages;
+using Lagalt_Backend.Services.Projects.Updates;
+using Lagalt_Backend.Data.Dtos.Project.Updates;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -33,6 +34,8 @@ namespace Lagalt_Backend.Controllers
         private readonly IProjectService _projService;
         private readonly IProjectTypeService _projectTypeService;
         private readonly IProjectRequestService _projectRequestService;
+        private readonly IMessageProjectService _messageProjectService;
+        private readonly IUpdateService _updateService;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -40,11 +43,12 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="projService">The service object for accessing project operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService)
+        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService)
         {
             _projService = projService;
             _projectTypeService = projectTypeService;
             _projectRequestService = projectRequestService;
+            _updateService = updateService;
             _mapper = mapper;
         }
 
@@ -431,7 +435,7 @@ namespace Lagalt_Backend.Controllers
         {
             try
             {
-                var messages = await _projService.GetAllMessagesInProjectAsync(id);
+                var messages = await _messageProjectService.GetAllMessagesInProjectAsync(id);
                 var messageDtos = _mapper.Map<List<MessageDTO>>(messages);
 
                 return Ok(messageDtos);
@@ -454,7 +458,7 @@ namespace Lagalt_Backend.Controllers
         {
             try
             {
-                var message = await _projService.GetMessageInProjectByIdAsync(id, messageId);
+                var message = await _messageProjectService.GetMessageInProjectByIdAsync(id, messageId);
                 var messageDto = _mapper.Map<MessageDTO>(message);
 
                 return Ok(messageDto);
@@ -492,10 +496,12 @@ namespace Lagalt_Backend.Controllers
 
             newMessage.ParentId = null;
 
-            var addedMessage = await _projService.AddMessageToProjectAsync(id, newMessage);
+            var addedMessage = await _messageProjectService.AddMessageToProjectAsync(id, newMessage);
 
             return Ok(addedMessage);
         }
+
+        //Requests
 
         /// <summary>
         /// Request to join project
@@ -660,6 +666,63 @@ namespace Lagalt_Backend.Controllers
             return NotFound("Request not found or an error occurred.");
         }
 
+        //Updates
+
+        [HttpGet("{id}/updates")]
+        [Authorize]
+        public async Task<IActionResult> GetAllUpdatesInProject(int id)
+        {
+            try
+            {
+                var updates = await _updateService.GetAllUpdatesInProjectAsync(id);
+                var updateDtos = _mapper.Map<List<UpdateDTO>>(updates);
+
+                return Ok(updateDtos);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}/updates/{updateId}")]
+        [Authorize]
+        public async Task<IActionResult> GetUpdateInProjectById(int id, int updateId)
+        {
+            try
+            {
+                var update = await _updateService.GetUpdateInProjectByIdAsync(id, updateId);
+                var updateDto = _mapper.Map<UpdateDTO>(update);
+
+                return Ok(updateDto);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/updates")]
+        [Authorize]
+        public async Task<IActionResult> AddUpdateToProject(int id, [FromBody] UpdatePostDTO updatePostDTO)
+        {
+            //string userId = "00000000-0000-0000-0000-000000000001";
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            Guid userGuid = Guid.Parse(userId);
+
+            var newUpdate = new Update
+            {
+                Description = updatePostDTO.Description,
+                Timestamp = DateTime.UtcNow,
+                UserId = userGuid,
+                ProjectId = id
+            };
+
+            var addedUpdate = await _updateService.AddUpdateToProjectAsync(id, newUpdate);
+
+            return Ok(addedUpdate);
+        }
 
     }
 }

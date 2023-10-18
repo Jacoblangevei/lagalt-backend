@@ -9,6 +9,7 @@ using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Lagalt_Backend.Services.ProjectRequests;
+using Lagalt_Backend.Services.Projects.Updates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +63,7 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectTypeService, ProjectTypeService>();
 builder.Services.AddScoped<IProjectRequestService,  ProjectRequestService>();
+builder.Services.AddScoped<IUpdateService, UpdateService>();
 // Add automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

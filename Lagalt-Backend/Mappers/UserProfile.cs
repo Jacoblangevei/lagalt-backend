@@ -29,14 +29,6 @@ namespace Lagalt_Backend.Mappers
             
             CreateMap<User, UserPutDTO>().ReverseMap();
 
-            CreateMap<User, UserProfileDTO>()
-                .ForMember(
-                    udto => udto.Projects, options => options.MapFrom(u => u.Projects.Select(p => p.ProjectId).ToArray()))
-                .ForMember(
-                    udto => udto.Skills, options => options.MapFrom(u => u.Skills.Select(s => s.SkillId).ToArray()))
-                .ForMember(
-                    udto => udto.PortfolioProjects, options => options.MapFrom(u => u.PortfolioProjects.Select(pp => pp.PortfolioProjectId).ToArray())).ReverseMap();
-
             CreateMap<Skill, UserDTO>().ReverseMap();
         }
     }
