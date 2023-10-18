@@ -130,7 +130,8 @@ namespace Lagalt_Backend.Controllers
         /// <param name="project">The new project's data.</param>
         /// <returns>A newly created project.</returns>
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
+        //[Authorize]
         public async Task<ActionResult<ProjectDTO>> PostProject([FromBody] ProjectPostDTO projectPostDTO)
         {
             try
