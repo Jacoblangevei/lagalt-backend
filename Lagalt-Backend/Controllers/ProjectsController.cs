@@ -134,8 +134,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="project">The new project's data.</param>
         /// <returns>A newly created project.</returns>
         [HttpPost]
-        [AllowAnonymous]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<ProjectDTO>> PostProject([FromBody] ProjectPostDTO projectPostDTO)
         {
             try
@@ -149,7 +148,8 @@ namespace Lagalt_Backend.Controllers
                     Name = projectPostDTO.Name,
                     Description = projectPostDTO.Description,
                     ImageUrl = projectPostDTO.ImageUrl,
-                    ProjectType = projectType
+                    ProjectType = projectType,
+                    ProjectStatusId = 1,
                 };
 
                 var createdProject = await _projService.CreateProjectAsync(newProject, Guid.Parse(ownerId));

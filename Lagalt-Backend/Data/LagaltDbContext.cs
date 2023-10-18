@@ -52,8 +52,8 @@ namespace Lagalt_Backend.Data
             modelBuilder.Entity<Project>().HasOne(p => p.ProjectType).WithMany(pt => pt.Projects).HasForeignKey(p => p.ProjectTypeId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Project>().HasData(
-                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), ImageUrl = "www.example.no", ProjectTypeId = 10 },
-                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), ImageUrl= "www.example.no", ProjectTypeId = 4 }
+                new Project { ProjectId = 1, Name = "Happy Hacking", Description = "Hacking someone important", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), ImageUrl = "www.example.no", ProjectTypeId = 10, ProjectStatusId = 1 },
+                new Project { ProjectId = 2, Name = "Movie Maker", Description = "Make a cool movie", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), ImageUrl= "www.example.no", ProjectTypeId = 4, ProjectStatusId = 1 }
                 );
             
             //ProjectUser
@@ -135,8 +135,13 @@ namespace Lagalt_Backend.Data
 
             //MilestoneStatus
             modelBuilder.Entity<MilestoneStatus>().HasData(
-                new MilestoneStatus { MilestoneStatusId = 1, MilestoneStatusName = "Completed" }
-                );
+                new MilestoneStatus { MilestoneStatusId = 1, MilestoneStatusName = "Not Started" },
+                new MilestoneStatus { MilestoneStatusId = 2, MilestoneStatusName = "In Progress" },
+                new MilestoneStatus { MilestoneStatusId = 3, MilestoneStatusName = "On Hold" },
+                new MilestoneStatus { MilestoneStatusId = 4, MilestoneStatusName = "Completed" },
+                new MilestoneStatus { MilestoneStatusId = 5, MilestoneStatusName = "Cancelled" },
+                new MilestoneStatus { MilestoneStatusId = 6, MilestoneStatusName = "Delayed" }
+            );
 
             //Tag
             modelBuilder.Entity<Tag>().HasData(
@@ -161,7 +166,12 @@ namespace Lagalt_Backend.Data
 
             //ProjectStatus
             modelBuilder.Entity<ProjectStatus>().HasData(
-                new ProjectStatus { StatusId = 1, StatusName = "Completed" }
+                new ProjectStatus { StatusId = 1, StatusName = "Not Started" },
+                new ProjectStatus { StatusId = 2, StatusName = "In Progress" },
+                new ProjectStatus { StatusId = 3, StatusName = "On Hold" },
+                new ProjectStatus { StatusId = 4, StatusName = "Completed" },
+                new ProjectStatus { StatusId = 5, StatusName = "Cancelled" },
+                new ProjectStatus { StatusId = 6, StatusName = "Delayed" }
                 );
 
             //ProjectType
