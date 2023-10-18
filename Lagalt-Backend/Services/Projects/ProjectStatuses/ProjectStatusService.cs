@@ -16,5 +16,10 @@ namespace Lagalt_Backend.Services.Projects.ProjectStatuses
         {
             return await _context.ProjectStatuses.ToListAsync();
         }
+        public async Task<bool> ProjectStatusExistsAsync(int statusId)
+        {
+            return await _context.ProjectStatuses.AnyAsync(s => s.StatusId == statusId);
+        }
+
     }
 }

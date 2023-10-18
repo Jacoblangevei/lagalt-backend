@@ -18,6 +18,8 @@ using Microsoft.EntityFrameworkCore;
 using Lagalt_Backend.Services.Projects.Messages;
 using Lagalt_Backend.Services.Projects.Updates;
 using Lagalt_Backend.Data.Dtos.Project.Updates;
+using Lagalt_Backend.Services.Projects.ProjectStatuses;
+using System;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -36,6 +38,7 @@ namespace Lagalt_Backend.Controllers
         private readonly IProjectRequestService _projectRequestService;
         private readonly IMessageProjectService _messageProjectService;
         private readonly IUpdateService _updateService;
+        private readonly IProjectStatusService _projectStatusService;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -43,12 +46,13 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="projService">The service object for accessing project operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService)
+        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService, IProjectStatusService projectStatusService)
         {
             _projService = projService;
             _projectTypeService = projectTypeService;
             _projectRequestService = projectRequestService;
             _updateService = updateService;
+            _projectStatusService = projectStatusService;
             _mapper = mapper;
         }
 
@@ -87,16 +91,16 @@ namespace Lagalt_Backend.Controllers
         }
 
         /// <summary>
-        /// Updates a given project.
+        /// Updates project
         /// </summary>
-        /// <param name="id">The ID of the project to update.</param>
-        /// <param name="project">The project data to use for the update.</param>
+        /// <param name="id"></param>
+        /// <param name="projectPutDTO"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> PutProject(int id, ProjectPutDTO project)
+        [AllowAnonymous]
+        public async Task<IActionResult> PutProject(int id, [FromBody] ProjectPutDTO projectPutDTO)
         {
-
+            //string userId = "00000000-0000-0000-0000-000000000001";
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(id);
@@ -111,21 +115,35 @@ namespace Lagalt_Backend.Controllers
                 return Forbid();
             }
 
-            if (id != project.ProjectId)
-            {
-                return BadRequest();
-            }
-
             try
             {
-                await _projService.UpdateAsync(_mapper.Map<Project>(project));
+                // Update project details
+                existingProject.Name = projectPutDTO.Name;
+                existingProject.Description = projectPutDTO.Description;
+                existingProject.ImageUrl = projectPutDTO.ImageUrl;
+
+                // Check if the status is being updated
+                if (existingProject.ProjectStatusId != projectPutDTO.ProjectStatusId)
+                {
+                    // Ensure that the selected status exists
+                    var statusExists = await _projectStatusService.ProjectStatusExistsAsync(projectPutDTO.ProjectStatusId);
+                    if (!statusExists)
+                    {
+                        return BadRequest("Invalid project status.");
+                    }
+
+                    existingProject.ProjectStatusId = projectPutDTO.ProjectStatusId;
+                }
+
+                // Call the service to save changes
+                await _projService.UpdateAsync(existingProject);
+
+                return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-
-            return NoContent();
         }
 
         /// <summary>
@@ -133,7 +151,7 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="project">The new project's data.</param>
         /// <returns>A newly created project.</returns>
-        [HttpPost]
+                [HttpPost]
         [Authorize]
         public async Task<ActionResult<ProjectDTO>> PostProject([FromBody] ProjectPostDTO projectPostDTO)
         {
@@ -669,6 +687,11 @@ namespace Lagalt_Backend.Controllers
 
         //Updates
 
+        /// <summary>
+        /// Gets all updates in a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}/updates")]
         [Authorize]
         public async Task<IActionResult> GetAllUpdatesInProject(int id)
@@ -686,6 +709,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets one update in a project by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateId"></param>
+        /// <returns></returns>
         [HttpGet("{id}/updates/{updateId}")]
         [Authorize]
         public async Task<IActionResult> GetUpdateInProjectById(int id, int updateId)
@@ -703,6 +732,12 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds update to project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatePostDTO"></param>
+        /// <returns></returns>
         [HttpPost("{id}/updates")]
         [Authorize]
         public async Task<IActionResult> AddUpdateToProject(int id, [FromBody] UpdatePostDTO updatePostDTO)

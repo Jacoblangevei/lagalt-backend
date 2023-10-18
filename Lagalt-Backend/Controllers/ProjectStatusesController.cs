@@ -30,6 +30,10 @@ namespace Lagalt_Backend.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Gets all project statuses projects can have
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("statuses")]
         [AllowAnonymous] // or [Authorize] if necessary
         public async Task<ActionResult<List<ProjectStatusDTO>>> GetAllProjectStatuses()

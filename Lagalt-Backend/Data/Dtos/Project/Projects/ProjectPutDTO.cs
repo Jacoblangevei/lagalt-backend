@@ -4,7 +4,6 @@ namespace Lagalt_Backend.Data.Dtos.Projects
 {
     public class ProjectPutDTO
     {
-        public int ProjectId { get; set; }
         [Required]
         [StringLength(150)]
         public string Name { get; set; }
@@ -13,10 +12,8 @@ namespace Lagalt_Backend.Data.Dtos.Projects
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         [Required]
-        public string ProjectType { get; set; }
+        public int ProjectTypeId { get; set; }
         [Required]
-        public string ProjectStatus { get; set; }
-
-        public int[] Tags { get; set; }
+        public int ProjectStatusId { get; set; }
     }
 }
