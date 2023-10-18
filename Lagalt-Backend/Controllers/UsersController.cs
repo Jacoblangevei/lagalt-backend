@@ -111,7 +111,7 @@ namespace Lagalt_Backend.Controllers
                 var existingUser = _context.Users.Find(userId);
                 if (existingUser != null)
                 {
-                    return Conflict("User already registered.");
+                    return Ok("User is already registered.");
                 }
 
                 // Create a new user

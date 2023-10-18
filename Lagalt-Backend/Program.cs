@@ -6,21 +6,13 @@ using Lagalt_Backend.Services.Messages;
 using Lagalt_Backend.Services.Users;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Lagalt_Backend.Services.ProjectRequests;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-
-//.AddJsonOptions(options =>
-//{
-//    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-//});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpClient();
@@ -69,7 +61,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectTypeService, ProjectTypeService>();
-builder.Services.AddScoped<IProjectRequestService, ProjectRequestService>();
+builder.Services.AddScoped<IProjectRequestService,  ProjectRequestService>();
 // Add automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

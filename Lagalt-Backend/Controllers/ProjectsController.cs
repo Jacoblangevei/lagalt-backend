@@ -16,6 +16,7 @@ using Lagalt_Backend.Data.Dtos.Requirements;
 using Lagalt_Backend.Data.Models.MessageModels;
 using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Services.ProjectRequests;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -496,42 +497,62 @@ namespace Lagalt_Backend.Controllers
             return Ok(addedMessage);
         }
 
-        // Request Project
+        /// <summary>
+        /// Request to join project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
         [HttpPost("{projectId}/requests")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> RequestToJoinProject(int projectId)
         {
-            //string userId = "00000000-0000-0000-0000-000000000001";
-
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            DateTime requestDate = DateTime.UtcNow;
 
             Project existingProject = await _projService.GetByIdAsync(projectId);
 
             if (existingProject == null)
             {
-                return NotFound();
+                return NotFound("Project not found.");
             }
 
-            if (existingProject.OwnerId != Guid.Parse(userId))
+            // Check if the user is already a member of the project
+            bool isMember = await _projectRequestService.IsUserMemberOfProject(userId, projectId);
+
+            // Check if the user has already sent a request
+            bool hasSentRequest = await _projectRequestService.HasUserSentRequest(userId, projectId);
+
+            if (isMember)
             {
-                return Forbid();
+                return BadRequest("User is already a member of the project.");
+            }
+
+            if (hasSentRequest)
+            {
+                return BadRequest("User has already sent a request to join the project.");
             }
 
             var projectRequest = new ProjectRequest
             {
                 UserId = Guid.Parse(userId),
                 ProjectId = projectId,
-                RequestDate = DateTime.UtcNow
+                RequestDate = requestDate
             };
 
-            // Call service layer to add the request
             var result = await _projectRequestService.CreateRequestAsync(projectRequest);
 
-            return CreatedAtAction(nameof(GetProjectRequests), new { projectId = projectId }, result);
+            var responseDto = _mapper.Map<ProjectRequestDTO>(result);
+
+            return CreatedAtAction(nameof(GetProjectRequests), new { projectId = projectId }, responseDto);
         }
 
+        /// <summary>
+        /// Get all requests a project has
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
         [HttpGet("{projectId}/requests")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> GetProjectRequests(int projectId)
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
@@ -569,11 +590,9 @@ namespace Lagalt_Backend.Controllers
         /// <param name="requestId"></param>
         /// <returns></returns>
         [HttpDelete("{projectId}/requests/{requestId}")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult> RemoveRequestFromProject(int projectId, int requestId)
         {
-            //string userId = "00000000-0000-0000-0000-000000000001";
-
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(projectId);
@@ -598,5 +617,49 @@ namespace Lagalt_Backend.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Accepts request and adds user to project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+        [HttpPost("projects/{projectId}/requests/{requestId}/accept")]
+        [Authorize]
+        public async Task<IActionResult> AcceptRequest(int projectId, int requestId)
+        {
+            //string userId = "00000000-0000-0000-0000-000000000001";
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (projectId <= 0 || requestId <= 0)
+            {
+                return BadRequest("Invalid project ID or request ID.");
+            }
+
+            // Check if a project with the specified project ID exists
+            Project existingProject = await _projService.GetByIdAsync(projectId);
+
+            if (existingProject == null)
+            {
+                return NotFound("Project not found.");
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(userId))
+            {
+                return Forbid("Only the project owner can accept requests.");
+            }
+
+            // Call the service method to accept the request
+            var result = await _projectRequestService.AcceptRequestAsync(projectId, requestId);
+
+            if (result)
+            {
+                return Ok("Request accepted.");
+            }
+
+            return NotFound("Request not found or an error occurred.");
+        }
+
+
     }
 }

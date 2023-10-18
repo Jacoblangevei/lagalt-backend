@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Lagalt_Backend.Data;
 using System.Data;
 using Lagalt_Backend.Data.Models.ProjectModels;
-using Lagalt_Backend.Data.Dtos.ProjectRequests;
 using Lagalt_Backend.Data.Exceptions;
 using Lagalt_Backend.Data.Models.UserModels;
+using Lagalt_Backend.Services.Projects;
 
 namespace Lagalt_Backend.Services.ProjectRequests
 {
     public class ProjectRequestService : IProjectRequestService
     {
         private readonly LagaltDbContext _context;
+        private IProjectService _projService;
 
-        public ProjectRequestService(LagaltDbContext context)
+        public ProjectRequestService(LagaltDbContext context, IProjectService projService)
         {
             _context = context;
+            _projService = projService;
         }
 
         public async Task<IEnumerable<ProjectRequest>> GetAllAsync()
@@ -54,14 +52,6 @@ namespace Lagalt_Backend.Services.ProjectRequests
                 .ToListAsync();
 
             return requests;
-        }
-
-        public async Task<IEnumerable<ProjectRequest>> GetAllRequestsForUserAsync(Guid userId)
-        {
-            return await _context.ProjectRequests
-                .Where(r => r.UserId == userId)
-                .Include(r => r.Project)
-                .ToListAsync();
         }
 
         public async Task<bool> DeleteRequestAsync(int requestId)
@@ -101,6 +91,58 @@ namespace Lagalt_Backend.Services.ProjectRequests
                 project.ProjectRequests.Remove(request);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> AcceptRequestAsync(int projectId, int requestId)
+        {
+            if (projectId <= 0 || requestId <= 0)
+            {
+                return false;
+            }
+
+            var request = await _context.ProjectRequests.FindAsync(requestId);
+
+            if (request == null)
+            {
+                return false;
+            }
+
+            var userId = request.UserId ?? Guid.Empty;
+
+            var projectUser = new ProjectUser
+            {
+                ProjectId = projectId,
+                UserId = userId,
+                Role = "User"
+            };
+
+            _context.ProjectUsers.Add(projectUser);
+            await _context.SaveChangesAsync();
+
+            _context.ProjectRequests.Remove(request);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> IsUserMemberOfProject(string userId, int projectId)
+        {
+            Guid userGuid = new Guid(userId);
+
+            var membership = await _context.ProjectUsers
+                .FirstOrDefaultAsync(m => m.UserId == userGuid && m.ProjectId == projectId);
+
+            return membership != null;
+        }
+
+        public async Task<bool> HasUserSentRequest(string userId, int projectId)
+        {
+            Guid userGuid = new Guid(userId);
+
+            var existingRequest = await _context.ProjectRequests
+                .FirstOrDefaultAsync(r => r.UserId == userGuid && r.ProjectId == projectId);
+
+            return existingRequest != null;
         }
 
         Task<ICollection<ProjectRequest>> ICrudService<ProjectRequest, int>.GetAllAsync()

@@ -10,8 +10,10 @@ namespace Lagalt_Backend.Services.ProjectRequests
         Task<ProjectRequest> CreateRequestAsync(ProjectRequest request);
         Task<ProjectRequest> GetRequestByIdAsync(int requestId);
         Task<IEnumerable<ProjectRequest>> GetAllRequestsForProjectAsync(int projectId);
-        Task<IEnumerable<ProjectRequest>> GetAllRequestsForUserAsync(Guid userId);
         Task<bool> DeleteRequestAsync(int requestId);
         Task RemoveProjectFromProjectAsync(int projectId, int requestId);
+        Task<bool> AcceptRequestAsync(int projectId, int requestId);
+        Task<bool> IsUserMemberOfProject(string userId, int projectId);
+        Task<bool> HasUserSentRequest(string userId, int projectId);
     }
 }

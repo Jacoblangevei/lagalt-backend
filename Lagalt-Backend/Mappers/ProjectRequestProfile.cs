@@ -9,6 +9,8 @@ namespace Lagalt_Backend.Mappers
     {
         public ProjectRequestProfile()
         {
+            CreateMap<ProjectRequest, ProjectRequestPostDTO>().ReverseMap();
+
             CreateMap<ProjectRequest, ProjectRequestDTO>()
                 .ForMember(
                     prdto => prdto.UserId, options => options.MapFrom(u => u.UserId))
