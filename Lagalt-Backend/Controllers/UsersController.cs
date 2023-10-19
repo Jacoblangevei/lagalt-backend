@@ -278,22 +278,28 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <param name="skillPostDto"></param>
         /// <returns></returns>
-        [HttpPost("{userId}/skills")]
+        [HttpPost("users/{userId}/skills")]
         [Authorize]
-        public async Task<IActionResult> AddNewSkillToUser(string userId, [FromBody] SkillPostDTO skillPostDto)
+        public async Task<IActionResult> AddNewSkillToUser(Guid userId, [FromBody] SkillPostDTO skillPostDto)
         {
             // Retrieve the user's ID from the claims
             var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             // Ensure that the user's ID is not null
-            if (string.IsNullOrEmpty(keycloakUserId) || !keycloakUserId.Equals(userId, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(keycloakUserId))
             {
-                return Forbid("User ID is missing or does not match the authenticated user.");
+                return Forbid("User ID from Keycloak is missing or invalid.");
+            }
+
+            // Check if the user is trying to add skills to their own profile
+            if (keycloakUserId != userId.ToString())
+            {
+                return Forbid("You can only add skills to your own profile.");
             }
 
             try
             {
-                await _userService.AddNewSkillToUserAsync(Guid.Parse(userId), skillPostDto.SkillName);
+                await _userService.AddNewSkillToUserAsync(userId, skillPostDto.SkillName);
                 return Ok("Skill added to user successfully.");
             }
             catch (UserNotFoundException ex)
