@@ -171,11 +171,16 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> PutAppUser(Guid id, [FromBody] UserPutDTO userPutDTO)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+            var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId.Value != id.ToString())
+            if (string.IsNullOrEmpty(keycloakUserId))
             {
-                return Forbid();
+                return Forbid("User ID from Keycloak is missing or invalid.");
+            }
+
+            if (keycloakUserId != id.ToString())
+            {
+                return Forbid("You can only add skills to your own profile.");
             }
 
             try
