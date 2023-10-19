@@ -5,6 +5,7 @@ using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.MessageModels;
 using System.ComponentModel.Design;
 using Lagalt_Backend.Data.Models.UserModels;
+using Lagalt_Backend.Data.Dtos.Projects;
 
 namespace Lagalt_Backend.Services.Projects
 {
@@ -84,6 +85,16 @@ namespace Lagalt_Backend.Services.Projects
             _context.SaveChanges();
 
             return obj;
+        }
+
+        public async Task<ICollection<Project>> GetProjectsUserOwnsAsync(Guid userId)
+        {
+            var projects = await _context.ProjectUsers
+            .Where(pu => pu.UserId == userId && pu.Role == "Owner")
+            .Select(pu => pu.Projects)
+            .ToListAsync();
+
+            return projects;
         }
 
         //Tags

@@ -26,8 +26,8 @@ namespace Lagalt_Backend.Services.Projects.Milestones
         public async Task<Milestone> GetMilestoneInProjectByIdAsync(int id, int milestoneId)
         {
             var milestone = await _context.Milestones
-               .Where(m => m.ProjectId == id)
-               .SingleOrDefaultAsync();
+                .Where(m => m.ProjectId == id && m.MilestoneId == milestoneId)
+                .FirstOrDefaultAsync();
 
             if (milestone == null)
             {
@@ -43,6 +43,12 @@ namespace Lagalt_Backend.Services.Projects.Milestones
             _context.Milestones.Add(milestone);
             await _context.SaveChangesAsync();
             return milestone;
+        }
+
+        public async Task UpdateMilestoneInProjectAsync(Milestone milestone)
+        {
+            _context.Entry(milestone).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
     }
 }

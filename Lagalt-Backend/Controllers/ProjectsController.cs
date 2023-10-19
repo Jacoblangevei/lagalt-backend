@@ -12,9 +12,7 @@ using System.Security.Claims;
 using Lagalt_Backend.Data.Dtos.Tags;
 using Lagalt_Backend.Data.Dtos.Requirements;
 using Lagalt_Backend.Data.Models.MessageModels;
-using Lagalt_Backend.Data.Models.UserModels;
 using Lagalt_Backend.Services.ProjectRequests;
-using Microsoft.EntityFrameworkCore;
 using Lagalt_Backend.Services.Projects.Messages;
 using Lagalt_Backend.Services.Projects.Updates;
 using Lagalt_Backend.Data.Dtos.Project.Updates;
@@ -49,7 +47,7 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="projService">The service object for accessing project operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService, IProjectStatusService projectStatusService, IMessageProjectService messageProjectService)
+        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService, IProjectStatusService projectStatusService, IMessageProjectService messageProjectService, IMilestoneService milestoneService)
         {
             _projService = projService;
             _projectTypeService = projectTypeService;
@@ -57,6 +55,7 @@ namespace Lagalt_Backend.Controllers
             _updateService = updateService;
             _projectStatusService = projectStatusService;
             _messageProjectService = messageProjectService;
+            _milestoneService = milestoneService;
             _mapper = mapper;
         }
 
@@ -792,6 +791,13 @@ namespace Lagalt_Backend.Controllers
             try
             {
                 var milestones = await _milestoneService.GetAllMilestonesInProjectAsync(id);
+
+                if (milestones == null)
+                {
+                    // Handle the case where milestones are null (e.g., return an appropriate response)
+                    return NotFound("Milestones not found for the given project ID.");
+                }
+
                 var milestoneDtos = _mapper.Map<List<MilestoneDTO>>(milestones);
 
                 return Ok(milestoneDtos);
@@ -826,7 +832,7 @@ namespace Lagalt_Backend.Controllers
         }
 
         /// <summary>
-        /// Adds update to project
+        /// Adds milestone to project
         /// </summary>
         /// <param name="id"></param>
         /// <param name="milestonePostDTO"></param>
@@ -843,12 +849,68 @@ namespace Lagalt_Backend.Controllers
                 DueDate = DateTime.UtcNow,
                 Currency = milestonePostDTO.Currency,
                 PaymentAmount = milestonePostDTO.PaymentAmount,
-                ProjectId = id
+                ProjectId = id,
+                MilestoneStatusId = 1
             };
 
             var addedMilestone = await _milestoneService.AddMilestoneToProjectAsync(id, newMilestone);
 
             return Ok(addedMilestone);
+        }
+
+        /// <summary>
+        /// Update milestone status in a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="milestoneId"></param>
+        /// <param name="milestonePutDTO"></param>
+        /// <returns></returns>
+        [HttpPut("{id}/milestones/{milestoneId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateMilestoneStatus(int id, int milestoneId, [FromBody] MilestonePutDTO milestonePutDTO)
+        {
+            try
+            {
+                var existingMilestone = await _milestoneService.GetMilestoneInProjectByIdAsync(id, milestoneId);
+
+                if (existingMilestone == null)
+                {
+                    return NotFound("Milestone not found");
+                }
+
+                existingMilestone.MilestoneStatusId = milestonePutDTO.MilestoneStatusId;
+
+                await _milestoneService.UpdateMilestoneInProjectAsync(existingMilestone);
+
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets all projects logged in user owns
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("owned")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProjectsOwnedByUser()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //string userId = "00000000-0000-0000-0000-000000000001";
+
+                var ownerProjects = await _projService.GetProjectsUserOwnsAsync(Guid.Parse(userId));
+                var projectDtos = _mapper.Map<IEnumerable<ProjectDTO>>(ownerProjects);
+                return Ok(projectDtos);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

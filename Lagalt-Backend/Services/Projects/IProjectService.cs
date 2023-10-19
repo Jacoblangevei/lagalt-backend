@@ -15,6 +15,7 @@ namespace Lagalt_Backend.Services.Projects
 
         Task<Project> UpdateAsync(Project obj);
         Task DeleteByIdAsync(int id);
+        Task<ICollection<Project>> GetProjectsUserOwnsAsync(Guid userId);
 
         //Tags
         Task<List<Tag>> GetAllTagsInProjectAsync(int id);
