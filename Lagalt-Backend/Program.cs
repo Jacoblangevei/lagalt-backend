@@ -13,6 +13,7 @@ using Lagalt_Backend.Services.Projects.Updates;
 using Lagalt_Backend.Services.Projects.ProjectStatuses;
 using Lagalt_Backend.Services.Projects.MilestoneStatuses;
 using Lagalt_Backend.Services.Projects.Messages;
+using Lagalt_Backend.Services.Projects.Milestones;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +69,7 @@ builder.Services.AddScoped<IProjectTypeService, ProjectTypeService>();
 builder.Services.AddScoped<IProjectRequestService,  ProjectRequestService>();
 builder.Services.AddScoped<IUpdateService, UpdateService>();
 builder.Services.AddScoped<IProjectStatusService, ProjectStatusService>();
+builder.Services.AddScoped<IMilestoneService, MilestoneService>();
 builder.Services.AddScoped<IMilestoneStatusService, MilestoneStatusService>();
 builder.Services.AddScoped<IMessageProjectService, MessageProjectService>();
 // Add automapper

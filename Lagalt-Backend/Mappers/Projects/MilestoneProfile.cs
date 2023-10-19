@@ -1,6 +1,19 @@
-﻿namespace Lagalt_Backend.Mappers.Projects
+﻿using AutoMapper;
+using Lagalt_Backend.Data.Dtos.Project.Milestones;
+using Lagalt_Backend.Data.Models.ProjectModels;
+
+namespace Lagalt_Backend.Mappers.Projects
 {
-    public class MilestoneProfile
+    public class MilestoneProfile : Profile
     {
+        public MilestoneProfile() 
+        {
+            CreateMap<Milestone, MilestonePostDTO>();
+            CreateMap<Milestone, MilestoneDTO>()
+                .ForMember(
+                mdto => mdto.ProjectId, options => options.MapFrom(m => m.ProjectId))
+                .ForMember(
+                mdto => mdto.MilestoneStatusId, options => options.MapFrom(m => m.MilestoneStatusId)).ReverseMap();
+        }
     }
 }

@@ -20,6 +20,8 @@ using Lagalt_Backend.Services.Projects.Updates;
 using Lagalt_Backend.Data.Dtos.Project.Updates;
 using Lagalt_Backend.Services.Projects.ProjectStatuses;
 using System;
+using Lagalt_Backend.Services.Projects.Milestones;
+using Lagalt_Backend.Data.Dtos.Project.Milestones;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -39,6 +41,7 @@ namespace Lagalt_Backend.Controllers
         private readonly IMessageProjectService _messageProjectService;
         private readonly IUpdateService _updateService;
         private readonly IProjectStatusService _projectStatusService;
+        private readonly IMilestoneService _milestoneService;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -511,9 +514,13 @@ namespace Lagalt_Backend.Controllers
         public async Task<IActionResult> AddMessageToProject(int id, [FromBody] MessagePostDTO messagePostDTO)
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            //Guid userGuid = Guid.Parse(userId);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Forbid("User ID from Keycloak is missing or invalid.");
+            }
 
             var newMessage = new Message
             {
@@ -772,7 +779,76 @@ namespace Lagalt_Backend.Controllers
         }
 
         //Milestones
-        //[HttpGet("{id}/milestones")]
 
+        /// <summary>
+        /// Gets all milestones in a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/milestones")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllMilestonesInProject(int id)
+        {
+            try
+            {
+                var milestones = await _milestoneService.GetAllMilestonesInProjectAsync(id);
+                var milestoneDtos = _mapper.Map<List<MilestoneDTO>>(milestones);
+
+                return Ok(milestoneDtos);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets one milestone in a project by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="milestoneId"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/milestones/{milestoneId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetMilestoneInProjectById(int id, int milestoneId)
+        {
+            try
+            {
+                var milestone = await _milestoneService.GetMilestoneInProjectByIdAsync(id, milestoneId);
+                var milestoneDto = _mapper.Map<MilestoneDTO>(milestone);
+
+                return Ok(milestoneDto);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Adds update to project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="milestonePostDTO"></param>
+        /// <returns></returns>
+        [HttpPost("{id}/milestones")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddMilestoneToProject(int id, [FromBody] MilestonePostDTO milestonePostDTO)
+        {
+
+            var newMilestone = new Milestone
+            {
+                Title = milestonePostDTO.Title,
+                Description = milestonePostDTO.Description,
+                DueDate = DateTime.UtcNow,
+                Currency = milestonePostDTO.Currency,
+                PaymentAmount = milestonePostDTO.PaymentAmount,
+                ProjectId = id
+            };
+
+            var addedMilestone = await _milestoneService.AddMilestoneToProjectAsync(id, newMilestone);
+
+            return Ok(addedMilestone);
+        }
     }
 }
