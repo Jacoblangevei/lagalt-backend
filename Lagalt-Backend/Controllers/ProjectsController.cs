@@ -46,13 +46,14 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="projService">The service object for accessing project operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService, IProjectStatusService projectStatusService)
+        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService, IProjectStatusService projectStatusService, IMessageProjectService messageProjectService)
         {
             _projService = projService;
             _projectTypeService = projectTypeService;
             _projectRequestService = projectRequestService;
             _updateService = updateService;
             _projectStatusService = projectStatusService;
+            _messageProjectService = messageProjectService;
             _mapper = mapper;
         }
 
@@ -454,7 +455,18 @@ namespace Lagalt_Backend.Controllers
         {
             try
             {
+                if (_messageProjectService == null)
+                {
+                    return NotFound("Message project service is not available.");
+                }
+
                 var messages = await _messageProjectService.GetAllMessagesInProjectAsync(id);
+
+                if (_mapper == null)
+                {
+                    return NotFound("Mapper is not available.");
+                }
+
                 var messageDtos = _mapper.Map<List<MessageDTO>>(messages);
 
                 return Ok(messageDtos);
@@ -758,6 +770,9 @@ namespace Lagalt_Backend.Controllers
 
             return Ok(addedUpdate);
         }
+
+        //Milestones
+        //[HttpGet("{id}/milestones")]
 
     }
 }

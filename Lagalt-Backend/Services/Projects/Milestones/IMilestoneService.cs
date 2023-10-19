@@ -2,7 +2,7 @@
 
 namespace Lagalt_Backend.Services.Projects.Milestones
 {
-    public interface IMilestoneService : ICrudService<ProjectRequest, int>
+    public interface IMilestoneService : ICrudService<MilestoneStatus, int>
     {
     }
 }

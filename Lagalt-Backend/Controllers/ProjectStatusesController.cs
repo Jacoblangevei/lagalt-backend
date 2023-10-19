@@ -19,11 +19,6 @@ namespace Lagalt_Backend.Controllers
         private readonly IProjectStatusService _projectStatusService;
         private readonly IMapper _mapper;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProjectsController"/> class.
-        /// </summary>
-        /// <param name="projService">The service object for accessing project operations.</param>
-        /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
         public ProjectStatusesController(IProjectStatusService projectStatusService, IMapper mapper)
         {
             _projectStatusService = projectStatusService;
@@ -34,8 +29,8 @@ namespace Lagalt_Backend.Controllers
         /// Gets all project statuses projects can have
         /// </summary>
         /// <returns></returns>
-        [HttpGet("statuses")]
-        [AllowAnonymous] // or [Authorize] if necessary
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProjectStatusDTO>>> GetAllProjectStatuses()
         {
             var projectStatuses = await _projectStatusService.GetAllProjectStatusesAsync();
