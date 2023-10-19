@@ -85,7 +85,7 @@ namespace Lagalt_Backend.Controllers
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
             //string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             //Guid userGuid = Guid.Parse(userId);
 
             var parentMessage = await _msgService.GetByIdAsync(id);
@@ -101,7 +101,7 @@ namespace Lagalt_Backend.Controllers
                 MessageContent = messagePostDTO.MessageContent,
                 ImageUrl = messagePostDTO.ImageUrl,
                 Timestamp = DateTime.UtcNow,
-                UserId = userGuid,
+                UserId = Guid.Parse(userId),
                 ParentId = id
             };
 

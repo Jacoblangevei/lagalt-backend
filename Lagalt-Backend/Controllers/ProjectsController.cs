@@ -268,7 +268,7 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddTagToProject(int id, [FromBody] TagPostDTO tagPostDTO)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(id);
 
@@ -303,7 +303,7 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> RemoveTag(int id, int tagId)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(id);
 
@@ -381,7 +381,7 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddRequirementToProject(int id, [FromBody] RequirementPostDTO requirementPostDTO)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(id);
 
@@ -416,7 +416,7 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> RemoveRequirement(int id, int requirementId)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(id);
 
@@ -499,8 +499,8 @@ namespace Lagalt_Backend.Controllers
         public async Task<IActionResult> AddMessageToProject(int id, [FromBody] MessagePostDTO messagePostDTO)
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
-            //string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             //Guid userGuid = Guid.Parse(userId);
 
             var newMessage = new Message
@@ -509,7 +509,7 @@ namespace Lagalt_Backend.Controllers
                 MessageContent = messagePostDTO.MessageContent,
                 ImageUrl = messagePostDTO.ImageUrl,
                 Timestamp = DateTime.UtcNow,
-                UserId = userGuid,
+                UserId = Guid.Parse(userId),
                 ProjectId = id,
             };
 
@@ -531,7 +531,7 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> RequestToJoinProject(int projectId)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             DateTime requestDate = DateTime.UtcNow;
 
             Project existingProject = await _projService.GetByIdAsync(projectId);
@@ -582,7 +582,7 @@ namespace Lagalt_Backend.Controllers
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
 
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(projectId);
 
@@ -618,7 +618,7 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<ActionResult> RemoveRequestFromProject(int projectId, int requestId)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(projectId);
 
@@ -654,7 +654,7 @@ namespace Lagalt_Backend.Controllers
         public async Task<IActionResult> AcceptRequest(int projectId, int requestId)
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (projectId <= 0 || requestId <= 0)
             {
@@ -743,15 +743,14 @@ namespace Lagalt_Backend.Controllers
         public async Task<IActionResult> AddUpdateToProject(int id, [FromBody] UpdatePostDTO updatePostDTO)
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             //Guid userGuid = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            Guid userGuid = Guid.Parse(userId);
 
             var newUpdate = new Update
             {
                 Description = updatePostDTO.Description,
                 Timestamp = DateTime.UtcNow,
-                UserId = userGuid,
+                UserId = Guid.Parse(userId),
                 ProjectId = id
             };
 
