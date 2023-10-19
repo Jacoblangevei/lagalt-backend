@@ -278,13 +278,11 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <param name="skillPostDto"></param>
         /// <returns></returns>
-        [HttpPost("users/{userId}/skills")]
+        [HttpPost("{userId}/skills")]
         [Authorize]
         public async Task<IActionResult> AddNewSkillToUser(Guid userId, [FromBody] SkillPostDTO skillPostDto)
         {
             var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            Console.WriteLine("Id" + keycloakUserId);
 
             if (string.IsNullOrEmpty(keycloakUserId))
             {
@@ -317,17 +315,20 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<ActionResult> RemoveSkillFromUser(Guid id, int skillId)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim))
+            if (string.IsNullOrEmpty(keycloakUserId))
             {
-                // Handle the case where the user's ID is not available in the claims.
-                return Unauthorized();
+                return Forbid("User ID from Keycloak is missing or invalid.");
+            }
+
+            if (keycloakUserId != id.ToString())
+            {
+                return Forbid("You can only remove skills to your own profile.");
             }
 
             try
             {
-                Guid userId = Guid.Parse(userIdClaim);
                 await _userService.RemoveSkillFromUserAsync(id, skillId);
                 return Ok("Skill removed from user successfully.");
             }
@@ -390,12 +391,16 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddPortfolioProjectToUser(Guid id, [FromBody] PortfolioProjectPostDTO projectDTO)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+            var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // Compare userId with id to ensure the user is working on their own data.
-            if (userId.Value != id.ToString())
+            if (string.IsNullOrEmpty(keycloakUserId))
             {
-                return Forbid(); // Return a 403 Forbidden status if access is denied.
+                return Forbid("User ID from Keycloak is missing or invalid.");
+            }
+
+            if (keycloakUserId != id.ToString())
+            {
+                return Forbid("You can only add requirements to your own profile.");
             }
 
             try
@@ -423,11 +428,16 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<ActionResult> RemovePortfolioProjectFromUser(Guid id, int portfolioProjectId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+            var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId.Value != id.ToString())
+            if (string.IsNullOrEmpty(keycloakUserId))
             {
-                return Forbid();
+                return Forbid("User ID from Keycloak is missing or invalid.");
+            }
+
+            if (keycloakUserId != id.ToString())
+            {
+                return Forbid("You can only remove requirements to your own profile.");
             }
 
             try

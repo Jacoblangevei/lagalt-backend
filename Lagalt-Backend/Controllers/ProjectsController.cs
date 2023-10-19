@@ -190,7 +190,7 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteProject(int id)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(id);
 
