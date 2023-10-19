@@ -1,6 +1,6 @@
 ﻿namespace Lagalt_Backend.Services.Projects.Milestones
 {
-    public class MilestoneService
+    public class MilestoneService : IMilestoneService
     {
     }
 }

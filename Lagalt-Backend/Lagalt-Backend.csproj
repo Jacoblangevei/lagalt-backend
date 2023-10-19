@@ -37,7 +37,7 @@
 
 
 	<ItemGroup>
-	  <Folder Include="Services\Projects\MilestoneStatuses\" />
+	  <Folder Include="Data\Dtos\Project\Milestones\" />
 	</ItemGroup>
 
 </Project>

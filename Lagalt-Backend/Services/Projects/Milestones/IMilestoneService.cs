@@ -1,6 +1,8 @@
-﻿namespace Lagalt_Backend.Services.Projects.Milestones
+﻿using Lagalt_Backend.Data.Models.ProjectModels;
+
+namespace Lagalt_Backend.Services.Projects.Milestones
 {
-    public interface IMilestoneService
+    public interface IMilestoneService : ICrudService<ProjectRequest, int>
     {
     }
 }
