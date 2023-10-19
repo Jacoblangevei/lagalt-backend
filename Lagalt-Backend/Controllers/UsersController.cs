@@ -171,9 +171,9 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> PutAppUser(Guid id, [FromBody] UserPutDTO userPutDTO)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (userId != id.ToString())
+            if (userId.Value != id.ToString())
             {
                 return Forbid();
             }
@@ -282,10 +282,10 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddNewSkillToUser(Guid id, [FromBody] SkillPostDTO skillPostDto)
         {
-            string userId =User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
                 //"00000000-0000-0000-0000-000000000001";
 
-            if (userId != id.ToString())
+            if (userId.Value != id.ToString())
             {
                 return Forbid();
             }
@@ -311,10 +311,10 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<ActionResult> RemoveSkillFromUser(Guid id, int skillId)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
             // Compare userId with id to ensure the user is working on their own data.
-            if (userId != id.ToString())
+            if (userId.Value != id.ToString())
             {
                 return Forbid(); // Return a 403 Forbidden status if access is denied.
             }
@@ -383,10 +383,10 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddPortfolioProjectToUser(Guid id, [FromBody] PortfolioProjectPostDTO projectDTO)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
             // Compare userId with id to ensure the user is working on their own data.
-            if (userId != id.ToString())
+            if (userId.Value != id.ToString())
             {
                 return Forbid(); // Return a 403 Forbidden status if access is denied.
             }
@@ -416,9 +416,9 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<ActionResult> RemovePortfolioProjectFromUser(Guid id, int portfolioProjectId)
         {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (userId != id.ToString())
+            if (userId.Value != id.ToString())
             {
                 return Forbid();
             }
