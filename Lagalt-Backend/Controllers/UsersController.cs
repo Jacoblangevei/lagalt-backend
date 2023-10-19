@@ -282,21 +282,19 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddNewSkillToUser([FromBody] SkillPostDTO skillPostDto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim))
+            if (string.IsNullOrEmpty(userId))
             {
-                // Handle the case where the user's ID is not available in the claims.
-                return Unauthorized();
+                return Forbid("User ID is missing or invalid.");
             }
 
             try
             {
-                Guid userId = Guid.Parse(userIdClaim);
-                await _userService.AddNewSkillToUserAsync(userId, skillPostDto.SkillName);
+                await _userService.AddNewSkillToUserAsync(Guid.Parse(userId), skillPostDto.SkillName);
                 return Ok("Skill added to user successfully.");
             }
-            catch (EntityNotFoundException ex)
+            catch (UserNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -308,20 +306,21 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <param name="skillId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}/skills/{skillId}")]
+        [HttpDelete("skills/{skillId}")]
         [Authorize]
         public async Task<ActionResult> RemoveSkillFromUser(Guid id, int skillId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // Compare userId with id to ensure the user is working on their own data.
-            if (userId.Value != id.ToString())
+            if (string.IsNullOrEmpty(userIdClaim))
             {
-                return Forbid(); // Return a 403 Forbidden status if access is denied.
+                // Handle the case where the user's ID is not available in the claims.
+                return Unauthorized();
             }
 
             try
             {
+                Guid userId = Guid.Parse(userIdClaim);
                 await _userService.RemoveSkillFromUserAsync(id, skillId);
                 return Ok("Skill removed from user successfully.");
             }
