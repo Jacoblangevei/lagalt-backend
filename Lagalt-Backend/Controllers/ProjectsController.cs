@@ -151,13 +151,13 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="project">The new project's data.</param>
         /// <returns>A newly created project.</returns>
-                [HttpPost]
+        [HttpPost]
         [Authorize]
         public async Task<ActionResult<ProjectDTO>> PostProject([FromBody] ProjectPostDTO projectPostDTO)
         {
             try
             {
-                string ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var ownerId = User.FindFirst(ClaimTypes.NameIdentifier);
 
                 ProjectType projectType = await _projectTypeService.GetByIdAsync(projectPostDTO.ProjectTypeId.Value);
 
@@ -170,7 +170,7 @@ namespace Lagalt_Backend.Controllers
                     ProjectStatusId = 1,
                 };
 
-                var createdProject = await _projService.CreateProjectAsync(newProject, Guid.Parse(ownerId));
+                var createdProject = await _projService.CreateProjectAsync(newProject, Guid.Parse(ownerId.Value));
                 var projectDTO = _mapper.Map<ProjectDTO>(createdProject);
 
                 return CreatedAtAction("GetProject", new { id = projectDTO.ProjectId }, projectDTO);
