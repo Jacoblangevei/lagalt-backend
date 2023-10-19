@@ -282,16 +282,15 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> AddNewSkillToUser(Guid userId, [FromBody] SkillPostDTO skillPostDto)
         {
-            // Retrieve the user's ID from the claims
             var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // Ensure that the user's ID is not null
+            Console.WriteLine("Id" + keycloakUserId);
+
             if (string.IsNullOrEmpty(keycloakUserId))
             {
                 return Forbid("User ID from Keycloak is missing or invalid.");
             }
 
-            // Check if the user is trying to add skills to their own profile
             if (keycloakUserId != userId.ToString())
             {
                 return Forbid("You can only add skills to your own profile.");
