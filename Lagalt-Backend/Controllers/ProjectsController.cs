@@ -157,7 +157,7 @@ namespace Lagalt_Backend.Controllers
         {
             try
             {
-                var ownerId = User.FindFirst(ClaimTypes.NameIdentifier);
+                var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 ProjectType projectType = await _projectTypeService.GetByIdAsync(projectPostDTO.ProjectTypeId.Value);
 
@@ -170,7 +170,7 @@ namespace Lagalt_Backend.Controllers
                     ProjectStatusId = 1,
                 };
 
-                var createdProject = await _projService.CreateProjectAsync(newProject, Guid.Parse(ownerId.Value));
+                var createdProject = await _projService.CreateProjectAsync(newProject, Guid.Parse(ownerId));
                 var projectDTO = _mapper.Map<ProjectDTO>(createdProject);
 
                 return CreatedAtAction("GetProject", new { id = projectDTO.ProjectId }, projectDTO);
