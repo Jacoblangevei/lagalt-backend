@@ -278,21 +278,22 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <param name="skillPostDto"></param>
         /// <returns></returns>
-        [HttpPost("{id}/skills")]
+        [HttpPost("skills")]
         [Authorize]
-        public async Task<IActionResult> AddNewSkillToUser(Guid id, [FromBody] SkillPostDTO skillPostDto)
+        public async Task<IActionResult> AddNewSkillToUser([FromBody] SkillPostDTO skillPostDto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
-                //"00000000-0000-0000-0000-000000000001";
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId.Value != id.ToString())
+            if (string.IsNullOrEmpty(userIdClaim))
             {
-                return Forbid();
+                // Handle the case where the user's ID is not available in the claims.
+                return Unauthorized();
             }
 
             try
             {
-                await _userService.AddNewSkillToUserAsync(id, skillPostDto.SkillName);
+                Guid userId = Guid.Parse(userIdClaim);
+                await _userService.AddNewSkillToUserAsync(userId, skillPostDto.SkillName);
                 return Ok("Skill added to user successfully.");
             }
             catch (EntityNotFoundException ex)
@@ -474,6 +475,19 @@ namespace Lagalt_Backend.Controllers
             {
                 return NotFound(ex.Message);
             }
+        }
+
+        private bool UserHasAccessToUser(Guid id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim != null)
+            {
+                Guid authenticatedUserId = Guid.Parse(userIdClaim);
+                return authenticatedUserId == id;
+            }
+
+            return false;
         }
     }
 }
