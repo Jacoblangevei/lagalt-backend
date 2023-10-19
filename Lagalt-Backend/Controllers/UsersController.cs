@@ -278,15 +278,17 @@ namespace Lagalt_Backend.Controllers
         /// <param name="id"></param>
         /// <param name="skillPostDto"></param>
         /// <returns></returns>
-        [HttpPost("skills")]
+        [HttpPost("{userId}/skills")]
         [Authorize]
-        public async Task<IActionResult> AddNewSkillToUser([FromBody] SkillPostDTO skillPostDto)
+        public async Task<IActionResult> AddNewSkillToUser(string userId, [FromBody] SkillPostDTO skillPostDto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // Retrieve the user's ID from the claims
+            var keycloakUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+            // Ensure that the user's ID is not null
+            if (string.IsNullOrEmpty(keycloakUserId) || !keycloakUserId.Equals(userId, StringComparison.OrdinalIgnoreCase))
             {
-                return Forbid("User ID is missing or invalid.");
+                return Forbid("User ID is missing or does not match the authenticated user.");
             }
 
             try
