@@ -101,7 +101,7 @@ namespace Lagalt_Backend.Controllers
         public async Task<IActionResult> PutProject(int id, [FromBody] ProjectPutDTO projectPutDTO)
         {
             //string userId = "00000000-0000-0000-0000-000000000001";
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(id);
 
