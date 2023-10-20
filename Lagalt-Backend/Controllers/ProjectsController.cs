@@ -838,7 +838,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="milestonePostDTO"></param>
         /// <returns></returns>
         [HttpPost("{id}/milestones")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> AddMilestoneToProject(int id, [FromBody] MilestonePostDTO milestonePostDTO)
         {
 
@@ -866,7 +866,7 @@ namespace Lagalt_Backend.Controllers
         /// <param name="milestonePutDTO"></param>
         /// <returns></returns>
         [HttpPut("{id}/milestones/{milestoneId}")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> UpdateMilestoneStatus(int id, int milestoneId, [FromBody] MilestonePutDTO milestonePutDTO)
         {
             try
@@ -895,7 +895,7 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("owned")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> GetProjectsOwnedByUser()
         {
             try
