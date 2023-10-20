@@ -405,7 +405,7 @@ namespace Lagalt_Backend.Controllers
 
             if (keycloakUserId != id.ToString())
             {
-                return Forbid("You can only add requirements to your own profile.");
+                return Forbid("You can only add portfolioproject to your own profile.");
             }
 
             try
@@ -442,7 +442,7 @@ namespace Lagalt_Backend.Controllers
 
             if (keycloakUserId != id.ToString())
             {
-                return Forbid("You can only remove requirements to your own profile.");
+                return Forbid("You can only remove portfolio project to your own profile.");
             }
 
             try
