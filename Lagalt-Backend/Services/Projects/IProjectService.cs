@@ -1,6 +1,7 @@
 ﻿using Lagalt_Backend.Data.Models.ProjectModels;
 using Lagalt_Backend.Data.Models.MessageModels;
 using System.ComponentModel.DataAnnotations;
+using Lagalt_Backend.Data.Models.UserModels;
 
 namespace Lagalt_Backend.Services.Projects
 {
@@ -29,13 +30,9 @@ namespace Lagalt_Backend.Services.Projects
         Task<Project> AddRequirementToProjectAsync(int id, string requirementText);
         Task<Project> RemoveRequirementFromProjectAsync(int id, int requirementId);
 
-        //Messages
-
-        //Milestone
-        //Add milestone to project
-        //Get all milestones in project
-        //Get milestone in project by id
-        //update milestone status
+        //Users
+        Task<List<User>> GetAllUsersInProjectAsync(int id);
+        Task<Project> RemoveUserFromProjectAsync(int id, Guid userId);
 
     }
 }

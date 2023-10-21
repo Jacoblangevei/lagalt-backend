@@ -299,6 +299,50 @@ namespace Lagalt_Backend.Services.Projects
             return project;
         }
 
+        //Users in project
+        public async Task<List<User>> GetAllUsersInProjectAsync(int id)
+        {
+            var project = await _context.Projects.FindAsync(id);
+
+            if (project == null)
+            {
+                throw new EntityNotFoundException(nameof(Project), id);
+            }
+
+            var userIds = await _context.ProjectUsers
+                .Where(u => u.ProjectId == id && u.Role == "User")
+                .Select(u => u.UserId)
+                .ToListAsync();
+
+            var users = await _context.Users
+                .Where(u => userIds.Contains(u.UserId))
+                .ToListAsync();
+
+            return users;
+        }
+
+        public async Task<Project> RemoveUserFromProjectAsync(int id, Guid userId)
+        {
+            var project = await _context.Projects
+                .Include(p => p.Users)
+                .FirstOrDefaultAsync(p => p.ProjectId == id);
+
+            if (project == null)
+            {
+                throw new EntityNotFoundException(nameof(Project), id);
+            }
+
+            var userToRemove = project.Users.FirstOrDefault(u => u.UserId == userId);
+
+            if (userToRemove != null)
+            {
+                project.Users.Remove(userToRemove);
+                _context.SaveChanges();
+            }
+
+            return project;
+        }
+
         //Helping methods
         private async Task<bool> ProjectExistsAsync(int id)
         {

@@ -20,6 +20,7 @@ using Lagalt_Backend.Services.Projects.ProjectStatuses;
 using System;
 using Lagalt_Backend.Services.Projects.Milestones;
 using Lagalt_Backend.Data.Dtos.Project.Milestones;
+using Lagalt_Backend.Data.Dtos.Users;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -890,6 +891,8 @@ namespace Lagalt_Backend.Controllers
             }
         }
 
+        //Users
+
         /// <summary>
         /// Gets all projects logged in user owns
         /// </summary>
@@ -906,6 +909,62 @@ namespace Lagalt_Backend.Controllers
                 var ownerProjects = await _projService.GetProjectsUserOwnsAsync(Guid.Parse(userId));
                 var projectDtos = _mapper.Map<IEnumerable<ProjectDTO>>(ownerProjects);
                 return Ok(projectDtos);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets every member in project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/users")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAllUsersInProject(int id)
+        {
+            try
+            {
+                var users = await _projService.GetAllUsersInProjectAsync(id);
+                var userDTOs = _mapper.Map<List<UserDTO>>(users);
+                return Ok(userDTOs);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Removes user from project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}/users/remove/{userId}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveUserFromProject(int id, Guid userId)
+        {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Project existingProject = await _projService.GetByIdAsync(id);
+
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
+
+            if (existingProject.OwnerId != Guid.Parse(ownerId))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _projService.RemoveUserFromProjectAsync(id, userId);
+                return NoContent();
             }
             catch (EntityNotFoundException ex)
             {
