@@ -21,6 +21,8 @@ using System;
 using Lagalt_Backend.Services.Projects.Milestones;
 using Lagalt_Backend.Data.Dtos.Project.Milestones;
 using Lagalt_Backend.Data.Dtos.Users;
+using Lagalt_Backend.Services.Projects.Resources;
+using Lagalt_Backend.Data.Dtos.Project.Resources;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -41,6 +43,7 @@ namespace Lagalt_Backend.Controllers
         private readonly IUpdateService _updateService;
         private readonly IProjectStatusService _projectStatusService;
         private readonly IMilestoneService _milestoneService;
+        private readonly IResourceService _resourceService;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace Lagalt_Backend.Controllers
         /// </summary>
         /// <param name="projService">The service object for accessing project operations.</param>
         /// <param name="mapper">The AutoMapper object for converting entity models to DTOs and vice versa.</param>
-        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService, IProjectStatusService projectStatusService, IMessageProjectService messageProjectService, IMilestoneService milestoneService)
+        public ProjectsController(IProjectService projService, IProjectTypeService projectTypeService, IMapper mapper, IProjectRequestService projectRequestService, IUpdateService updateService, IProjectStatusService projectStatusService, IMessageProjectService messageProjectService, IMilestoneService milestoneService, IResourceService resourceService)
         {
             _projService = projService;
             _projectTypeService = projectTypeService;
@@ -57,6 +60,7 @@ namespace Lagalt_Backend.Controllers
             _projectStatusService = projectStatusService;
             _messageProjectService = messageProjectService;
             _milestoneService = milestoneService;
+            _resourceService = resourceService;
             _mapper = mapper;
         }
 
@@ -970,6 +974,105 @@ namespace Lagalt_Backend.Controllers
             {
                 return NotFound(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// User leaving project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}/leave")]
+        public async Task<IActionResult> LeaveProject(int id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                bool success = await _projService.LeaveProjectAsync(userId, id);
+
+                if (success)
+                {
+                    return Ok("User has left the project.");
+                }
+                else
+                {
+                    return NotFound("User is not a member of the project.");
+                }
+            }
+            else
+            {
+                return Forbid("User ID from Keycloak is missing or invalid.");
+            }
+        }
+
+        //Project Resources
+
+        /// <summary>
+        /// Get all resources in a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/resources")]
+        [Authorize]
+        public async Task<IActionResult> GetAllResourcesInProject(int id)
+        {
+            try
+            {
+                var resources = await _resourceService.GetAllResourcesInProjectAsync(id);
+                var resourceDtos = _mapper.Map<List<ResourceDTO>>(resources);
+
+                return Ok(resourceDtos);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get one resource from project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/resources/{resourceId}")]
+        [Authorize]
+        public async Task<IActionResult> GetResourceInProjectById(int id, int resourceId)
+        {
+            try
+            {
+                var resource = await _resourceService.GetResourceInProjectByIdAsync(id, resourceId);
+                var resourceDto = _mapper.Map<ResourceDTO>(resource);
+
+                return Ok(resourceDto);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Add resource to project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="resourcePostDTO"></param>
+        /// <returns></returns>
+        [HttpPost("{id}/resources")]
+        [Authorize]
+        public async Task<IActionResult> AddResourceToProject(int id, [FromBody] ResourcePostDTO resourcePostDTO)
+        {
+
+            var newResource = new Resource
+            {
+                ResourceName = resourcePostDTO.ResourceName,
+                ResourceLink = resourcePostDTO.ResourceLink,
+                ProjectId = id
+            };
+
+            var addedResource = await _resourceService.AddResourceToProjectAsync(id, newResource);
+
+            return Ok(addedResource);
         }
     }
 }

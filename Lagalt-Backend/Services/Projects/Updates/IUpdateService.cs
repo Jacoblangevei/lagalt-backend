@@ -2,7 +2,7 @@
 
 namespace Lagalt_Backend.Services.Projects.Updates
 {
-    public interface IUpdateService : ICrudService<ProjectType, int>
+    public interface IUpdateService : ICrudService<Update, int>
     {
         Task<List<Update>> GetAllUpdatesInProjectAsync(int id);
         Task<Update> GetUpdateInProjectByIdAsync(int id, int updateId);

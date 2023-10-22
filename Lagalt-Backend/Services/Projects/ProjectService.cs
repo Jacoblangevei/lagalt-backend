@@ -343,6 +343,22 @@ namespace Lagalt_Backend.Services.Projects
             return project;
         }
 
+        public async Task<bool> LeaveProjectAsync(Guid userId, int projectId)
+        {
+            var projectUser = await _context.ProjectUsers
+                .FirstOrDefaultAsync(pu => pu.UserId == userId && pu.ProjectId == projectId);
+
+            if (projectUser == null)
+            {
+                return false;
+            }
+
+            _context.ProjectUsers.Remove(projectUser);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         //Helping methods
         private async Task<bool> ProjectExistsAsync(int id)
         {

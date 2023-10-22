@@ -29,6 +29,8 @@ namespace Lagalt_Backend.Mappers
                 .ForMember(
                     pdto => pdto.Messages, options => options.MapFrom(p => p.Messages.Select(msg => msg.MessageId).ToArray()))
                 .ForMember(
+                    pdto => pdto.Requirements, options => options.MapFrom(p => p.Resources.Select(r => r.ResourceId).ToArray()))
+                .ForMember(
                     pdto => pdto.OwnerId, options => options.MapFrom(p => p.OwnerId))
                 .ForMember(
                     pdto => pdto.ProjectStatusId, options => options.MapFrom(p => p.ProjectStatusId))

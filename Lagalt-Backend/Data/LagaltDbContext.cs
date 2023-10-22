@@ -29,12 +29,7 @@ namespace Lagalt_Backend.Data
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<ProjectTag> ProjectTags { get; set; }
         public DbSet<ProjectRequirement> ProjectRequirements { get; set; }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer("Data Source=N-NO-01-01-5733\\SQLEXPRESS; Initial Catalog=LagaltEF; Integrated Security= true; Trust Server Certificate= true;");
-        //    //Ida data source: N-NO-01-01-5733\SQLEXPRESS
-        //}
+        public DbSet<Resource> Resources { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -246,6 +241,16 @@ namespace Lagalt_Backend.Data
 
             modelBuilder.Entity<ProjectRequirement>().HasData(
                 new ProjectRequirement { ProjectId = 1, RequirementId = 1 }
+                );
+
+            //Resources
+            modelBuilder.Entity<Resource>()
+                .HasOne(r => r.Project)
+                .WithMany(p => p.Resources)
+                .HasForeignKey(r => r.ProjectId);
+
+            modelBuilder.Entity<Resource>().HasData(
+                new Resource { ResourceId = 1, ResourceName = "Github Repo", ResourceLink = "Github.com", ProjectId = 1, }
                 );
         }
     }

@@ -14,6 +14,8 @@ using Lagalt_Backend.Services.Projects.ProjectStatuses;
 using Lagalt_Backend.Services.Projects.MilestoneStatuses;
 using Lagalt_Backend.Services.Projects.Messages;
 using Lagalt_Backend.Services.Projects.Milestones;
+using Lagalt_Backend.Services.Projects.Resources;
+using System.ComponentModel.Design;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +74,8 @@ builder.Services.AddScoped<IProjectStatusService, ProjectStatusService>();
 builder.Services.AddScoped<IMilestoneService, MilestoneService>();
 builder.Services.AddScoped<IMilestoneStatusService, MilestoneStatusService>();
 builder.Services.AddScoped<IMessageProjectService, MessageProjectService>();
+builder.Services.AddScoped<Lagalt_Backend.Services.Projects.Resources.IResourceService, Lagalt_Backend.Services.Projects.Resources.ResourceService>();
+
 // Add automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

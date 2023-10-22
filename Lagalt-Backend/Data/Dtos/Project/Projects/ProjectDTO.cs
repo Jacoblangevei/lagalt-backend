@@ -23,5 +23,6 @@ namespace Lagalt_Backend.Data.Dtos.Projects
         public int[] ProjectRequests { get; set; }
         public int[] Requirements { get; set; }
         public int[] Messages { get; set; }
+        public int[] Resource {  get; set; }
     }
 }

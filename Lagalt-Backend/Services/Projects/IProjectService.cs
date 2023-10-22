@@ -33,6 +33,7 @@ namespace Lagalt_Backend.Services.Projects
         //Users
         Task<List<User>> GetAllUsersInProjectAsync(int id);
         Task<Project> RemoveUserFromProjectAsync(int id, Guid userId);
+        Task<bool> LeaveProjectAsync(Guid userId, int projectId);
 
     }
 }

@@ -38,6 +38,6 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         public ICollection<ProjectRequest> ProjectRequests { get; set; }
         public ICollection<Requirement> Requirements { get; set; }
         public ICollection<Message> Messages { get; set; }
-
+        public ICollection<Resource> Resources { get; set; }
     }
 }
