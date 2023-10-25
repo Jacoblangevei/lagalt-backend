@@ -83,11 +83,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins", builder =>
+    options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app/")
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app") // Update with your Vercel URL
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 
     options.AddDefaultPolicy(builder =>
