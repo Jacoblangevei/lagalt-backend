@@ -83,13 +83,14 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy("CorePolicy", builder =>
     {
-        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app", "https://lagalt.azurewebsites.net") // Update with your Vercel and Azure Web App URLs
+        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app", "https://lagalt.azurewebsites.net", "https://lemur-10.cloud-iam.com") // Update with your Vercel and Azure Web App URLs
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
     });
+});
 
     //options.AddDefaultPolicy(builder =>
     //{
@@ -98,7 +99,6 @@ builder.Services.AddCors(options =>
     //           .AllowAnyHeader()
     //           .AllowCredentials();
     //});
-});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
