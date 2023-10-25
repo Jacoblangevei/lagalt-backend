@@ -15,7 +15,7 @@ namespace Lagalt_Backend.Data.Models.ProjectModels
         [StringLength(150)]
         public string Name { get; set; }
         [Required]
-        [StringLength(255)]
+        [StringLength(1000)]
         public string Description { get; set; }
         public string ImageUrl { get; set; }
 

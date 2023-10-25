@@ -14,8 +14,9 @@ using Lagalt_Backend.Services.Projects.ProjectStatuses;
 using Lagalt_Backend.Services.Projects.MilestoneStatuses;
 using Lagalt_Backend.Services.Projects.Messages;
 using Lagalt_Backend.Services.Projects.Milestones;
-using Lagalt_Backend.Services.Projects.Resources;
-using System.ComponentModel.Design;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +83,13 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add CORS services
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("AllowSpecificOrigins", builder =>
+    {
+        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app/")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+
     options.AddDefaultPolicy(builder =>
     {
         builder.WithOrigins("https://lagalt.azurewebsites.net")
@@ -90,7 +98,6 @@ builder.Services.AddCors(options =>
                .AllowCredentials();
     });
 });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
