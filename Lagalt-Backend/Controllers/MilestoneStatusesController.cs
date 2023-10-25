@@ -4,7 +4,9 @@ using Lagalt_Backend.Data.Dtos.Project.ProjectStatuses;
 using Lagalt_Backend.Services.Projects.MilestoneStatuses;
 using Lagalt_Backend.Services.Projects.ProjectStatuses;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,6 +14,10 @@ namespace Lagalt_Backend.Controllers
 {
     [Route("api/v1/milestonestatuses")]
     [ApiController]
+    [Authorize]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiConventionType(typeof(DefaultApiConventions))]
+    [EnableCors("MyAllowSpecificOrigins")]
     public class MilestoneStatusesController : ControllerBase
     {
         private readonly IMilestoneStatusService _milestoneStatusService;

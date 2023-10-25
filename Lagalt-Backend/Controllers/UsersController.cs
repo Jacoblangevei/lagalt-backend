@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System;
 using Lagalt_Backend.Data;
 using Lagalt_Backend.Data.Dtos.Projects;
+using Microsoft.AspNetCore.Cors;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -27,6 +28,7 @@ namespace Lagalt_Backend.Controllers
     [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
+    [EnableCors("MyAllowSpecificOrigins")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;

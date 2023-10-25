@@ -23,6 +23,7 @@ using Lagalt_Backend.Data.Dtos.Project.Milestones;
 using Lagalt_Backend.Data.Dtos.Users;
 using Lagalt_Backend.Services.Projects.Resources;
 using Lagalt_Backend.Data.Dtos.Project.Resources;
+using Microsoft.AspNetCore.Cors;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -34,6 +35,7 @@ namespace Lagalt_Backend.Controllers
     [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
+    [EnableCors("MyAllowSpecificOrigins")]
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projService;

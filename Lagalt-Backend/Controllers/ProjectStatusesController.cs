@@ -2,6 +2,7 @@
 using Lagalt_Backend.Data.Dtos.Project.ProjectStatuses;
 using Lagalt_Backend.Services.Projects.ProjectStatuses;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -14,6 +15,7 @@ namespace Lagalt_Backend.Controllers
     [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
+    [EnableCors("MyAllowSpecificOrigins")]
     public class ProjectStatusesController : ControllerBase
     {
         private readonly IProjectStatusService _projectStatusService;

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Lagalt_Backend.Data.Dtos.Skills;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Cors;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -24,6 +25,7 @@ namespace Lagalt_Backend.Controllers
     [Authorize]
     [Produces(MediaTypeNames.Application.Json)]
     [ApiConventionType(typeof(DefaultApiConventions))]
+    [EnableCors("MyAllowSpecificOrigins")]
     public class MessagesController : ControllerBase
     {
         private readonly IMessageService _msgService;
