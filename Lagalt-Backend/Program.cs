@@ -116,6 +116,12 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpesificOrigins);
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' https://best-lagalt-project-git-main-ken-pixel-source.vercel.app;");
+
+    await next();
+});
 
 app.UseAuthentication();
 
