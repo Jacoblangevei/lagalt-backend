@@ -82,11 +82,11 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add CORS services
 
-var MyAllowSpesificOrigin = "_myAllowSpesificOrigins";
+var MyAllowSpesificOrigins = "_myAllowSpesificOrigins";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpesificOrigin, policy =>
+    options.AddPolicy(name: MyAllowSpesificOrigins, policy =>
     {
         policy.WithOrigins(
             "https://best-lagalt-project-git-main-ken-pixel-source.vercel.app"
@@ -115,7 +115,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors(MyAllowSpesificOrigin);
+app.UseCors(MyAllowSpesificOrigins);
 
 app.UseAuthentication();
 
