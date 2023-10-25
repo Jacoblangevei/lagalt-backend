@@ -88,7 +88,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpesificOrigin, policy =>
     {
-        policy.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app"
+        policy.WithOrigins(
+            "https://best-lagalt-project-git-main-ken-pixel-source.vercel.app"
             , "https://lagalt.azurewebsites.net"
             , "https://lemur-10.cloud-iam.com") // Update with your Vercel and Azure Web App URLs
             .AllowAnyMethod()
@@ -114,7 +115,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors(MyAllowSpesificOrigin);
 
 app.UseAuthentication();
 
