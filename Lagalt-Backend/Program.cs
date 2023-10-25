@@ -81,11 +81,16 @@ builder.Services.AddScoped<Lagalt_Backend.Services.Projects.Resources.IResourceS
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add CORS services
+
+var MyAllowSpesificOrigin = "_myAllowSpesificOrigins";
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorePolicy", builder =>
+    options.AddPolicy(name: MyAllowSpesificOrigin, policy =>
     {
-        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app", "https://lagalt.azurewebsites.net", "https://lemur-10.cloud-iam.com") // Update with your Vercel and Azure Web App URLs
+        policy.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app"
+            , "https://lagalt.azurewebsites.net"
+            , "https://lemur-10.cloud-iam.com") // Update with your Vercel and Azure Web App URLs
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
