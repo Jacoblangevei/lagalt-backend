@@ -120,6 +120,7 @@ app.UseCors(MyAllowSpesificOrigins);
 app.UseAuthentication();
 
 app.UseAuthorization();
+app.UseDeveloperExceptionPage();
 
 app.MapControllers();
 
