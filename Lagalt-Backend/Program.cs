@@ -85,19 +85,19 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app") // Update with your Vercel URL
+        builder.WithOrigins("https://best-lagalt-project-git-main-ken-pixel-source.vercel.app", "https://lagalt.azurewebsites.net") // Update with your Vercel and Azure Web App URLs
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
     });
 
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.WithOrigins("https://lagalt.azurewebsites.net")
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials();
-    });
+    //options.AddDefaultPolicy(builder =>
+    //{
+    //    builder.WithOrigins("https://lagalt.azurewebsites.net")
+    //           .AllowAnyMethod()
+    //           .AllowAnyHeader()
+    //           .AllowCredentials();
+    //});
 });
 var app = builder.Build();
 
