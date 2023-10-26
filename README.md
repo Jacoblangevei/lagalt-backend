@@ -2,13 +2,10 @@
 ## Introduction
 Lagalt .NET backend code for case project automn 2023. 
 
-## Getting Started
-Explain how to get your backend up and running. Include details on prerequisites, installation steps, and any initial setup.
+## Prerequisites
+Before getting started with the project, you'll need a development environment for the code. In this project, we utilized Visual Studio as our primary integrated development environment (IDE).
 
-### Prerequisites
-List any software or tools that users need to have installed before they can use your backend. Include versions if necessary.
-
-### Installation
+## Installation
 1. Clone this repository to your local machine `git clone https://github.com/Jacoblangevei/lagalt-backend`
 2. Configure your database connection and any necessary settings.
   1. To connect to SSMS, add this to LagaltDbContext
