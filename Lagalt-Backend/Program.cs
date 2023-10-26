@@ -90,7 +90,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "https://best-lagalt-project-git-main-ken-pixel-source.vercel.app",
-            "https://best-lagalt-project.vercel.app/project",
+            "https://best-lagalt-project.vercel.app",
             "https://lagalt.azurewebsites.net",
             "https://lemur-10.cloud-iam.com") // Update with your Vercel and Azure Web App URLs
             .AllowAnyMethod()
@@ -119,7 +119,7 @@ app.UseHttpsRedirection();
 app.UseCors(MyAllowSpesificOrigins);
 app.Use(async (context, next) =>
 {
-    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' https://best-lagalt-project-git-main-ken-pixel-source.vercel.app https://best-lagalt-project.vercel.app/project https://lemur-10.cloud-iam.com;");
+    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' https://best-lagalt-project-git-main-ken-pixel-source.vercel.app https://best-lagalt-project.vercel.app https://lemur-10.cloud-iam.com;");
 
     await next();
 });
