@@ -24,6 +24,7 @@ using Lagalt_Backend.Data.Dtos.Users;
 using Lagalt_Backend.Services.Projects.Resources;
 using Lagalt_Backend.Data.Dtos.Project.Resources;
 using Microsoft.AspNetCore.Cors;
+using Lagalt_Backend.Data.Dtos.Project.Projects;
 
 namespace Lagalt_Backend.Controllers
 {
@@ -224,6 +225,40 @@ namespace Lagalt_Backend.Controllers
                 return NotFound(ex.Message);
             }
         }
+        /// <summary>
+        /// Updates the status of a project
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="projectStatusPutDTO"></param>
+        /// <returns></returns>
+        [HttpPut("{id}/updatestatus")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateProjectStatus(int id, [FromBody] ProjectStatusPutDTO projectStatusPutDTO)
+        {
+            try
+            {
+                var existingProject = await _projService.GetByIdAsync(id);
+
+                if (existingProject == null)
+                {
+                    return NotFound("Project not found");
+                }
+
+                // Update the project status
+                existingProject.ProjectStatusId = projectStatusPutDTO.ProjectStatusId;
+
+                // Save the changes
+                await _projService.UpdateStatusInProjectAsync(existingProject);
+
+                return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
 
         //Tags
 

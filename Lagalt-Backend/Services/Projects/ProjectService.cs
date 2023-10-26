@@ -359,6 +359,12 @@ namespace Lagalt_Backend.Services.Projects
             return true;
         }
 
+        public async Task UpdateStatusInProjectAsync(Project project)
+        {
+            _context.Entry(project).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
         //Helping methods
         private async Task<bool> ProjectExistsAsync(int id)
         {
