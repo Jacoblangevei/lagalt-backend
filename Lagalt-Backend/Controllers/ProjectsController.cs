@@ -605,20 +605,12 @@ namespace Lagalt_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> GetProjectRequests(int projectId)
         {
-            //string userId = "00000000-0000-0000-0000-000000000001";
-
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Project existingProject = await _projService.GetByIdAsync(projectId);
 
             if (existingProject == null)
             {
                 return NotFound();
-            }
-
-            if (existingProject.OwnerId != Guid.Parse(userId))
-            {
-                return Forbid();
             }
 
             var requests = await _projectRequestService.GetAllRequestsForProjectAsync(projectId);
